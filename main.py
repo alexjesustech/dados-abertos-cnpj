@@ -1,16 +1,20 @@
 import os
 import re
 import shutil
+import time
 from pathlib import Path
-from time import sleep
+import logging
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 
 class DadosAbertoCadastroNacionalPessoaJuridica:
+    logging.basicConfig(filename="dados_aberto_cpnj.log", level=logging.INFO)
+    logging.info("Início do download dos Dados Abertos do Cadastro Nacional de Pessoa Jurídica...")
 
     def __init__(self):
+
         self.dir_temp = str(Path("temp").absolute())
 
         # caso exista, exclui o diretório temporário.
@@ -49,25 +53,38 @@ class DadosAbertoCadastroNacionalPessoaJuridica:
         self.driver = webdriver.Firefox(options=options)
         self.driver.install_addon(str(Path("drivers/selectorshub-4.6.8.xpi").absolute()))
         self.driver.implicitly_wait(10)
-        self.driver.get(
-            "https://dados.gov.br/dados/conjuntos-dados/cadastro-nacional-da-pessoa-juridica---cnpj")
+
         self.btn_collapse_recursos = (By.CLASS_NAME, "botao-collapse-Recursos")
         self.btns_acesso_recurso = (By.XPATH, '//button[text()=" Acessar o recurso "]')
 
+    def wait_for_downloads(self):
+        print("Aguardando downloads", end="")
+        while any([filename.endswith(".part") for filename in os.listdir(self.dir_temp)]):
+            time.sleep(2)
+            print(".", end="")
+        print("Feito!")
+        logging.info("Finalizando o driver.")
+        profile_name = driver.capabilities.get('moz:profile').replace('\\', '/').split('/')[-1]
+        logging.info(f"profile_name: {profile_name}")
+        self.driver.quit()
+
     def download(self):
+        self.driver.get(
+            "https://dados.gov.br/dados/conjuntos-dados/cadastro-nacional-da-pessoa-juridica---cnpj")
+
         btn_collapse_recursos = self.driver.find_element(*self.btn_collapse_recursos)
         btn_collapse_recursos.click()
 
-        sleep(5)
-
-        links = self.driver.find_elements(*self.btns_acesso_recurso)
-        num_download = 0
-        for link in links:
-            num_download += 1
-            link.click()
-            print(f'#{num_download} {link.text}')
-
-            sleep(5)
+        try:
+            links = self.driver.find_elements(*self.btns_acesso_recurso)
+            num_download = 0
+            for link in links:
+                num_download += 1
+                time.sleep(5)
+                print(f'#{num_download} {link.text}')
+                link.click()
+        finally:
+            self.wait_for_downloads()
 
         # retorna uma lista dos números retirados da frase/texto.
         num_links = re.findall(r"\d", btn_collapse_recursos.text)
@@ -79,7 +96,7 @@ class DadosAbertoCadastroNacionalPessoaJuridica:
             # TODO: Criar log e alerta via e-mail/discord sobre o erro.
             print("Falta implementar o alerta...")
 
-        self.driver.quit()
+        logging.info("Fim do download dos Dados Abertos do Cadastro Nacional de Pessoa Jurídica.")
 
 
 if __name__ == '__main__':
@@ -92,5 +109,6 @@ if __name__ == '__main__':
             1- Criar log e alerta via e-mail/discord sobre o erro;
             1.1 Informar cada extração bem ou mal sucedida;
             2- Criar rotina para descompactar os arquivos;
+            2.1 unzip file.zip
             3- Criar rotina para guardar as informações em uma base de dados;
     '''
