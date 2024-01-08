@@ -62,10 +62,8 @@ class DadosAbertoCadastroNacionalPessoaJuridica:
         while any([filename.endswith(".part") for filename in os.listdir(self.dir_temp)]):
             time.sleep(2)
             print(".", end="")
-        print("Feito!")
+        print("Concluído!")
         logging.info("Finalizando o driver.")
-        profile_name = driver.capabilities.get('moz:profile').replace('\\', '/').split('/')[-1]
-        logging.info(f"profile_name: {profile_name}")
         self.driver.quit()
 
     def download(self):
@@ -81,20 +79,20 @@ class DadosAbertoCadastroNacionalPessoaJuridica:
             for link in links:
                 num_download += 1
                 time.sleep(5)
-                print(f'#{num_download} {link.text}')
+                print(f'Download do recurso #{num_download} inicializado.')
                 link.click()
+
+            # retorna uma lista dos números retirados da frase/texto.
+            num_links = re.findall(r"\d", btn_collapse_recursos.text)
+            # junta todos os números da lista em uma única string.
+            num_links = ''.join([str(num_link) for num_link in num_links])
+            print(f'O número de links na página é {num_links} e o número de downloads é {num_download}.')
+
+            if num_download != num_links:
+                # TODO: Criar log e alerta via e-mail/discord sobre o erro.
+                print("Falta implementar o alerta...")
         finally:
             self.wait_for_downloads()
-
-        # retorna uma lista dos números retirados da frase/texto.
-        num_links = re.findall(r"\d", btn_collapse_recursos.text)
-        # junta todos os números da lista em uma única string.
-        num_links = ''.join([str(num_link) for num_link in num_links])
-        print(f'O número de links na página é {num_links} e o número de downloads é {num_download}.')
-
-        if num_download != num_links:
-            # TODO: Criar log e alerta via e-mail/discord sobre o erro.
-            print("Falta implementar o alerta...")
 
         logging.info("Fim do download dos Dados Abertos do Cadastro Nacional de Pessoa Jurídica.")
 
