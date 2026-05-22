@@ -1,112 +1,68 @@
-import os
-import re
-import shutil
-import time
-from pathlib import Path
+"""Orquestra o pipeline de Dados Abertos do CNPJ: fetcher -> database."""
 import logging
+import os
+import shutil
+from pathlib import Path
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+from notifier import Notifier, load_env
+from fetcher import CNPJFetcher
+from database import DatabaseManager
 
 
-class DadosAbertoCadastroNacionalPessoaJuridica:
-    logging.basicConfig(filename="dados_aberto_cpnj.log", level=logging.INFO)
-    logging.info("Início do download dos Dados Abertos do Cadastro Nacional de Pessoa Jurídica...")
+def main():
+    load_env()
+    notifier = Notifier()
 
-    def __init__(self):
+    dir_temp = Path("temp").absolute()
+    if dir_temp.exists():
+        notifier.log_and_notify(f'Limpando diretório temporário ("{dir_temp}").')
+        shutil.rmtree(dir_temp)
+    dir_temp.mkdir(parents=True)
 
-        self.dir_temp = str(Path("temp").absolute())
+    notifier.log_and_notify("Início da extração e ingestão dos Dados Abertos do CNPJ.")
 
-        # caso exista, exclui o diretório temporário.
-        if os.path.isdir(self.dir_temp):
-            print(f'Excluindo o diretório temporário("{self.dir_temp}")')
-            shutil.rmtree(self.dir_temp)
+    period_env = os.getenv("CNPJ_PERIOD", "").strip() or None
+    fetcher = CNPJFetcher(dir_temp=dir_temp, notifier=notifier)
 
-        # cria o diretório temporário.
-        os.makedirs(self.dir_temp)
-        print(f'Diretório temporário("{self.dir_temp}") recriado.')
+    try:
+        period, zip_files = fetcher.fetch_all(period_env)
+    except Exception as e:
+        notifier.log_and_notify(f"Falha no download dos ZIPs: {e}", level=logging.ERROR)
+        raise
 
-        profile = webdriver.FirefoxProfile()
-        profile.set_preference("browser.download.panel.shown", False)
-        profile.set_preference("browser.download.animateNotifications", False)
-        profile.set_preference("browser.download.dir", self.dir_temp)
-        profile.set_preference("browser.download.folderList", 2)
-        profile.set_preference("browser.helperApps.alwaysAsk.force", False)
-        profile.set_preference("browser.download.manager.showWhenStarting", False)
-        profile.set_preference("pdfjs.disabled", True)
-        profile.set_preference(
-            "browser.helperApps.neverAsk.saveToDisk",
-            (
-                "application/pdf, application/zip, application/octet-stream, "
-                "text/csv, text/xml, application/xml, text/plain, "
-                "text/octet-stream, application/x-gzip, application/x-tar "
-                "application/"
-                "vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            ),
-        )
+    notifier.log_and_notify(f"Download concluído ({len(zip_files)} arquivos) para o período {period}.")
 
-        options = webdriver.FirefoxOptions()
-        options.profile = profile
-        options.add_argument("-headless")
-        options.binary_location = str(Path("drivers/geckodriver.exe").absolute())
+    if not zip_files:
+        notifier.log_and_notify("Nenhum ZIP baixado — abortando ingestão.", level=logging.WARNING)
+        return
 
-        self.driver = webdriver.Firefox(options=options)
-        self.driver.install_addon(str(Path("drivers/selectorshub-4.6.8.xpi").absolute()))
-        self.driver.implicitly_wait(10)
+    db_path = os.getenv("DB_PATH", "dados_cnpj.db")
+    db_manager = DatabaseManager(db_path, notifier)
+    db_manager.init_db()
 
-        self.btn_collapse_recursos = (By.CLASS_NAME, "botao-collapse-Recursos")
-        self.btns_acesso_recurso = (By.XPATH, '//button[text()=" Acessar o recurso "]')
+    delete_zip_after = os.getenv("DELETE_ZIP_AFTER", "false").lower() == "true"
 
-    def wait_for_downloads(self):
-        print("Aguardando downloads", end="")
-        while any([filename.endswith(".part") for filename in os.listdir(self.dir_temp)]):
-            time.sleep(2)
-            print(".", end="")
-        print("Concluído!")
-        logging.info("Finalizando o driver.")
-        self.driver.quit()
-
-    def download(self):
-        self.driver.get(
-            "https://dados.gov.br/dados/conjuntos-dados/cadastro-nacional-da-pessoa-juridica---cnpj")
-
-        btn_collapse_recursos = self.driver.find_element(*self.btn_collapse_recursos)
-        btn_collapse_recursos.click()
-
+    for zip_file in zip_files:
         try:
-            links = self.driver.find_elements(*self.btns_acesso_recurso)
-            num_download = 0
-            for link in links:
-                num_download += 1
-                time.sleep(5)
-                print(f'Download do recurso #{num_download} inicializado.')
-                link.click()
+            success = db_manager.import_csv_from_zip(str(zip_file))
+            if success and delete_zip_after:
+                notifier.log_and_notify(f"Excluindo {zip_file.name} para liberar espaço.")
+                try:
+                    os.remove(zip_file)
+                except OSError as delete_err:
+                    notifier.log_and_notify(
+                        f"Erro ao remover {zip_file.name}: {delete_err}",
+                        level=logging.WARNING,
+                    )
+        except Exception as e:
+            notifier.log_and_notify(
+                f"Falha na ingestão de {zip_file.name}: {e}",
+                level=logging.ERROR,
+            )
 
-            # retorna uma lista dos números retirados da frase/texto.
-            num_links = re.findall(r"\d", btn_collapse_recursos.text)
-            # junta todos os números da lista em uma única string.
-            num_links = ''.join([str(num_link) for num_link in num_links])
-            print(f'O número de links na página é {num_links} e o número de downloads é {num_download}.')
-
-            if num_download != num_links:
-                # TODO: Criar log e alerta via e-mail/discord sobre o erro.
-                print("Falta implementar o alerta...")
-        finally:
-            self.wait_for_downloads()
-
-        logging.info("Fim do download dos Dados Abertos do Cadastro Nacional de Pessoa Jurídica.")
+    db_manager.create_indices()
+    notifier.log_and_notify("Processamento e ingestão concluídos com sucesso.")
 
 
-if __name__ == '__main__':
-    dados = DadosAbertoCadastroNacionalPessoaJuridica()
-    print("Início do download dos Dados Abertos do Cadastro Nacional de Pessoa Jurídica...")
-    dados.download()
-    print("Fim do download dos Dados Abertos do Cadastro Nacional de Pessoa Jurídica.")
-    '''
-        TODO:
-            1- Criar log e alerta via e-mail/discord sobre o erro;
-            1.1 Informar cada extração bem ou mal sucedida;
-            2- Criar rotina para descompactar os arquivos;
-            2.1 unzip file.zip
-            3- Criar rotina para guardar as informações em uma base de dados;
-    '''
+if __name__ == "__main__":
+    main()

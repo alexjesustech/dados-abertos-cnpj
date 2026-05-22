@@ -2,5 +2,13 @@
 .venv
 .idea
 .pytest_cache
-temp
+.claude/
+temp/
+temp_smoke/
+extracted/
+drivers/
+__pycache__/
+*.pyc
+*.db
+*.db-*
 dados_aberto_cpnj.log
