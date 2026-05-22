@@ -1,4 +1,4 @@
-# dados_aberto_cpnj
+# dados-abertos-cnpj
 
 Pipeline em Python para baixar os **Dados Abertos do CNPJ** publicados pela Receita Federal do Brasil (RFB) e ingerir em um banco SQLite local, com retomada parcial e notificações opcionais (Discord/Telegram).
 
@@ -14,8 +14,8 @@ A fonte é o share público de Nextcloud da RFB em [`arquivos.receitafederal.gov
 ## Instalação
 
 ```bash
-git clone git@github.com:alexjesustech/dados_aberto_cpnj.git
-cd dados_aberto_cpnj
+git clone git@github.com:alexjesustech/dados-abertos-cnpj.git
+cd dados-abertos-cnpj
 
 python3 -m venv .venv
 source .venv/bin/activate          # Linux/macOS
@@ -51,7 +51,7 @@ O pipeline:
 4. Para cada ZIP, faz streaming do CSV interno direto pro SQLite em chunks de 50 mil linhas
 5. Cria índices ao final
 
-Logs em `dados_aberto_cpnj.log`. Notificações opcionais se as variáveis do Discord/Telegram estiverem preenchidas.
+Logs em `dados-abertos-cnpj.log`. Notificações opcionais se as variáveis do Discord/Telegram estiverem preenchidas.
 
 ## Estrutura
 

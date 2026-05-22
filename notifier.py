@@ -27,7 +27,7 @@ class Notifier:
         logger = logging.getLogger()
         if not logger.handlers:
             logging.basicConfig(
-                filename="dados_aberto_cpnj.log",
+                filename="dados-abertos-cnpj.log",
                 level=logging.INFO,
                 format="%(asctime)s [%(levelname)s] %(message)s"
             )
