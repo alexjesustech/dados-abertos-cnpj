@@ -11,4 +11,4 @@ __pycache__/
 *.pyc
 *.db
 *.db-*
-dados_aberto_cpnj.log
+dados-abertos-cnpj.log

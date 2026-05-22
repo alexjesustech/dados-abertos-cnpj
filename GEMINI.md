@@ -1,4 +1,4 @@
-# dados_aberto_cpnj — Diretrizes para Agentes de IA
+# dados-abertos-cnpj — Diretrizes para Agentes de IA
 
 Este arquivo define **como agentes de IA** (Gemini Antigravity, Claude Code, etc.) devem se comportar dentro deste projeto. A arquitetura técnica completa fica em [`CLAUDE.md`](./CLAUDE.md); não duplique aqui.
 

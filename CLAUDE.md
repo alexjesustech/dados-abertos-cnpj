@@ -1,4 +1,4 @@
-# dados_aberto_cpnj — Pipeline de Ingestão CNPJ
+# dados-abertos-cnpj — Pipeline de Ingestão CNPJ
 
 Pipeline Python que baixa os Dados Abertos do CNPJ (Receita Federal) via WebDAV público do Nextcloud da RFB e ingere em SQLite local, com retomada e idempotência.
 
@@ -28,7 +28,7 @@ Três módulos de produção, todos em PT-BR:
 
 * **`database.py`** — SQLite. Schemas DDL para `empresas`, `estabelecimentos`, `socios`, `simples`, `cnaes`, `motivos`, `municipios`, `paises`, `qualificacoes`, `naturezas`. Ingestão por streaming direto do ZIP via `zipfile.ZipFile.open()` + `io.TextIOWrapper` (sem extração em disco), commits a cada 50k linhas, PRAGMAs agressivos (`synchronous=OFF`, `journal_mode=WAL`, `cache_size=100000`, `temp_store=MEMORY`). Idempotência via tabela `controle_importacao` (`is_file_imported`/`mark_file_as_imported`). `INSERT OR REPLACE` permite re-execução parcial sem violar PKs.
 
-* **`notifier.py`** — Logging para `dados_aberto_cpnj.log` + envio opcional para Discord Webhook e Telegram Bot. Carrega `.env` via parser próprio (sem dependência de `python-dotenv`).
+* **`notifier.py`** — Logging para `dados-abertos-cnpj.log` + envio opcional para Discord Webhook e Telegram Bot. Carrega `.env` via parser próprio (sem dependência de `python-dotenv`).
 
 ⚠️ **PRAGMAs agressivos**: `synchronous=OFF` torna o banco vulnerável a corrupção em crash de OS (não de processo). Aceitável aqui porque o pipeline é re-executável e a tabela `controle_importacao` permite retomar.
 
@@ -67,7 +67,7 @@ Para consultas ad hoc no banco já ingerido, registre o servidor SQLite MCP em `
         "-y",
         "@modelcontextprotocol/server-sqlite",
         "--db",
-        "/home/sander/projects/dados_aberto_cpnj/dados_cnpj.db"
+        "/home/sander/projects/dados-abertos-cnpj/dados_cnpj.db"
       ]
     }
   }
@@ -80,7 +80,7 @@ Para consultas ad hoc no banco já ingerido, registre o servidor SQLite MCP em `
 
 * O run cria/reseta `temp/` no início — arquivos parciais do run anterior **não** são preservados entre execuções (resume é por-arquivo dentro do mesmo run, via `Range`).
 * Ingestão é idempotente: ZIPs já registrados em `controle_importacao` são pulados. Para reprocessar, `DELETE FROM controle_importacao WHERE arquivo = 'X.zip'`.
-* Logs em `dados_aberto_cpnj.log` (ignorado pelo git).
+* Logs em `dados-abertos-cnpj.log` (ignorado pelo git).
 * Notificações via Discord/Telegram são opcionais — controladas só pela presença das envs.
 
 ---
