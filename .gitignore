@@ -23,3 +23,13 @@ htmlcov/
 
 # scratch runtime
 run.out
+
+# monitor/ — artefatos de runtime (lockfiles, logs, snapshot vivo)
+monitor/.collect.pid
+monitor/.collect.offset
+monitor/.http-server.pid
+monitor/.http-server.log
+monitor/collect.log
+monitor/notifications.log
+monitor/notify.sent
+monitor/status.json
