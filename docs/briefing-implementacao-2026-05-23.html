@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Briefing de implementação — Caminho 01 — 23 maio 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:#f5f1e8;
+    --paper-code:#ebe3cf;
+    --paper-toast:#1a1916;
+    --ink:#0d0c0a;
+    --ink-body:#1a1916;
+    --ink-text:#2d2a23;
+    --ink-soft:#3d3a32;
+    --ink-italic:#4a4438;
+    --kk-mono-fg:#807966;
+    --kk-caption:#6b6557;
+    --kk-toast-body:#d9cfb8;
+    --rule-dark:#1a1916;
+    --rule-soft:#c9bda3;
+    --rule-divider:#d9cfb8;
+    --accent:#b9532b;
+    --accent-deep:#a13d1e;
+    --accent-soft:#8a6a1e;
+    --accent-go:#2a5a3a;
+    --font-serif:"Newsreader","Source Serif Pro",Georgia,serif;
+    --font-sans:"Inter",system-ui,-apple-system,sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  *,*::before,*::after { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--paper); }
+  body {
+    color:var(--ink-text); font-family:var(--font-sans);
+    font-size:13.5px; line-height:1.55;
+    font-feature-settings:"lnum" 1,"tnum" 1;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .vb-page { max-width:900px; margin:0 auto; padding:64px 64px 56px; }
+
+  /* Masthead */
+  .vb-mast {
+    display:flex; justify-content:space-between; align-items:flex-end;
+    padding-bottom:14px; margin-bottom:36px;
+    border-bottom:2px solid var(--rule-dark);
+  }
+  .vb-mast .pub {
+    font-family:var(--font-serif); font-size:20px;
+    font-style:italic; font-weight:500;
+    color:var(--ink-body); line-height:1;
+  }
+  .vb-mast .sub {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--kk-mono-fg); margin-top:8px;
+  }
+  .vb-mast .right {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.10em; text-transform:uppercase;
+    color:var(--kk-caption); text-align:right; line-height:1.8;
+  }
+  .vb-mast .right .date { color:var(--ink-body); }
+
+  /* Title + Lead */
+  .vb-title {
+    font-family:var(--font-serif); font-size:52px; font-weight:600;
+    letter-spacing:-0.025em; line-height:1.05;
+    color:var(--ink); margin:0 0 22px;
+    text-wrap:balance;
+  }
+  .vb-title em { font-style:italic; font-weight:500; color:var(--accent); }
+  .vb-lead {
+    font-family:var(--font-serif); font-size:17px; font-weight:500;
+    line-height:1.55; color:var(--ink-body);
+    margin:0 0 52px; max-width:720px;
+    text-wrap:pretty;
+  }
+  .vb-lead::first-line { font-variant:small-caps; letter-spacing:0.04em; }
+
+  /* Section */
+  .vb-sec { margin-bottom:44px; }
+  .vb-sec::after { content:""; display:block; clear:both; }
+  .vb-num {
+    float:left; width:80px;
+    font-family:var(--font-serif); font-size:64px; font-weight:400;
+    letter-spacing:-0.04em; line-height:1;
+    color:var(--rule-soft); margin-top:4px;
+  }
+  .vb-secbody {
+    margin-left:80px; padding-top:10px;
+    border-top:1px solid var(--rule-dark);
+  }
+  .vb-secbody h2 {
+    font-family:var(--font-serif); font-size:26px; font-weight:600;
+    letter-spacing:-0.015em; color:var(--ink); margin:0 0 18px;
+  }
+  .vb-secbody h3 {
+    font-family:var(--font-serif); font-size:18px; font-weight:600;
+    color:var(--ink-body); margin:24px 0 12px; line-height:1.3;
+  }
+  .vb-secbody p {
+    margin:0 0 12px; line-height:1.6;
+  }
+  .vb-sec.full .vb-num { margin-bottom:12px; }
+  .vb-sec.full .vb-secbody { margin-left:0; }
+
+  /* Tabela */
+  .vb-tab { width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:12px; }
+  .vb-tab th {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.10em; text-transform:uppercase;
+    color:var(--kk-mono-fg); text-align:left;
+    padding:10px 12px 10px 0;
+    border-bottom:1.5px solid var(--rule-dark);
+  }
+  .vb-tab th:last-child { padding-right:0; }
+  .vb-tab td {
+    padding:10px 12px 10px 0;
+    border-bottom:1px dotted var(--rule-soft);
+    color:var(--ink-text); vertical-align:top; line-height:1.5;
+  }
+  .vb-tab td:last-child { padding-right:0; }
+  .vb-tab td:first-child {
+    font-family:var(--font-serif); font-size:13.5px;
+    font-style:italic; font-weight:500;
+    color:var(--ink-body);
+  }
+  .vb-tab tbody tr:last-child td { border-bottom:none; }
+
+  /* Sprints (estilo "caminho") */
+  .vb-sprints { display:grid; grid-template-columns:repeat(2,1fr); gap:24px 28px; }
+  .vb-sprint { padding-top:14px; border-top:3px solid var(--rule-dark); }
+  .vb-sprint .kicker {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--kk-mono-fg); margin-bottom:6px;
+  }
+  .vb-sprint .num {
+    font-family:var(--font-serif); font-size:48px; font-weight:500;
+    letter-spacing:-0.03em; line-height:1;
+    color:var(--ink); margin-bottom:8px;
+  }
+  .vb-sprint .title {
+    font-family:var(--font-serif); font-size:17px; font-weight:500;
+    font-style:italic; color:var(--ink-body);
+    margin-bottom:10px; line-height:1.3;
+  }
+  .vb-sprint .recipe {
+    font-family:var(--font-mono); font-size:10.5px; font-weight:500;
+    letter-spacing:0.10em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:12px;
+  }
+  .vb-sprint p {
+    font-family:var(--font-sans); font-size:12.5px;
+    color:var(--ink-text); line-height:1.55; margin:0 0 10px;
+  }
+  .vb-sprint .trade {
+    padding-top:10px; border-top:1px dotted var(--rule-soft);
+    font-family:var(--font-serif); font-size:12.5px; font-style:italic;
+    color:var(--ink-italic); line-height:1.5;
+  }
+
+  /* Stack table (decisões) — usa vb-tab base */
+
+  /* Code blocks */
+  pre.vb-code {
+    background:var(--paper-code); color:var(--ink-body);
+    font-family:var(--font-mono); font-size:11.5px;
+    line-height:1.55; padding:14px 18px;
+    border-left:3px solid var(--ink-body);
+    border-radius:2px; overflow-x:auto;
+    margin:14px 0;
+  }
+  code {
+    font-family:var(--font-mono); font-size:0.9em;
+    background:var(--paper-code); padding:1px 5px; border-radius:2px;
+    color:var(--ink-body);
+  }
+  .vb-page strong { color:var(--ink-body); font-weight:600; }
+
+  /* Artefato (subseção tipo solução) */
+  .vb-art { padding:14px 0; border-bottom:1px dotted var(--rule-soft); }
+  .vb-art:last-child { border-bottom:none; }
+  .vb-art .head { display:flex; align-items:baseline; gap:14px; margin-bottom:10px; }
+  .vb-art .id {
+    font-family:var(--font-serif); font-size:28px;
+    font-style:italic; font-weight:500;
+    color:var(--kk-mono-fg); line-height:1;
+  }
+  .vb-art .nm {
+    font-family:var(--font-serif); font-size:17px; font-weight:600;
+    color:var(--ink); line-height:1.3;
+  }
+  .vb-art .nm em { font-style:italic; font-weight:500; color:var(--ink-italic); }
+  .vb-art .meta {
+    font-family:var(--font-mono); font-size:10.5px; font-weight:500;
+    color:var(--kk-mono-fg); letter-spacing:0.04em;
+    display:flex; flex-wrap:wrap; gap:14px; margin-bottom:10px;
+  }
+  .vb-art .meta strong { color:var(--ink-body); font-weight:500; }
+  .vb-art .body {
+    font-family:var(--font-sans); font-size:12.5px;
+    color:var(--ink-text); line-height:1.6;
+  }
+  .vb-art ul { margin:6px 0 0; padding-left:18px; }
+  .vb-art ul li { margin-bottom:4px; }
+
+  /* Critério (3 numerais grandes) */
+  .vb-criteria { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:8px; }
+  .vb-crit { }
+  .vb-crit .num {
+    font-family:var(--font-serif); font-size:38px; font-weight:500;
+    letter-spacing:-0.025em; color:var(--ink); line-height:1;
+    margin-bottom:8px;
+  }
+  .vb-crit p {
+    font-family:var(--font-sans); font-size:12.5px;
+    color:var(--ink-text); line-height:1.55; margin:0;
+  }
+  .vb-crit code { font-size:11px; }
+
+  /* Não fazer (toast) */
+  .vb-nope {
+    background:var(--paper-toast); color:var(--kk-toast-body);
+    padding:22px 28px; border-radius:0;
+  }
+  .vb-nope h2 {
+    font-family:var(--font-serif); font-size:22px;
+    font-style:italic; font-weight:500;
+    color:var(--paper); margin:0 0 14px;
+  }
+  .vb-nope h2 u {
+    text-decoration:underline;
+    text-decoration-color:var(--accent);
+    text-decoration-thickness:2px;
+    text-underline-offset:4px;
+  }
+  .vb-nope ul {
+    list-style:none; margin:0; padding:0;
+    font-family:var(--font-sans); font-size:12.5px; line-height:1.6;
+  }
+  .vb-nope ul li {
+    position:relative; padding-left:16px; margin-bottom:6px;
+  }
+  .vb-nope ul li::before {
+    content:"—"; position:absolute; left:0; color:var(--accent);
+  }
+  .vb-nope strong { color:var(--paper); font-weight:500; }
+  .vb-nope code { background:#2a2725; color:var(--kk-toast-body); }
+
+  /* Footer */
+  .vb-foot {
+    margin-top:60px; padding-top:14px;
+    border-top:1px solid var(--rule-soft);
+    font-family:var(--font-serif); font-size:11px; font-style:italic;
+    color:var(--kk-caption); line-height:1.6;
+  }
+</style>
+</head>
+<body>
+<main class="vb-page">
+
+<!-- MASTHEAD -->
+<div class="vb-mast">
+  <div class="left">
+    <div class="pub">Briefing de implementação</div>
+    <div class="sub">PLANO DE EXECUÇÃO · Nº 002</div>
+  </div>
+  <div class="right">
+    <div class="date">23 MAIO 2026</div>
+    <div>CAMINHO 01 · A + I + J</div>
+  </div>
+</div>
+
+<h1 class="vb-title">"Caixa-preta de CNPJ pra mim" — <em>plano executável</em></h1>
+<p class="vb-lead">Três artefatos — validador, API local e MCP server — em três sprints úteis. Stack: FastAPI sobre <code>sqlite3</code> puro, <code>uv</code> gerindo deps, FastMCP expondo nove ferramentas tipadas. Começa por J (validador alfanumérico) porque a vigência do CNPJ alfa é 06/07/2026 e o algoritmo é dependência limpa de A e I. Total: três semanas e meia úteis, com margem de buffer dentro do orçamento de quatro do briefing Nº 001.</p>
+
+<!-- ===================== 01 — STACK ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">01</div>
+  <div class="vb-secbody">
+    <h2>Decisões de stack</h2>
+
+    <table class="vb-tab">
+      <thead>
+        <tr><th>Camada</th><th>Escolha</th><th>Justificativa</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Linguagem</td><td>Python 3.11+</td><td>Continuidade com pipeline; SDK MCP oficial em Python.</td></tr>
+        <tr><td>HTTP</td><td>FastAPI 0.115+</td><td>Pydantic 2 nativo — mesma definição alimenta MCP via FastMCP; Swagger grátis; <code>TestClient</code> zero-fricção.</td></tr>
+        <tr><td>ASGI</td><td>uvicorn[standard]</td><td>Padrão FastAPI; suficiente pra escopo local single-tenant.</td></tr>
+        <tr><td>Banco</td><td>sqlite3 + repositórios</td><td>Schema fixo da RFB; ORM agrega 200ms de import e zero benefício. Mantém continuidade com <code>database.py</code>.</td></tr>
+        <tr><td>Validação</td><td>Pydantic v2</td><td>Vem com FastAPI; mesmos models viram contract das tools MCP.</td></tr>
+        <tr><td>Deps</td><td>uv + pyproject.toml</td><td>Resolução em ms; lockfile reproduzível; instala MCP via entrypoint. <code>requirements.txt</code> mantido autogerado para não quebrar o pipeline.</td></tr>
+        <tr><td>MCP</td><td>mcp[cli] v1.27 (FastMCP)</td><td>Decorator <code>@mcp.tool()</code> com type hints vira schema JSON automaticamente.</td></tr>
+        <tr><td>Testes</td><td>pytest + httpx + Hypothesis</td><td>Property-based exercita o algoritmo módulo-11 do validador alfanumérico.</td></tr>
+        <tr><td>Lint</td><td>pylint (mantido) + ruff</td><td>Pylint já configurado; ruff cobre format + 90% das checks 100× mais rápido. Sem CI ainda.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== 02 — ESTRUTURA ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">02</div>
+  <div class="vb-secbody">
+    <h2>Estrutura de pastas</h2>
+
+    <p>Pipeline mantém-se na raiz. Novo código convive em três módulos isolados — <code>cnpj_lib/</code> (J), <code>app/</code> (A) e <code>mcp_server/</code> (I). O MCP importa <em>apenas</em> <code>app.servicos</code>, nunca <code>app.rotas</code>, para não inflar startup.</p>
+
+<pre class="vb-code">dados-abertos-cnpj/
+├── pyproject.toml             # NOVO — deps, extras [api]/[mcp]/[dev], entrypoints
+├── uv.lock                    # NOVO
+├── requirements.txt           # MANTÉM (auto-gerado via uv pip compile)
+├── main.py · fetcher.py · database.py · notifier.py   # MANTÉM
+├── cnpj_lib/                  # NOVO — biblioteca compartilhada (J)
+│   ├── validador.py           # algoritmo módulo-11 (alfa + num)
+│   ├── formatador.py          # normalizar, mascarar, fragmentar
+│   └── dominio.py             # tabelas hardcoded sem lookup no BD
+├── app/                       # NOVO — núcleo da API (A)
+│   ├── main.py · config.py · db.py · dependencias.py
+│   ├── rotas/         (cnpj, empresas, lookups, busca, meta)
+│   ├── repositorios/  (empresa, estabelecimento, socio, lookup)
+│   ├── servicos/      ← reusado pelo MCP (consulta_cnpj, busca_cnaes)
+│   └── schemas/       (Pydantic — compartilhado com MCP)
+├── mcp_server/                # NOVO — servidor MCP (I)
+│   ├── server.py              # FastMCP() + main() — stdio default
+│   └── tools/                 # 9 tools tipadas
+└── tests/
+    ├── unit/         (validador, formatador, dominio, parsers)
+    ├── integracao/   (rotas, repos, paginação)
+    └── mcp/          (tools invocadas diretamente, sem subprocess)</pre>
+  </div>
+</section>
+
+<!-- ===================== 03 — SPRINTS ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">03</div>
+  <div class="vb-secbody">
+    <h2>Cronograma de execução</h2>
+
+    <div class="vb-sprints">
+
+      <article class="vb-sprint">
+        <div class="kicker">SETUP · 1 DIA</div>
+        <div class="num">00</div>
+        <div class="title">"Andaime e contratos"</div>
+        <div class="recipe">PYPROJECT + ESTRUTURA + FIXTURES</div>
+        <p>Cria <code>pyproject.toml</code> com extras <code>[api]</code>, <code>[mcp]</code>, <code>[dev]</code>; estrutura de pastas vazia com <code>__init__.py</code>; <code>conftest.py</code> com fixture do <code>smoke_cnpj.db</code>. Adiciona índices ausentes — <code>idx_socios(cnpj_basico, identificador_socio)</code> e <code>idx_socios_documento(cnpj_cpf_socio)</code> — para destravar <code>vinculos_pj</code> antes da Sprint 3.</p>
+        <div class="trade"><em>Trade-off.</em> Migrar de <code>requirements.txt</code> para <code>uv</code> exige cuidado — pipeline atual roda com <code>pip install -r</code>; mantém <code>requirements.txt</code> via <code>uv pip compile</code>.</div>
+      </article>
+
+      <article class="vb-sprint">
+        <div class="kicker">VALIDADOR · 2–3 DIAS</div>
+        <div class="num">01</div>
+        <div class="title">"J — CNPJ alfanumérico"</div>
+        <div class="recipe">CNPJ_LIB COMPLETO + HYPOTHESIS</div>
+        <p>Implementa <code>cnpj_lib/validador.py</code> com algoritmo módulo-11 (pesos <code>5,4,3,2,9,8,7,6,5,4,3,2</code> e <code>6,5,4,3,2,9,8,7,6,5,4,3,2</code>; conversão de cada char via <code>ord(c) − 48</code>). Mesmo algoritmo serve para CNPJ antigo e novo — superconjunto matemático. <code>formatador.py</code> trata máscara, fragmentação em <code>basico/ordem/dv</code>. <code>dominio.py</code> hardcoded para <code>situacao_cadastral</code>, <code>identificador_socio</code>, <code>faixa_etaria</code>, <code>opcao_simples</code>.</p>
+        <div class="trade"><em>Trade-off.</em> Hypothesis vai gerar 1000 bases aleatórias <code>[0-9A-Z]{12}</code> e exigir round-trip — leva tempo para configurar mas paga regressão futura.</div>
+      </article>
+
+      <article class="vb-sprint">
+        <div class="kicker">API HTTP · 5–7 DIAS</div>
+        <div class="num">02</div>
+        <div class="title">"A — backbone da consulta"</div>
+        <div class="recipe">FASTAPI + REPOS + SCHEMAS + SWAGGER</div>
+        <p>Dia 1 — <code>config</code>, <code>db</code> (read-only via URI <code>?mode=ro</code>), <code>dependencias</code>, <code>/health</code>. Dia 2–3 — repos + schemas + <code>servicos/consulta_cnpj</code>. Dia 4 — <code>rotas/cnpj.py</code> com subrotas <code>/socios</code> e <code>/estabelecimentos</code>. Dia 5 — lookups, busca, meta. Dia 6–7 — testes de integração + tuning de performance para CNPJs com muitos sócios.</p>
+        <div class="trade"><em>Trade-off.</em> Resposta principal de <code>GET /cnpj/{cnpj}</code> traz <em>counts</em> de filiais e sócios — listagem completa exige subrota. Banco do Brasil (7.880 linhas) cabe em &lt; 800 ms apenas com esse desenho.</div>
+      </article>
+
+      <article class="vb-sprint">
+        <div class="kicker">MCP · 4–5 DIAS</div>
+        <div class="num">03</div>
+        <div class="title">"I — caixa-preta para o LLM"</div>
+        <div class="recipe">9 TOOLS · STDIO · UV RUN</div>
+        <p>Esqueleto FastMCP em <code>mcp_server/server.py</code>; entrypoint <code>mcp-cnpj</code> em <code>pyproject.toml</code>. Tools importam <code>app.servicos</code> diretamente — zero rede, mesma transação, mesmo Pydantic. Paginação manual em todas as listagens com <code>limit/offset</code> + metadado <code>tem_mais</code>. Registro em <code>~/.claude/mcp.json</code> via <code>uv run --directory</code>.</p>
+        <div class="trade"><em>Trade-off.</em> MCP não tem paginação nativa para <code>tools/call</code>; precisamos disciplinar todas as tools para nunca devolver lista bruta acima de 500 linhas.</div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 — ARTEFATO J ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">04</div>
+  <div class="vb-secbody">
+    <h2>Artefato J · Validador CNPJ</h2>
+
+    <div class="vb-art">
+      <div class="head">
+        <div class="id">J</div>
+        <div class="nm"><em>cnpj_lib/</em> · biblioteca standalone</div>
+      </div>
+      <div class="meta">
+        <span>deps: <strong>stdlib</strong></span>
+        <span>esforço: <strong>P</strong></span>
+        <span>publishable: <strong>sim</strong></span>
+        <span>vigência: <strong>06/07/2026</strong></span>
+      </div>
+      <div class="body">
+        <p>Cobre validação <em>e</em> geração de DV para os dois formatos. Algoritmo é único — o CNPJ antigo (14 dígitos) é caso particular do novo, pois <code>ord('0') − 48 = 0</code>. Não há conversão entre os universos; um CNPJ alfanumérico é necessariamente novo, emitido após a vigência.</p>
+
+        <h3>Arquivos</h3>
+        <ul>
+          <li><code>validador.py</code> — <code>validar(cnpj: str) → bool</code>, <code>calcular_dv(base12: str) → str</code>, <code>eh_alfanumerico(s) → bool</code></li>
+          <li><code>formatador.py</code> — <code>normalizar</code>, <code>formatar</code> (<code>XX.XXX.XXX/XXXX-DD</code>), <code>fragmentar(cnpj14) → (basico, ordem, dv)</code>, <code>mascarar_cpf</code></li>
+          <li><code>dominio.py</code> — dicionários hardcoded para enums ausentes no BD</li>
+        </ul>
+
+        <h3>Critérios de aceite</h3>
+        <ul>
+          <li>Casos da NT 2025.001 passam: <code>12.ABC.345/01DE-35</code>, <code>AB12CD34/EFGH-83</code>.</li>
+          <li>10 CNPJs antigos famosos (Itaú, BB, Petrobras...) — todos válidos.</li>
+          <li>Hypothesis: <code>validar(base + calcular_dv(base))</code> retorna <code>True</code> para 1.000 bases aleatórias.</li>
+          <li>Coverage ≥ 95% em <code>cnpj_lib/</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 05 — ARTEFATO A ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">05</div>
+  <div class="vb-secbody">
+    <h2>Artefato A · API HTTP</h2>
+
+    <div class="vb-art">
+      <div class="head">
+        <div class="id">A</div>
+        <div class="nm"><em>app/</em> · FastAPI sobre SQLite read-only</div>
+      </div>
+      <div class="meta">
+        <span>deps: <strong>fastapi · pydantic · uvicorn</strong></span>
+        <span>esforço: <strong>M</strong></span>
+        <span>porta: <strong>127.0.0.1:8000</strong></span>
+        <span>auth: <strong>nenhuma (local)</strong></span>
+      </div>
+      <div class="body">
+        <p>Conexão por request via URI <code>file:dados_cnpj.db?mode=ro&amp;immutable=0</code>. WAL permite N readers concorrentes mesmo durante import do pipeline. Lookups (6 tabelas, ~200k linhas, ~30 MB) carregam em memória no startup via <code>@lru_cache</code>.</p>
+
+        <h3>Modelagem JSON de <code>GET /cnpj/&#123;cnpj&#125;</code></h3>
+        <p>Decisões transversais:</p>
+        <ul>
+          <li><strong>CNPJ fragmentado</strong> — expõe <code>completo</code>, <code>formatado</code> e objeto <code>partes</code>. Cliente escolhe.</li>
+          <li><strong>Códigos</strong> — estrutura uniforme <code>{codigo, descricao}</code>, mesmo para enums sem lookup no BD (descrição vem de <code>cnpj_lib/dominio.py</code>).</li>
+          <li><strong>Datas</strong> — converte <code>YYYYMMDD</code> para ISO 8601; <code>"00000000"</code> vira <code>null</code>.</li>
+          <li><strong>capital_social</strong> — parseia <em>string</em> para <code>Decimal</code>; agrega <code>_formatado</code> opcional.</li>
+          <li><strong>CPF mascarado</strong> — expõe valor como vem (<code>***349729**</code>) + flag <code>mascarado: true</code>.</li>
+          <li><strong>Resposta principal</strong> — somente <em>counts</em> de filiais e sócios; listagem via subrotas <code>/cnpj/&#123;basico&#125;/estabelecimentos</code> e <code>/cnpj/&#123;basico&#125;/socios</code>.</li>
+        </ul>
+
+<pre class="vb-code">{
+  "cnpj": {
+    "completo": "00000000000191",
+    "formatado": "00.000.000/0001-91",
+    "partes": {"basico": "00000000", "ordem": "0001", "dv": "91"},
+    "alfanumerico": false
+  },
+  "empresa": {
+    "razao_social": "BANCO DO BRASIL SA",
+    "natureza_juridica": {"codigo": "2038", "descricao": "Sociedade de Economia Mista"},
+    "capital_social": "120000000000.00",
+    "capital_social_formatado": "R$ 120.000.000.000,00",
+    "simples": { ... }
+  },
+  "estabelecimento": {
+    "matriz_filial": {"codigo": "1", "descricao": "Matriz"},
+    "situacao": {"codigo": "02", "descricao": "Ativa", "data": "1969-12-31"},
+    "cnae_principal": {"codigo": "6422100", "descricao": "Bancos múltiplos..."},
+    "endereco": { ... },
+    "contato": { ... }
+  },
+  "estabelecimentos_filiais": {
+    "total": 4982, "retornados": 0, "tem_mais": true,
+    "link": "/cnpj/00000000000191/estabelecimentos"
+  },
+  "socios": { "total": 12, "retornados": 12, "lista": [ ... ] },
+  "metadados": { "periodo_dados": "2026-05", "consultado_em": "2026-05-23T15:30:00Z" }
+}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 06 — ARTEFATO I ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">06</div>
+  <div class="vb-secbody">
+    <h2>Artefato I · MCP Server</h2>
+
+    <div class="vb-art">
+      <div class="head">
+        <div class="id">I</div>
+        <div class="nm"><em>mcp_server/</em> · FastMCP via stdio</div>
+      </div>
+      <div class="meta">
+        <span>deps: <strong>mcp[cli] ≥ 1.27</strong></span>
+        <span>esforço: <strong>P</strong></span>
+        <span>importa: <strong>app.servicos</strong> · não usa HTTP</span>
+      </div>
+      <div class="body">
+        <p>Tools importam serviços do FastAPI diretamente — sem rede, sem subprocess, mesma transação. Cada tool de listagem aceita <code>limit</code> (default 50, máx 500) e <code>offset</code>; retorna <code>{total, retornados, tem_mais, lista}</code>. <code>buscar_empresa</code> nunca retorna listas brutas — só counts.</p>
+
+        <h3>As 9 tools</h3>
+        <table class="vb-tab">
+          <thead>
+            <tr><th>Tool</th><th>Input</th><th>Estratégia</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>buscar_empresa</td><td>cnpj 14 chars (num ou alfa, com/sem máscara)</td><td>Reusa <code>servicos.consulta_cnpj.montar_cnpj_completo</code>; só counts para arrays</td></tr>
+            <tr><td>listar_socios</td><td>cnpj_basico, limit, offset</td><td><code>socio_repo</code> + paginação manual</td></tr>
+            <tr><td>listar_filiais</td><td>cnpj_basico, limit, offset</td><td><code>estabelecimento_repo</code> + paginação</td></tr>
+            <tr><td>vinculos_pj</td><td>documento (cnpj 14 ou cpf mascarado)</td><td>Query por <code>cnpj_cpf_socio</code> — depende de <code>idx_socios_documento</code> criado na Sprint 0</td></tr>
+            <tr><td>cnaes_por_municipio</td><td>municipio_codigo, limit, offset</td><td>Agregação <code>GROUP BY cnae_fiscal_principal</code> com join em <code>cnaes</code></td></tr>
+            <tr><td>empresas_por_cnae</td><td>cnae, municipio?, uf?, limit, offset</td><td>Usa <code>idx_estab_cnae</code>, <code>idx_estab_mun</code>, <code>idx_estab_uf</code></td></tr>
+            <tr><td>delta_mensal</td><td>periodo_a, periodo_b, tabela</td><td>MVP: só metadados de <code>controle_importacao</code>; diff real exige snapshot histórico — fica como TODO</td></tr>
+            <tr><td>validar_cnpj</td><td>cnpj</td><td>Wrap de <code>cnpj_lib.validador.validar</code> — evita gastar query no banco</td></tr>
+            <tr><td>descrever_codigo</td><td>tabela, codigo</td><td>Wrap de <code>lookup_repo.descricao</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 07 — RISCOS ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">07</div>
+  <div class="vb-secbody">
+    <h2>Riscos transversais</h2>
+
+    <table class="vb-tab">
+      <thead>
+        <tr><th>Risco</th><th>Prob.</th><th>Impacto</th><th>Mitigação</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Query do tipo Banco do Brasil explode com sócios + filiais</td>
+          <td>Alta</td><td>UX ruim</td>
+          <td>Subrotas separadas; resposta principal só com counts; índice composto em <code>socios</code> na Sprint 0</td>
+        </tr>
+        <tr>
+          <td>MCP estoura contexto do LLM</td>
+          <td>Alta</td><td>Tool inutilizável</td>
+          <td>Paginação obrigatória em toda listagem; <code>buscar_empresa</code> nunca retorna arrays brutos</td>
+        </tr>
+        <tr>
+          <td>Pipeline (writer) e API (reader) concorrem no banco</td>
+          <td>Média</td><td>Latência durante import</td>
+          <td>API abre em <code>mode=ro</code>; WAL permite N readers + 1 writer</td>
+        </tr>
+        <tr>
+          <td>Algoritmo CNPJ alfa mudar antes de 06/07/2026</td>
+          <td>Baixa</td><td>Validador errado</td>
+          <td>Pesos como constantes nomeadas; spec linkada no docstring; teste de regressão contra subset do dataset oficial</td>
+        </tr>
+        <tr>
+          <td>RFB renomeia campo no schema mensal</td>
+          <td>Média</td><td>API quebra silenciosamente</td>
+          <td>Smoke test que valida <code>pragma table_info()</code> no startup e falha rápido se diverge</td>
+        </tr>
+        <tr>
+          <td>Migrar para <code>uv</code> quebra pipeline</td>
+          <td>Média</td><td>Pipeline para</td>
+          <td><code>requirements.txt</code> mantido via <code>uv pip compile</code>; <code>main.py</code> continua rodando com <code>pip install -r</code></td>
+        </tr>
+        <tr>
+          <td>API exposta sem auth</td>
+          <td>Baixa (local)</td><td>Vazamento se exposta</td>
+          <td>Default bind <code>127.0.0.1:8000</code>; documentação explícita; auth fica como Caminho 04 backlog</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== 08 — CRITÉRIO ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">08</div>
+  <div class="vb-secbody">
+    <h2>Critério de "Caminho 01 concluído"</h2>
+
+    <div class="vb-criteria">
+
+      <div class="vb-crit">
+        <div class="num">01</div>
+        <p><code>uv run cnpj-api</code> levanta API em <code>localhost:8000</code>; <code>GET /cnpj/00000000000191</code> devolve o JSON modelado em &lt; 800 ms; <code>GET /docs</code> mostra Swagger curado em pt-BR.</p>
+      </div>
+
+      <div class="vb-crit">
+        <div class="num">02</div>
+        <p><code>uvx --from . mcp-cnpj</code> registrado em <code>~/.claude/mcp.json</code> expõe nove tools no Claude Code; <code>buscar_empresa("00.000.000/0001-91")</code> devolve payload Pydantic-validado idêntico ao da API.</p>
+      </div>
+
+      <div class="vb-crit">
+        <div class="num">03</div>
+        <p><code>pytest tests/</code> passa 100% verde (unit + integração + mcp); validador aceita os quatro casos da NT 2025.001 e 1.000 CNPJs aleatórios via Hypothesis; suíte roda em &lt; 10 s sem tocar o <code>dados_cnpj.db</code> de produção.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 09 — NÃO FAZER ===================== -->
+<section class="vb-sec full">
+  <div class="vb-num">09</div>
+  <div class="vb-secbody">
+    <div class="vb-nope">
+      <h2>O que <u>não</u> fazer agora</h2>
+      <ul>
+        <li><strong>Não exportar para a internet pública.</strong> O briefing Nº 001 já registrou: busca reversa por nome de sócio PF é zona LGPD vermelha. Se um dia abrir, será com auth e sem indexar pessoa física.</li>
+        <li><strong>Não construir snapshot histórico para</strong> <code>delta_mensal</code> <strong>no MVP.</strong> Diff real exige preservar safras anteriores — fora do escopo das três semanas e meia. MVP retorna apenas metadados de <code>controle_importacao</code>.</li>
+        <li><strong>Não migrar</strong> <code>database.py</code> <strong>para SQLAlchemy.</strong> Schema é fixo, queries são poucas; ORM adiciona dependência e import time sem benefício. Repositórios finos em <code>sqlite3</code> puro bastam.</li>
+        <li><strong>Não criar UI web no Caminho 01.</strong> O briefing é "caixa-preta pra mim" — API e MCP. Dashboard visual é Caminho 02 (Observatório de deltas).</li>
+        <li><strong>Não tentar implementar tools MCP que requerem mais de 500 linhas em uma única resposta.</strong> Paginação manual é parte do contrato; tools que não couberem nesse padrão são <em>resources</em>, não tools.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="vb-foot">
+  <p>Briefing de implementação gerado em 23 de maio de 2026 por equipe técnica — Explore (codebase + schema real), general-purpose (MCP Python SDK + spec NT 2025.001) e Plan (síntese arquitetural). Material bruto preservado nos transcripts. Próximo passo factual: aprovar plano e iniciar Sprint 00 + Sprint 01.</p>
+</footer>
+
+</main>
+</body>
+</html>
