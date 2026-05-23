@@ -37,3 +37,35 @@ def listar_por_basico(
         (cnpj_basico, limit, offset),
     )
     return [dict(row) for row in cur]
+
+
+def contar_por_documento(conn: sqlite3.Connection, documento: str) -> int:
+    cur = conn.execute(
+        "SELECT COUNT(*) AS c FROM socios WHERE cnpj_cpf_socio = ?",
+        (documento,),
+    )
+    return int(cur.fetchone()["c"])
+
+
+def listar_por_documento(
+    conn: sqlite3.Connection,
+    documento: str,
+    limit: int,
+    offset: int,
+) -> list[dict[str, Any]]:
+    """Vínculos: empresas onde `documento` aparece como sócio.
+
+    `documento` é CPF mascarado (``***NNNNNN**``) ou CNPJ de 14 chars.
+    Performance ruim sem `idx_socios_documento` — ver migrations/.
+    """
+    cur = conn.execute(
+        f"""
+        SELECT {_COLUNAS}
+          FROM socios
+         WHERE cnpj_cpf_socio = ?
+         ORDER BY cnpj_basico
+         LIMIT ? OFFSET ?
+        """,
+        (documento, limit, offset),
+    )
+    return [dict(row) for row in cur]
