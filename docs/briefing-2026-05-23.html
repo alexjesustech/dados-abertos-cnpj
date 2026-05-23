@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Briefing de planejamento — dados-abertos-cnpj — 23 maio 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:#f5f1e8;
+    --paper-code:#ebe3cf;
+    --paper-toast:#1a1916;
+    --ink:#0d0c0a;
+    --ink-body:#1a1916;
+    --ink-text:#2d2a23;
+    --ink-soft:#3d3a32;
+    --ink-italic:#4a4438;
+    --kk-mono-fg:#807966;
+    --kk-caption:#6b6557;
+    --kk-toast-body:#d9cfb8;
+    --rule-dark:#1a1916;
+    --rule-soft:#c9bda3;
+    --rule-divider:#d9cfb8;
+    --accent:#b9532b;
+    --accent-deep:#a13d1e;
+    --accent-soft:#8a6a1e;
+    --accent-go:#2a5a3a;
+    --font-serif:"Newsreader","Source Serif Pro",Georgia,serif;
+    --font-sans:"Inter",system-ui,-apple-system,sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+
+  *,*::before,*::after { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--paper); }
+  body {
+    color:var(--ink-text);
+    font-family:var(--font-sans);
+    font-size:13.5px;
+    line-height:1.55;
+    font-feature-settings:"lnum" 1,"tnum" 1;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  .vb-page { max-width:900px; margin:0 auto; padding:64px 64px 56px; }
+
+  /* ============ Masthead ============ */
+  .vb-mast {
+    display:flex; justify-content:space-between; align-items:flex-end;
+    padding-bottom:14px; margin-bottom:36px;
+    border-bottom:2px solid var(--rule-dark);
+  }
+  .vb-mast .pub {
+    font-family:var(--font-serif); font-size:20px;
+    font-style:italic; font-weight:500;
+    color:var(--ink-body); line-height:1;
+  }
+  .vb-mast .sub {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--kk-mono-fg); margin-top:8px;
+  }
+  .vb-mast .right {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.10em; text-transform:uppercase;
+    color:var(--kk-caption); text-align:right; line-height:1.8;
+  }
+  .vb-mast .right .date { color:var(--ink-body); }
+
+  /* ============ Title + Lead ============ */
+  .vb-title {
+    font-family:var(--font-serif); font-size:52px; font-weight:600;
+    letter-spacing:-0.025em; line-height:1.05;
+    color:var(--ink); margin:0 0 22px;
+    text-wrap:balance;
+  }
+  .vb-title em {
+    font-style:italic; font-weight:500; color:var(--accent);
+  }
+  .vb-lead {
+    font-family:var(--font-serif); font-size:17px; font-weight:500;
+    line-height:1.55; color:var(--ink-body);
+    margin:0 0 52px; max-width:720px;
+    text-wrap:pretty;
+  }
+  .vb-lead::first-line { font-variant:small-caps; letter-spacing:0.04em; }
+
+  /* ============ Section ============ */
+  .vb-sec { margin-bottom:44px; }
+  .vb-sec::after { content:""; display:block; clear:both; }
+  .vb-num {
+    float:left; width:80px;
+    font-family:var(--font-serif); font-size:64px; font-weight:400;
+    letter-spacing:-0.04em; line-height:1;
+    color:var(--rule-soft); margin-top:4px;
+  }
+  .vb-secbody {
+    margin-left:80px; padding-top:10px;
+    border-top:1px solid var(--rule-dark);
+  }
+  .vb-secbody h2 {
+    font-family:var(--font-serif); font-size:26px; font-weight:600;
+    letter-spacing:-0.015em; color:var(--ink);
+    margin:0 0 22px;
+  }
+  .vb-sec.full .vb-num { margin-bottom:12px; }
+  .vb-sec.full .vb-secbody { margin-left:0; }
+
+  /* ============ Metric grid (sec 1) ============ */
+  .vb-metrics {
+    display:grid; grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--rule-soft);
+    border-bottom:1px solid var(--rule-soft);
+    margin-bottom:28px;
+  }
+  .vb-metric {
+    padding:14px 16px 14px 0;
+    border-right:1px solid var(--rule-divider);
+  }
+  .vb-metric:last-child { border-right:none; padding-right:0; }
+  .vb-metric .label {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--kk-mono-fg); margin-bottom:8px;
+  }
+  .vb-metric .val {
+    font-family:var(--font-serif); font-size:32px; font-weight:500;
+    letter-spacing:-0.025em; color:var(--ink); line-height:1;
+  }
+
+  /* ============ Status (sec 1) ============ */
+  .vb-status {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  }
+  .vb-stat .tag {
+    display:inline-block;
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.12em; text-transform:uppercase;
+    padding:3px 8px; border-radius:2px;
+    margin-bottom:10px;
+  }
+  .vb-stat .tag.ok   { background:var(--ink-body); color:var(--paper); }
+  .vb-stat .tag.warn { background:var(--accent);   color:var(--paper); }
+  .vb-stat .title {
+    font-family:var(--font-sans); font-size:13px; font-weight:600;
+    color:var(--ink-body); margin-bottom:4px; line-height:1.35;
+  }
+  .vb-stat .body {
+    font-family:var(--font-sans); font-size:12.5px;
+    color:var(--ink-soft); line-height:1.55;
+  }
+
+  /* ============ Market rows (sec 2) ============ */
+  .vb-mkt-row {
+    display:grid; grid-template-columns:180px 1fr; gap:24px;
+    padding:14px 0;
+    border-bottom:1px dotted var(--rule-soft);
+  }
+  .vb-mkt-row:last-child { border-bottom:none; }
+  .vb-mkt-row .kicker {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--kk-mono-fg); margin-bottom:6px;
+  }
+  .vb-mkt-row .title {
+    font-family:var(--font-serif); font-size:17px; font-weight:500;
+    color:var(--ink-body); line-height:1.3;
+  }
+  .vb-mkt-row .right ul {
+    column-count:2; column-gap:24px;
+    margin:0; padding-left:18px;
+    font-family:var(--font-sans); font-size:12.5px;
+    color:var(--ink-text); line-height:1.55;
+  }
+  .vb-mkt-row .right ul li { margin-bottom:4px; break-inside:avoid; }
+  .vb-mkt-row.gap .kicker { color:var(--accent); }
+  .vb-mkt-row.gap .title  { color:var(--accent); font-style:italic; }
+  .vb-mkt-row.gap .right ul { list-style:none; padding-left:0; }
+  .vb-mkt-row.gap .right ul li {
+    position:relative; padding-left:16px;
+  }
+  .vb-mkt-row.gap .right ul li::before {
+    content:"—"; position:absolute; left:0;
+    color:var(--rule-soft);
+  }
+
+  /* ============ Semáforo (sec 3) ============ */
+  .vb-sem {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--rule-soft);
+    border-bottom:1px solid var(--rule-soft);
+  }
+  .vb-sem-col {
+    padding:16px 18px;
+    border-right:1px solid var(--rule-divider);
+  }
+  .vb-sem-col:first-child { padding-left:0; }
+  .vb-sem-col:last-child  { border-right:none; padding-right:0; }
+  .vb-sem-head {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-bottom:10px; margin-bottom:12px;
+    border-bottom:1px solid var(--rule-soft);
+  }
+  .vb-sem-col .label {
+    font-family:var(--font-serif); font-size:18px; font-weight:600;
+    font-style:italic; line-height:1;
+  }
+  .vb-sem-col.go      .label { color:var(--accent-go);   }
+  .vb-sem-col.caution .label { color:var(--accent-soft); }
+  .vb-sem-col.stop    .label { color:var(--accent-deep); }
+  .vb-sem-col .meta {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.10em; text-transform:uppercase;
+    color:var(--kk-mono-fg);
+  }
+  .vb-sem-col ul {
+    list-style:disc; margin:0; padding-left:18px;
+    font-family:var(--font-sans); font-size:12px;
+    color:var(--ink-text); line-height:1.6;
+  }
+  .vb-sem-col ul li { margin-bottom:5px; }
+  .vb-sem-ref {
+    font-family:var(--font-serif); font-size:11px; font-style:italic;
+    color:var(--kk-caption); margin-top:14px;
+    padding-left:0;
+  }
+
+  /* ============ Tabela (sec 4) ============ */
+  .vb-tab {
+    width:100%; border-collapse:collapse;
+    font-family:var(--font-sans); font-size:12px;
+  }
+  .vb-tab th {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.10em; text-transform:uppercase;
+    color:var(--kk-mono-fg); text-align:left;
+    padding:10px 12px 10px 0;
+    border-bottom:1.5px solid var(--rule-dark);
+  }
+  .vb-tab th:last-child { padding-right:0; }
+  .vb-tab td {
+    padding:10px 12px 10px 0;
+    border-bottom:1px dotted var(--rule-soft);
+    color:var(--ink-text); vertical-align:top;
+    line-height:1.5;
+  }
+  .vb-tab td:last-child { padding-right:0; }
+  .vb-tab td:first-child {
+    font-family:var(--font-serif); font-size:13.5px;
+    font-style:italic; font-weight:500;
+    color:var(--ink-body);
+  }
+  .vb-tab tbody tr:last-child td { border-bottom:none; }
+
+  /* ============ Soluções (sec 5) ============ */
+  .vb-sols {
+    display:grid; grid-template-columns:repeat(2,1fr);
+  }
+  .vb-sol {
+    padding:16px 18px;
+    border-right:1px solid var(--rule-divider);
+    border-bottom:1px solid var(--rule-divider);
+  }
+  .vb-sol::after { content:""; display:block; clear:both; }
+  .vb-sol:nth-child(2n)   { border-right:none; padding-right:0; }
+  .vb-sol:nth-child(2n+1) { padding-left:0; }
+  .vb-sol:nth-last-child(-n+2) { border-bottom:none; }
+  .vb-sol .id {
+    float:left; width:48px;
+    font-family:var(--font-serif); font-size:28px;
+    font-style:italic; font-weight:500;
+    color:var(--kk-mono-fg); line-height:1; margin-top:4px;
+  }
+  .vb-sol h3 {
+    font-family:var(--font-serif); font-size:16px; font-weight:600;
+    color:var(--ink-body); margin:0 0 6px 48px; line-height:1.3;
+  }
+  .vb-sol p {
+    margin:0 0 10px 48px;
+    font-family:var(--font-sans); font-size:12px;
+    color:var(--ink-text); line-height:1.55;
+  }
+  .vb-sol .meta {
+    margin-left:48px;
+    display:flex; flex-wrap:wrap; gap:14px;
+    font-family:var(--font-mono); font-size:10.5px; font-weight:500;
+    color:var(--kk-mono-fg); letter-spacing:0.04em;
+  }
+  .vb-sol .meta strong { color:var(--ink-body); font-weight:500; }
+  .vb-sol .meta .star  { color:var(--accent); }
+
+  /* ============ Caminhos (sec 6) ============ */
+  .vb-paths {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  }
+  .vb-path { padding-top:14px; border-top:3px solid var(--rule-dark); }
+  .vb-path .kicker {
+    font-family:var(--font-mono); font-size:10px; font-weight:500;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--kk-mono-fg); margin-bottom:6px;
+  }
+  .vb-path .num {
+    font-family:var(--font-serif); font-size:48px; font-weight:500;
+    letter-spacing:-0.03em; line-height:1;
+    color:var(--ink); margin-bottom:8px;
+  }
+  .vb-path .title {
+    font-family:var(--font-serif); font-size:17px; font-weight:500;
+    font-style:italic; color:var(--ink-body);
+    margin-bottom:10px; line-height:1.3;
+  }
+  .vb-path .recipe {
+    font-family:var(--font-mono); font-size:10.5px; font-weight:500;
+    letter-spacing:0.10em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:12px;
+  }
+  .vb-path p {
+    font-family:var(--font-sans); font-size:12.5px;
+    color:var(--ink-text); line-height:1.55; margin:0 0 12px;
+  }
+  .vb-path .trade {
+    padding-top:12px; border-top:1px dotted var(--rule-soft);
+    font-family:var(--font-serif); font-size:12.5px; font-style:italic;
+    color:var(--ink-italic); line-height:1.5;
+  }
+
+  /* ============ Não fazer (sec 7) ============ */
+  .vb-nope {
+    background:var(--paper-toast); color:var(--kk-toast-body);
+    padding:22px 28px; border-radius:0;
+  }
+  .vb-nope h2 {
+    font-family:var(--font-serif); font-size:22px;
+    font-style:italic; font-weight:500;
+    color:var(--paper); margin:0 0 14px;
+  }
+  .vb-nope h2 u {
+    text-decoration:underline;
+    text-decoration-color:var(--accent);
+    text-decoration-thickness:2px;
+    text-underline-offset:4px;
+  }
+  .vb-nope ul {
+    list-style:none; margin:0; padding:0;
+    font-family:var(--font-sans); font-size:12.5px; line-height:1.6;
+  }
+  .vb-nope ul li {
+    position:relative; padding-left:16px; margin-bottom:6px;
+  }
+  .vb-nope ul li::before {
+    content:"—"; position:absolute; left:0; color:var(--accent);
+  }
+  .vb-nope strong { color:var(--paper); font-weight:500; }
+
+  /* ============ Footer ============ */
+  .vb-foot {
+    margin-top:60px; padding-top:14px;
+    border-top:1px solid var(--rule-soft);
+    font-family:var(--font-serif); font-size:11px; font-style:italic;
+    color:var(--kk-caption); line-height:1.6;
+  }
+
+  /* ============ Inline ============ */
+  .vb-page strong { color:var(--ink-body); font-weight:600; }
+  .vb-page code {
+    font-family:var(--font-mono); font-size:0.9em;
+    background:var(--paper-code); padding:1px 5px; border-radius:2px;
+    color:var(--ink-body);
+  }
+</style>
+</head>
+<body>
+<main class="vb-page">
+
+<!-- ===================== MASTHEAD ===================== -->
+<div class="vb-mast">
+  <div class="left">
+    <div class="pub">Briefing de planejamento</div>
+    <div class="sub">PESQUISA DE VIABILIDADE · Nº 001</div>
+  </div>
+  <div class="right">
+    <div class="date">23 MAIO 2026</div>
+    <div>VOL. 1 · SESSÃO ÚNICA</div>
+  </div>
+</div>
+
+<!-- ===================== TÍTULO + LEAD ===================== -->
+<h1 class="vb-title">dados-abertos-cnpj — <em>o que dá pra construir?</em></h1>
+<p class="vb-lead">Pipeline já ingere 30 GB de Dados Abertos da RFB num SQLite local — 68 milhões de empresas, 71 milhões de estabelecimentos, 27 milhões de sócios. Este dossiê mapeia o que existe no mercado, o que a lei permite, e propõe um catálogo de soluções viáveis para um projeto pessoal solo.</p>
+
+<!-- ===================== SEÇÃO 01 ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">01</div>
+  <div class="vb-secbody">
+    <h2>O que já temos rodando</h2>
+
+    <div class="vb-metrics">
+      <div class="vb-metric"><div class="label">empresas</div><div class="val">68,1M</div></div>
+      <div class="vb-metric"><div class="label">estabelecimentos</div><div class="val">71,3M</div></div>
+      <div class="vb-metric"><div class="label">sócios</div><div class="val">27,7M</div></div>
+      <div class="vb-metric"><div class="label">SQLite</div><div class="val">30,6 GB</div></div>
+    </div>
+
+    <div class="vb-status">
+      <div class="vb-stat">
+        <span class="tag ok">EM PÉ</span>
+        <div class="title">Pipeline idempotente</div>
+        <div class="body">Streaming dos 37 ZIPs, retomada por <code>Range</code>, tabela <code>controle_importacao</code> permite skip. Re-execução é barata.</div>
+      </div>
+      <div class="vb-stat">
+        <span class="tag ok">EM PÉ</span>
+        <div class="title">Índices essenciais</div>
+        <div class="body">Estabelecimentos por <code>cnpj_basico</code>, município, UF, CNAE principal. Sócios por <code>cnpj_basico</code>. Joins típicos respondem.</div>
+      </div>
+      <div class="vb-stat">
+        <span class="tag warn">ATENÇÃO</span>
+        <div class="title">Pontos a observar</div>
+        <div class="body"><code>synchronous=OFF</code> (risco em crash de OS), <code>socios</code> sem PK declarada, pipeline cobre apenas CNPJ — sem hook para RAIS, CAGED, MEI separado.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SEÇÃO 02 ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">02</div>
+  <div class="vb-secbody">
+    <h2>Paisagem do mercado</h2>
+
+    <div class="vb-mkt-row">
+      <div class="left">
+        <div class="kicker">ENTERPRISE · PAGO</div>
+        <div class="title">Serasa · Cortex · BigData Corp · Boa Vista</div>
+      </div>
+      <div class="right">
+        <ul>
+          <li>Score, KYB, <em>sales intelligence</em>, +179M empresas em Cortex</li>
+          <li>Cobrança por consulta + SaaS enterprise</li>
+          <li>Bases proprietárias somadas — score, telefone, e-mail</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vb-mkt-row">
+      <div class="left">
+        <div class="kicker">MID-MARKET · LEAD GEN</div>
+        <div class="title">Econodata · Speedio · LeadCNPJ · MonitorCNPJ</div>
+      </div>
+      <div class="right">
+        <ul>
+          <li>SaaS R$ 300 a R$ 1.500/mês com filtros + export CRM</li>
+          <li>Enriquecimento com contato é o diferencial</li>
+          <li>MonitorCNPJ consolida 10+ portais de sanção com risco IA</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vb-mkt-row">
+      <div class="left">
+        <div class="kicker">CONSULTA UNITÁRIA WEB</div>
+        <div class="title">Casa dos Dados · CNPJ.biz · ConsultaCNPJ · ReceitaWS</div>
+      </div>
+      <div class="right">
+        <ul>
+          <li>SEO-driven, freemium com anúncios</li>
+          <li>API limitada — 3 req/min é o padrão de free tier</li>
+          <li>Casa dos Dados sob pressão LGPD recorrente</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vb-mkt-row">
+      <div class="left">
+        <div class="kicker">API OPEN · FREEMIUM</div>
+        <div class="title">CNPJ.ws · OpenCNPJ.org · minha-receita</div>
+      </div>
+      <div class="right">
+        <ul>
+          <li>minha-receita: JSON unitário a partir dos 37 ZIPs</li>
+          <li>OpenCNPJ.org: free sem cap, concorrente recente</li>
+          <li>CNPJ.ws: 3 req/min free, 2k req/min pago</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vb-mkt-row">
+      <div class="left">
+        <div class="kicker">OPEN SOURCE · ETL</div>
+        <div class="title">aphonsoar (435★) · msantosjader · cuducos · okfn-brasil</div>
+      </div>
+      <div class="right">
+        <ul>
+          <li>ETLs para PostgreSQL e SQLite, alguns ativos jun/2025</li>
+          <li>Brasil.io (socios-brasil) com histórico de atraso</li>
+          <li>Espelho no BigQuery via Base dos Dados</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vb-mkt-row gap">
+      <div class="left">
+        <div class="kicker">GAPS PERCEPTÍVEIS</div>
+        <div class="title">Onde quase ninguém entrega bem</div>
+      </div>
+      <div class="right">
+        <ul>
+          <li>Alertas de delta mês-a-mês — novo sócio, baixa, mudança de CNAE</li>
+          <li>Analytics agregado e séries históricas por setor ou região</li>
+          <li>Grafo societário transversal grátis (Cortex/MonitorCNPJ paywall)</li>
+          <li>Mapas de calor CNAE × município</li>
+          <li>Busca semântica em razão social mais atividade</li>
+          <li>Dump + delta mensal livres — a maioria oferece só consulta unitária</li>
+          <li>Cobertura do CNPJ alfanumérico (jul/2026) inconsistente entre players</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SEÇÃO 03 ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">03</div>
+  <div class="vb-secbody">
+    <h2>Restrições legais — semáforo</h2>
+
+    <div class="vb-sem">
+      <div class="vb-sem-col go">
+        <div class="vb-sem-head">
+          <span class="label">Permitido</span>
+          <span class="meta">DEC. 8.777/2016 · LAI</span>
+        </div>
+        <ul>
+          <li>Redistribuir os dados, com atribuição à RFB</li>
+          <li>Construir produto pago em cima</li>
+          <li>Cruzar com outras bases públicas (Compras, CEIS, BACEN, CVM, IBGE)</li>
+          <li>Disponibilizar APIs, dashboards e analytics agregados</li>
+        </ul>
+      </div>
+      <div class="vb-sem-col caution">
+        <div class="vb-sem-head">
+          <span class="label">Cuidado</span>
+          <span class="meta">ZONA CINZENTA · LGPD</span>
+        </div>
+        <ul>
+          <li>Mostrar CPF mascarado tal como vem da RFB — defensável</li>
+          <li>Permitir busca reversa por <strong>nome de sócio PF</strong> — Casa dos Dados sofre pedidos LGPD recorrentes</li>
+          <li>Construir grafo societário com nomes PF indexáveis</li>
+          <li>Perfilamento ou scoring de sócio PF a partir do QSA</li>
+        </ul>
+      </div>
+      <div class="vb-sem-col stop">
+        <div class="vb-sem-head">
+          <span class="label">Evitar</span>
+          <span class="meta">RISCO ALTO · LGPD</span>
+        </div>
+        <ul>
+          <li>Reidentificar CPF mascarado cruzando com TSE, doações ou servidores</li>
+          <li>Ligar sócio PF a processos do CNJ apenas por nome — falso-positivo + LGPD</li>
+          <li>Usar microdado RAIS/CAGED <strong>identificado</strong> sem ACT com MTE</li>
+          <li>Publicar perfis pessoais derivados sem base legal sólida</li>
+        </ul>
+      </div>
+    </div>
+    <p class="vb-sem-ref">STF ADIs 6387–6393 reconhece proteção de dados como direito fundamental, mesmo sobre dados públicos. TJDFT 2021 suspendeu comercialização de dados pessoais pela Serasa por extrapolar a finalidade da publicação original.</p>
+  </div>
+</section>
+
+<!-- ===================== SEÇÃO 04 ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">04</div>
+  <div class="vb-secbody">
+    <h2>Datasets gov abertos cruzáveis</h2>
+
+    <table class="vb-tab">
+      <thead>
+        <tr>
+          <th>Base</th>
+          <th>Cruzamento</th>
+          <th>Frequência</th>
+          <th>Acesso</th>
+          <th>Valor agregado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>CEIS · CNEP · CEPIM</td><td>CNPJ + CPF + nome</td><td>Diária</td><td>API + CSV</td><td>Sanções, inidoneidade, KYB</td></tr>
+        <tr><td>Compras gov.br · PNCP</td><td>CNPJ fornecedor</td><td>Diária</td><td>REST / Swagger</td><td>Quem vende o quê para a União</td></tr>
+        <tr><td>CNJ DataJud</td><td>Nome de parte (não CNPJ)</td><td>Diária</td><td>API c/ chave pública</td><td>Processos — cuidado com homônimo</td></tr>
+        <tr><td>RAIS · Novo CAGED</td><td>CNPJ agregado</td><td>Anual / mensal</td><td>Dump TXT</td><td>Nº funcionários, salário médio</td></tr>
+        <tr><td>IBGE (CNAE, municípios)</td><td>Tabelas de domínio</td><td>Eventual</td><td>API + CSV</td><td>Enriquecer setor e geo</td></tr>
+        <tr><td>CVM</td><td>CNPJ direto</td><td>Diária / Trimestral</td><td>CSV</td><td>Cias abertas, fatos relevantes</td></tr>
+        <tr><td>TSE doações</td><td>CNPJ doador</td><td>Quadrienal</td><td>CSV</td><td>Vínculo político ↔ empresa</td></tr>
+        <tr><td>BACEN IF.data</td><td>CNPJ de IF supervisionada</td><td>Trimestral</td><td>OData / Swagger</td><td>Saúde financeira de banco ou IP</td></tr>
+        <tr><td>ANS · ANVISA · ANATEL</td><td>CNPJ regulado</td><td>Mensal / eventual</td><td>CSV / API</td><td>Validar registros setoriais</td></tr>
+        <tr><td>Portal da Transparência</td><td>CPF servidor + CNPJ convenente</td><td>Mensal</td><td>API + CSV</td><td>Convênios, repasses</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== SEÇÃO 05 ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">05</div>
+  <div class="vb-secbody">
+    <h2>Catálogo de soluções possíveis</h2>
+
+    <div class="vb-sols">
+
+      <article class="vb-sol">
+        <div class="id">A</div>
+        <h3>API "minha-receita" pessoal</h3>
+        <p>FastAPI ou Hono na frente do SQLite. <code>GET /cnpj/{cnpj}</code> devolve empresa + QSA + estabelecimentos com CNAE e município resolvidos. Espelho local, sem rate-limit.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ only</strong></span>
+          <span>esforço: <strong>P</strong></span>
+          <span>gap: <strong>já existe</strong></span>
+          <span>lgpd: <strong>baixo</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">B</div>
+        <h3>Monitor de deltas mensais</h3>
+        <p>A cada nova safra, diff vs safra anterior — novo estabelecimento, baixa, mudança de CNAE, alteração de QSA, capital social. Persiste em tabela <code>eventos</code>. Saída por feed, e-mail ou webhook.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ only</strong></span>
+          <span>esforço: <strong>M</strong></span>
+          <span>gap: <span class="star">★</span> <strong>claro</strong></span>
+          <span>lgpd: <strong>baixo</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">C</div>
+        <h3>Mapa de calor CNAE × município</h3>
+        <p>Dashboard estático (Observable, D3 ou Leaflet) com densidade de estabelecimentos por CNAE e município, séries históricas por safra. Útil para expansão de rede e jornalismo econômico.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ + IBGE</strong></span>
+          <span>esforço: <strong>M</strong></span>
+          <span>gap: <span class="star">★</span> <strong>pouca oferta</strong></span>
+          <span>lgpd: <strong>nenhum</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">D</div>
+        <h3>KYB simplificado — sanção + situação</h3>
+        <p>Dado um CNPJ, devolve situação cadastral, sanção (CEIS/CNEP/CEPIM), contratos com a União (Compras), capital social, idade da empresa, alertas. Versão livre do MonitorCNPJ, focada em transparência.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ + CEIS + Compras</strong></span>
+          <span>esforço: <strong>M</strong></span>
+          <span>gap: <span class="star">★</span> <strong>versão simples</strong></span>
+          <span>lgpd: <strong>baixo</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">E</div>
+        <h3>Grafo de vínculos societários PJ ↔ PJ</h3>
+        <p>Grafo só com sócios PJ (<code>cnpj_socio</code> → <code>cnpj_empresa</code>) usando <code>identificador_socio = 1</code>. Visualização interativa em Cytoscape ou sqlite-vss. Evita PF, reduz risco LGPD.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ only</strong></span>
+          <span>esforço: <strong>M–G</strong></span>
+          <span>gap: <span class="star">★</span> <strong>paywall hoje</strong></span>
+          <span>lgpd: <strong>baixo</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">F</div>
+        <h3>Lead gen B2B filtrável</h3>
+        <p>UI tipo "Algolia para CNPJ" com filtros (CNAE, UF, porte, idade), export CSV, sem telefone ou e-mail. Concorre por cima do free de Speedio e Econodata, mas sem enriquecimento.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ only</strong></span>
+          <span>esforço: <strong>M</strong></span>
+          <span>gap: <strong>competitivo</strong></span>
+          <span>lgpd: <strong>médio</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">G</div>
+        <h3>Busca semântica em razão social</h3>
+        <p>Embeddings (BGE-small em PT) sobre <code>razao_social + nome_fantasia + cnae_descricao</code>. "Mostre padarias artesanais em Porto Velho" devolve CNPJs ranqueados. SQLite-vss ou Qdrant local.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ + modelo</strong></span>
+          <span>esforço: <strong>M–G</strong></span>
+          <span>gap: <span class="star">★</span> <strong>quase ninguém faz</strong></span>
+          <span>lgpd: <strong>baixo</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">H</div>
+        <h3>Dashboard econômico de Rondônia</h3>
+        <p>Recorte regional (RO) com séries históricas de abertura e baixa, top CNAEs, distribuição por município, cruzando com Compras gov.br para fornecedores locais da União. Casa com contexto institucional.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ + Compras + IBGE</strong></span>
+          <span>esforço: <strong>M</strong></span>
+          <span>gap: <span class="star">★</span> <strong>nicho regional vazio</strong></span>
+          <span>lgpd: <strong>baixo</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">I</div>
+        <h3>MCP server para Claude e agentes</h3>
+        <p>Já existe MCP <code>sqlite-cnpj</code> genérico. Wrappar em ferramentas tipadas — <code>buscar_empresa</code>, <code>vinculos_pj</code>, <code>cnaes_por_municipio</code>, <code>delta_mensal</code>. Acelera uso pessoal e vira projeto open.</p>
+        <div class="meta">
+          <span>dado: <strong>CNPJ only</strong></span>
+          <span>esforço: <strong>P</strong></span>
+          <span>gap: <span class="star">★</span> <strong>não vi MCP equivalente</strong></span>
+          <span>lgpd: <strong>baixo</strong></span>
+        </div>
+      </article>
+
+      <article class="vb-sol">
+        <div class="id">J</div>
+        <h3>Validador de CNPJ alfanumérico</h3>
+        <p>A virada para CNPJ alfanumérico em jul/2026 ainda tem suporte inconsistente. Lib + endpoint validador + reconciliação numérico ↔ alfanumérico vira referência rápida no ecossistema.</p>
+        <div class="meta">
+          <span>dado: <strong>só regra</strong></span>
+          <span>esforço: <strong>P</strong></span>
+          <span>gap: <span class="star">★</span> <strong>janela curta</strong></span>
+          <span>lgpd: <strong>nenhum</strong></span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SEÇÃO 06 ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">06</div>
+  <div class="vb-secbody">
+    <h2>Três caminhos sugeridos</h2>
+
+    <div class="vb-paths">
+
+      <article class="vb-path">
+        <div class="kicker">CURTO PRAZO · ALTO USO</div>
+        <div class="num">01</div>
+        <div class="title">"Caixa-preta de CNPJ pra mim"</div>
+        <div class="recipe">A + I + J · 3–4 SEMANAS</div>
+        <p>API local read-only, MCP tipado para Claude, validador alfanumérico. Resolve uso pessoal e profissional, acelera todo agente que tocar CNPJ, e os artefatos ficam compostos.</p>
+        <div class="trade">Trade-off. Não é um produto público — é uma toolchain pessoal.</div>
+      </article>
+
+      <article class="vb-path">
+        <div class="kicker">PROJETO PÚBLICO · DIFERENCIADO</div>
+        <div class="num">02</div>
+        <div class="title">"Observatório de deltas + grafo PJ"</div>
+        <div class="recipe">B + E + C · 2–3 MESES</div>
+        <p>Diff mensal automatizado, grafo de vínculos PJ ↔ PJ, mapa de calor CNAE × município. Endereça três gaps reais sem cruzar a linha LGPD de pessoa física.</p>
+        <div class="trade">Trade-off. Exige hosting de mais de 30 GB e disciplina de atualização mensal.</div>
+      </article>
+
+      <article class="vb-path">
+        <div class="kicker">INSTITUCIONAL · TJRO</div>
+        <div class="num">03</div>
+        <div class="title">"Observatório econômico de Rondônia"</div>
+        <div class="recipe">H + D · 4–6 SEMANAS</div>
+        <p>Dashboard regional com séries históricas de abertura e baixa, KYB simplificado de fornecedores da União em RO. Encaixa narrativa institucional e serve jornalismo local e órgãos de controle.</p>
+        <div class="trade">Trade-off. Nicho regional limita alcance — mas casa com contexto profissional.</div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SEÇÃO 07 ===================== -->
+<section class="vb-sec full">
+  <div class="vb-num">07</div>
+  <div class="vb-secbody">
+    <div class="vb-nope">
+      <h2>O que <u>não</u> fazer</h2>
+      <ul>
+        <li>Replicar Casa dos Dados — busca reversa por nome de sócio PF indexada no Google é alvo recorrente de pedidos <strong>LGPD</strong>.</li>
+        <li>Tentar score de crédito sem base própria — Serasa e Boa Vista têm dado restritivo proprietário; não dá pra competir só com dado aberto.</li>
+        <li>Vender lead gen com telefone e e-mail enriquecido — exige scraping ou parceiros, e o terreno legal e comercial está saturado.</li>
+        <li>Re-implementar ETL CNPJ do zero — já existem 6+ ETLs open source maduros, e o seu já roda.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="vb-foot">
+  <p>Briefing gerado em 23 de maio de 2026 por equipe de pesquisa — Explore (codebase) + duas frentes general-purpose (mercado e regulatório). Material bruto preservado nos transcripts da sessão. Próximo passo factual: decidir entre <strong>Caminho 01, 02 ou 03</strong>, ou compor um subconjunto.</p>
+</footer>
+
+</main>
+</body>
+</html>

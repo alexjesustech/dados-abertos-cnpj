@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>dados-abertos-cnpj — Planejamento de Produto (2026-05-23)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .kpi { font-variant-numeric: tabular-nums; }
+  .chip { display:inline-flex; align-items:center; gap:.25rem; padding:.1rem .5rem; border-radius:9999px; font-size:.7rem; font-weight:600; }
+  .arrow::after { content: "→"; margin-left:.4rem; color:#94a3b8; }
+  details > summary { cursor:pointer; }
+  details > summary::-webkit-details-marker { display:none; }
+  details > summary::before { content: "▸ "; color:#64748b; }
+  details[open] > summary::before { content: "▾ "; }
+  table { border-collapse: collapse; }
+  th, td { vertical-align: top; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<main class="max-w-6xl mx-auto p-6 space-y-8">
+
+<header class="border-b border-slate-300 pb-4">
+  <p class="text-xs uppercase tracking-widest text-slate-500">Briefing de planejamento • 2026-05-23</p>
+  <h1 class="text-3xl font-bold mt-1">dados-abertos-cnpj — o que dá pra construir?</h1>
+  <p class="text-slate-600 mt-2 max-w-3xl">Pipeline já ingere 30 GB de Dados Abertos da RFB num SQLite local (68M empresas, 71M estabelecimentos, 27M sócios). Este documento mapeia o que existe no mercado, o que a lei permite, e propõe um catálogo de soluções viáveis para um projeto pessoal solo.</p>
+</header>
+
+<!-- ===================== O QUE TEMOS HOJE ===================== -->
+<section>
+  <h2 class="text-xl font-semibold mb-3">1. O que já temos rodando</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="bg-white rounded-lg p-4 border border-slate-200">
+      <p class="text-xs text-slate-500">empresas</p>
+      <p class="kpi text-2xl font-bold">68,1M</p>
+    </div>
+    <div class="bg-white rounded-lg p-4 border border-slate-200">
+      <p class="text-xs text-slate-500">estabelecimentos</p>
+      <p class="kpi text-2xl font-bold">71,3M</p>
+    </div>
+    <div class="bg-white rounded-lg p-4 border border-slate-200">
+      <p class="text-xs text-slate-500">sócios</p>
+      <p class="kpi text-2xl font-bold">27,7M</p>
+    </div>
+    <div class="bg-white rounded-lg p-4 border border-slate-200">
+      <p class="text-xs text-slate-500">SQLite (.db)</p>
+      <p class="kpi text-2xl font-bold">30,6 GB</p>
+    </div>
+  </div>
+  <div class="grid md:grid-cols-3 gap-3 mt-3">
+    <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm">
+      <p class="font-semibold text-emerald-900">✅ Pipeline idempotente</p>
+      <p class="text-emerald-800">Streaming dos ZIPs, retomada por Range, controle_importacao para skip. Re-execução barata.</p>
+    </div>
+    <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm">
+      <p class="font-semibold text-emerald-900">✅ Índices essenciais</p>
+      <p class="text-emerald-800">estabelecimentos por cnpj_basico, município, UF, CNAE principal; sócios por cnpj_basico.</p>
+    </div>
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm">
+      <p class="font-semibold text-amber-900">⚠ Pontos a observar</p>
+      <p class="text-amber-800"><code>synchronous=OFF</code> (risco em crash OS), <code>socios</code> sem PK declarada, pipeline só cobre CNPJ (sem RAIS/CAGED).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAISAGEM DO MERCADO ===================== -->
+<section>
+  <h2 class="text-xl font-semibold mb-3">2. Paisagem do mercado</h2>
+  <div class="grid md:grid-cols-3 gap-4">
+
+    <div class="bg-white border border-slate-200 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-500">Enterprise / pago</p>
+      <h3 class="font-semibold mt-1">Serasa · Cortex · BigData Corp · Boa Vista</h3>
+      <ul class="text-sm text-slate-700 mt-2 space-y-1 list-disc list-inside">
+        <li>Score, KYB, sales intelligence, +179M empresas (Cortex)</li>
+        <li>Cobrança por consulta + SaaS enterprise</li>
+        <li>Bases proprietárias somadas (score, telefone, e-mail)</li>
+      </ul>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-500">Mid-market / lead gen</p>
+      <h3 class="font-semibold mt-1">Econodata · Speedio · LeadCNPJ · MonitorCNPJ</h3>
+      <ul class="text-sm text-slate-700 mt-2 space-y-1 list-disc list-inside">
+        <li>SaaS R$ 300–1.500/mês com filtros + export CRM</li>
+        <li>Enriquecimento com contato (telefone/e-mail) é o diferencial</li>
+        <li>MonitorCNPJ consolida 10+ portais de sanção + risco IA</li>
+      </ul>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-500">Consulta unitária web</p>
+      <h3 class="font-semibold mt-1">Casa dos Dados · CNPJ.biz · ConsultaCNPJ · ReceitaWS</h3>
+      <ul class="text-sm text-slate-700 mt-2 space-y-1 list-disc list-inside">
+        <li>SEO-driven, freemium com ads</li>
+        <li>API limitada (3 req/min é o padrão de free tier)</li>
+        <li>Casa dos Dados sob pressão LGPD recorrente</li>
+      </ul>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-500">API open / freemium</p>
+      <h3 class="font-semibold mt-1">CNPJ.ws · OpenCNPJ.org · minha-receita</h3>
+      <ul class="text-sm text-slate-700 mt-2 space-y-1 list-disc list-inside">
+        <li>minha-receita (cuducos): JSON unitário a partir dos 37 ZIPs</li>
+        <li>OpenCNPJ.org: free sem cap (concorrente recente)</li>
+        <li>CNPJ.ws Bitize: 3 req/min free → 2k req/min pago</li>
+      </ul>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-500">Open source / ETL</p>
+      <h3 class="font-semibold mt-1">aphonsoar (435★) · msantosjader · cuducos · okfn-brasil</h3>
+      <ul class="text-sm text-slate-700 mt-2 space-y-1 list-disc list-inside">
+        <li>ETLs para PostgreSQL/SQLite, alguns ativos jun/2025</li>
+        <li>Brasil.io (socios-brasil) com histórico de atraso</li>
+        <li>Espelho no BigQuery via Base dos Dados</li>
+      </ul>
+    </div>
+
+    <div class="bg-rose-50 border border-rose-200 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-rose-700">Gaps perceptíveis</p>
+      <h3 class="font-semibold mt-1 text-rose-900">Onde quase ninguém entrega bem</h3>
+      <ul class="text-sm text-rose-900 mt-2 space-y-1 list-disc list-inside">
+        <li><strong>Alertas de delta</strong> mês-a-mês (novo sócio, baixa, mudança de CNAE)</li>
+        <li><strong>Analytics agregado</strong> e séries históricas por setor/região</li>
+        <li><strong>Grafo societário transversal</strong> grátis (Cortex/MonitorCNPJ paywall)</li>
+        <li><strong>Mapas de calor</strong> por CNAE × município</li>
+        <li><strong>Busca semântica/NL</strong> sobre razão social + atividade</li>
+        <li><strong>Dump + delta mensal</strong> livre (a maioria oferece só consulta unitária)</li>
+        <li><strong>Cobertura CNPJ alfanumérico</strong> (vigência jul/2026) ainda inconsistente</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== RESTRIÇÕES LEGAIS ===================== -->
+<section>
+  <h2 class="text-xl font-semibold mb-3">3. Restrições legais — semáforo</h2>
+  <div class="grid md:grid-cols-3 gap-4">
+
+    <div class="bg-emerald-50 border-l-4 border-emerald-500 rounded p-4">
+      <p class="font-semibold text-emerald-900">🟢 Permitido — Dec. 8.777/2016 + LAI</p>
+      <ul class="text-sm text-emerald-900 mt-2 space-y-1 list-disc list-inside">
+        <li>Redistribuir os dados (atribuição à RFB)</li>
+        <li>Construir produto pago em cima</li>
+        <li>Cruzar com outras bases públicas (Compras, CEIS, BACEN, CVM, IBGE)</li>
+        <li>Disponibilizar APIs, dashboards e analytics agregados</li>
+      </ul>
+    </div>
+
+    <div class="bg-amber-50 border-l-4 border-amber-500 rounded p-4">
+      <p class="font-semibold text-amber-900">🟡 Zona cinzenta — risco LGPD</p>
+      <ul class="text-sm text-amber-900 mt-2 space-y-1 list-disc list-inside">
+        <li>Mostrar CPF mascarado já como vem da RFB (defensável)</li>
+        <li>Permitir busca reversa por <strong>nome de sócio PF</strong> (Casa dos Dados sofre pedidos LGPD recorrentes)</li>
+        <li>Construir grafo societário com nomes PF indexáveis</li>
+        <li>Perfilamento/scoring de sócio PF a partir do QSA</li>
+      </ul>
+    </div>
+
+    <div class="bg-rose-50 border-l-4 border-rose-500 rounded p-4">
+      <p class="font-semibold text-rose-900">🔴 Evitar — risco alto</p>
+      <ul class="text-sm text-rose-900 mt-2 space-y-1 list-disc list-inside">
+        <li>Reidentificar CPF mascarado cruzando com TSE/doações/servidores</li>
+        <li>Ligar sócio PF a processos do CNJ <strong>só por nome</strong> (falso-positivo + LGPD)</li>
+        <li>Usar microdado RAIS/CAGED <strong>identificado</strong> sem ACT com MTE</li>
+        <li>Publicar perfis pessoais derivados sem base legal sólida</li>
+      </ul>
+    </div>
+
+  </div>
+  <p class="text-xs text-slate-500 mt-2">Referência: STF ADIs 6387–6393 (proteção de dados ≠ uso livre só por ser público); TJDFT 2021 (Serasa, comercialização suspensa por extrapolar finalidade).</p>
+</section>
+
+<!-- ===================== DATASETS CRUZÁVEIS ===================== -->
+<section>
+  <h2 class="text-xl font-semibold mb-3">4. Datasets gov abertos cruzáveis</h2>
+  <div class="overflow-x-auto bg-white border border-slate-200 rounded-lg">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-100 text-left">
+        <tr>
+          <th class="p-2">Base</th>
+          <th class="p-2">Cruzamento</th>
+          <th class="p-2">Frequência</th>
+          <th class="p-2">Acesso</th>
+          <th class="p-2">Valor agregado</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr><td class="p-2 font-medium">CEIS / CNEP / CEPIM</td><td class="p-2">CNPJ + CPF + nome</td><td class="p-2">Diária</td><td class="p-2">API + CSV</td><td class="p-2">Sanções, inidoneidade, KYB</td></tr>
+        <tr><td class="p-2 font-medium">Compras gov.br / PNCP</td><td class="p-2">CNPJ fornecedor</td><td class="p-2">Diária</td><td class="p-2">REST / Swagger</td><td class="p-2">Quem vende o quê para a União</td></tr>
+        <tr><td class="p-2 font-medium">CNJ DataJud</td><td class="p-2">Nome de parte (não CNPJ)</td><td class="p-2">Diária</td><td class="p-2">API c/ chave pública</td><td class="p-2">Processos — cuidado com homônimo</td></tr>
+        <tr><td class="p-2 font-medium">RAIS / Novo CAGED</td><td class="p-2">CNPJ agregado</td><td class="p-2">Anual / mensal</td><td class="p-2">Dump TXT</td><td class="p-2">Nº funcionários, salário médio</td></tr>
+        <tr><td class="p-2 font-medium">IBGE (CNAE, municípios)</td><td class="p-2">Tabelas de domínio</td><td class="p-2">Eventual</td><td class="p-2">API + CSV</td><td class="p-2">Enriquecer setor + geo</td></tr>
+        <tr><td class="p-2 font-medium">CVM</td><td class="p-2">CNPJ direto</td><td class="p-2">Diária / Trimestral</td><td class="p-2">CSV</td><td class="p-2">Cias abertas, fatos relevantes</td></tr>
+        <tr><td class="p-2 font-medium">TSE doações</td><td class="p-2">CNPJ doador</td><td class="p-2">Quadrienal</td><td class="p-2">CSV</td><td class="p-2">Vínculo político-empresa</td></tr>
+        <tr><td class="p-2 font-medium">BACEN IF.data</td><td class="p-2">CNPJ IF supervisionada</td><td class="p-2">Trimestral</td><td class="p-2">OData / Swagger</td><td class="p-2">Saúde financeira de banco/IP</td></tr>
+        <tr><td class="p-2 font-medium">ANS / ANVISA / ANATEL</td><td class="p-2">CNPJ regulado</td><td class="p-2">Mensal / eventual</td><td class="p-2">CSV / API</td><td class="p-2">Validar registros setoriais</td></tr>
+        <tr><td class="p-2 font-medium">Portal da Transparência</td><td class="p-2">CPF servidor + CNPJ convenente</td><td class="p-2">Mensal</td><td class="p-2">API + CSV</td><td class="p-2">Convênios, repasses</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== CATÁLOGO DE SOLUÇÕES ===================== -->
+<section>
+  <h2 class="text-xl font-semibold mb-3">5. Catálogo de soluções possíveis</h2>
+  <p class="text-sm text-slate-600 mb-4">Cada card cita: <span class="chip bg-slate-100 text-slate-700">dado</span> <span class="chip bg-blue-100 text-blue-700">esforço</span> <span class="chip bg-emerald-100 text-emerald-700">gap atendido</span> <span class="chip bg-amber-100 text-amber-800">LGPD</span>.</p>
+
+  <div class="grid md:grid-cols-2 gap-4">
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">A · API "minha-receita" pessoal (read-only JSON)</h3>
+      <p class="text-sm text-slate-700 mt-1">FastAPI / Hono na frente do SQLite. GET /cnpj/{cnpj} devolve empresa + QSA + estabelecimentos resolvidos com CNAE/município. Espelho local rápido sem rate-limit.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ only</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço P</span>
+        <span class="chip bg-emerald-100 text-emerald-700">já existe (minha-receita)</span>
+        <span class="chip bg-amber-100 text-amber-800">baixo</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">B · Monitor de deltas mensais (gap real)</h3>
+      <p class="text-sm text-slate-700 mt-1">A cada nova safra mensal, diff vs safra anterior: <em>novo estabelecimento aberto, baixa, mudança de CNAE, mudança de QSA, mudança de capital social</em>. Persistência em tabela <code>eventos</code>. Saída por feed/RSS, e-mail ou webhook por CNPJ ou por filtro (CNAE+UF).</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ only</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço M</span>
+        <span class="chip bg-emerald-100 text-emerald-700">⭐ gap claro</span>
+        <span class="chip bg-amber-100 text-amber-800">baixo (evento, não perfil)</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">C · Mapa de calor CNAE × município</h3>
+      <p class="text-sm text-slate-700 mt-1">Dashboard estático (Observable / D3 / Leaflet) com densidade de estabelecimentos por CNAE e município, séries históricas por safra. Útil para expansão de rede e jornalismo econômico.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ + IBGE</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço M</span>
+        <span class="chip bg-emerald-100 text-emerald-700">⭐ pouca oferta gratuita</span>
+        <span class="chip bg-amber-100 text-amber-800">nenhum (agregado)</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">D · KYB simplificado (sanção + situação)</h3>
+      <p class="text-sm text-slate-700 mt-1">Dado um CNPJ, devolve: situação cadastral, sanção (CEIS/CNEP/CEPIM), contratos com a União (Compras), capital social, idade da empresa, alertas. Versão livre do MonitorCNPJ focada em transparência pública.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ + CEIS + Compras</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço M</span>
+        <span class="chip bg-emerald-100 text-emerald-700">⭐ gap (versão simples)</span>
+        <span class="chip bg-amber-100 text-amber-800">baixo</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">E · Grafo de vínculos societários (PJ↔PJ)</h3>
+      <p class="text-sm text-slate-700 mt-1">Construir grafo apenas com sócios PJ (cnpj_socio → cnpj_empresa) usando <em>identificador_socio = 1</em>. Visualização interativa (Cytoscape, Neo4j-lite via sqlite-vss/grafos). Evita PF → menor risco LGPD.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ only</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço M-G</span>
+        <span class="chip bg-emerald-100 text-emerald-700">⭐ paywall hoje</span>
+        <span class="chip bg-amber-100 text-amber-800">baixo (só PJ)</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">F · Lead gen B2B filtrável (CNAE + UF + idade + porte)</h3>
+      <p class="text-sm text-slate-700 mt-1">UI tipo "Algolia para CNPJ" com filtros, export CSV, sem telefone/e-mail (nem cruzar PF). Concorre por cima do free de Speedio/Econodata mas sem enriquecimento.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ only</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço M</span>
+        <span class="chip bg-emerald-100 text-emerald-700">competitivo (vários free)</span>
+        <span class="chip bg-amber-100 text-amber-800">médio (lista PJ tudo bem)</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">G · Busca semântica em razão social + atividade</h3>
+      <p class="text-sm text-slate-700 mt-1">Embeddings (BGE-small em PT) sobre <code>razao_social + nome_fantasia + cnae_descricao</code>. "Mostre padarias artesanais em Porto Velho" → CNPJs ranqueados. SQLite-vss ou Qdrant local.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ only + modelo</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço M-G</span>
+        <span class="chip bg-emerald-100 text-emerald-700">⭐ quase ninguém faz</span>
+        <span class="chip bg-amber-100 text-amber-800">baixo</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">H · Dashboard econômico de Rondônia / TJRO</h3>
+      <p class="text-sm text-slate-700 mt-1">Recorte regional (RO) com séries históricas de abertura/baixa, top CNAEs, distribuição por município, cruzando com Compras gov.br p/ fornecedores locais da União. Encaixa no contexto institucional do autor.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ + Compras + IBGE</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço M</span>
+        <span class="chip bg-emerald-100 text-emerald-700">⭐ nicho regional vazio</span>
+        <span class="chip bg-amber-100 text-amber-800">baixo</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">I · MCP server para Claude/agentes</h3>
+      <p class="text-sm text-slate-700 mt-1">Tool MCP <code>sqlite-cnpj</code> já existe (manual). Wrappar em ferramentas tipadas: <code>buscar_empresa</code>, <code>vinculos_pj</code>, <code>cnaes_por_municipio</code>, <code>delta_mensal</code>. Acelera uso pessoal e oferece como projeto open.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">CNPJ only</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço P</span>
+        <span class="chip bg-emerald-100 text-emerald-700">⭐ não vi MCP equivalente</span>
+        <span class="chip bg-amber-100 text-amber-800">baixo (uso local)</span>
+      </div>
+    </article>
+
+    <article class="bg-white border border-slate-200 rounded-lg p-4">
+      <h3 class="font-semibold">J · Validação de CNPJ alfanumérico (jul/2026)</h3>
+      <p class="text-sm text-slate-700 mt-1">A virada para CNPJ alfanumérico em jul/2026 ainda tem suporte inconsistente nos players. Lib + endpoint validador + reconciliação numérico↔alfanumérico vira referência rápida no ecossistema.</p>
+      <div class="mt-2 flex flex-wrap gap-1">
+        <span class="chip bg-slate-100 text-slate-700">só regra</span>
+        <span class="chip bg-blue-100 text-blue-700">esforço P</span>
+        <span class="chip bg-emerald-100 text-emerald-700">⭐ janela curta</span>
+        <span class="chip bg-amber-100 text-amber-800">nenhum</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== 3 CAMINHOS ===================== -->
+<section>
+  <h2 class="text-xl font-semibold mb-3">6. Três caminhos sugeridos (não exclusivos)</h2>
+  <div class="grid md:grid-cols-3 gap-4">
+
+    <div class="bg-gradient-to-b from-emerald-50 to-white border border-emerald-300 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-emerald-700">Caminho 1 · curto prazo, alto valor de uso</p>
+      <h3 class="font-semibold text-lg mt-1">"Caixa-preta de CNPJ pra mim"</h3>
+      <p class="text-sm mt-2 text-slate-700">A (API local) + I (MCP server) + J (validador alfanumérico). 3–4 semanas. Resolve uso pessoal/profissional, acelera Claude, e os artefatos ficam compostos.</p>
+      <p class="text-xs text-emerald-800 mt-2"><strong>Trade-off:</strong> não é um produto público, é uma toolchain pessoal.</p>
+    </div>
+
+    <div class="bg-gradient-to-b from-blue-50 to-white border border-blue-300 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-blue-700">Caminho 2 · projeto público diferenciado</p>
+      <h3 class="font-semibold text-lg mt-1">"Observatório de deltas + grafo PJ"</h3>
+      <p class="text-sm mt-2 text-slate-700">B (deltas mensais) + E (grafo só PJ) + C (mapa CNAE×município). 2–3 meses. Endereça gaps reais (alertas, grafo, geo) sem entrar na zona LGPD de PF.</p>
+      <p class="text-xs text-blue-800 mt-2"><strong>Trade-off:</strong> exige hosting (>30 GB) e disciplina de atualização mensal.</p>
+    </div>
+
+    <div class="bg-gradient-to-b from-amber-50 to-white border border-amber-300 rounded-lg p-4">
+      <p class="text-xs uppercase tracking-wider text-amber-700">Caminho 3 · institucional / TJRO</p>
+      <h3 class="font-semibold text-lg mt-1">"Observatório econômico de RO"</h3>
+      <p class="text-sm mt-2 text-slate-700">H (dashboard regional) + D (KYB simplificado para fornecedores da União em RO). 4–6 semanas. Encaixa narrativa do autor (Nugesip/TJRO), serve jornalismo local e órgãos de controle.</p>
+      <p class="text-xs text-amber-800 mt-2"><strong>Trade-off:</strong> nicho regional limita reach; mas casa com contexto profissional.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== O QUE NÃO FAZER ===================== -->
+<section class="bg-rose-50 border-l-4 border-rose-500 rounded p-4">
+  <h2 class="text-lg font-semibold text-rose-900">7. O que <u>não</u> fazer</h2>
+  <ul class="text-sm text-rose-900 mt-2 space-y-1 list-disc list-inside">
+    <li>Replicar Casa dos Dados (busca reversa por nome de sócio PF indexada no Google) — alvo recorrente de pedidos LGPD.</li>
+    <li>Tentar score de crédito sem base própria — Serasa/Boa Vista têm dado restritivo proprietário, não dá pra competir só com dado aberto.</li>
+    <li>Vender lead gen com telefone/e-mail enriquecido — exige scraping/parceiros e cai em terreno legal/comercial saturado.</li>
+    <li>Re-implementar ETL CNPJ "do zero" — já tem 6+ ETLs open source maduros; o seu já roda.</li>
+  </ul>
+</section>
+
+<footer class="text-xs text-slate-500 pt-6 border-t border-slate-200">
+  Briefing gerado em 2026-05-23 por equipe de pesquisa (Explore + 2× general-purpose). Material bruto preservado nos transcripts da sessão. Próximo passo: decidir entre <strong>Caminho 1/2/3</strong> ou compor um subconjunto.
+</footer>
+
+</main>
+</body>
+</html>
