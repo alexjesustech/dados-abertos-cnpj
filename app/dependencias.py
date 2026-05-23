@@ -34,7 +34,7 @@ def validar_cnpj_path(
     """Valida CNPJ no path e devolve forma normalizada (sem máscara, maiúscula)."""
     if not validar(cnpj):
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"CNPJ inválido: {cnpj!r}",
         )
     return normalizar(cnpj)
@@ -47,7 +47,7 @@ def validar_basico_path(
     base = normalizar(cnpj_basico)
     if len(base) != 8 or not all(c.isdigit() or "A" <= c <= "Z" for c in base):
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"cnpj_basico inválido: esperado 8 chars [0-9A-Z], recebido {cnpj_basico!r}",
         )
     return base
