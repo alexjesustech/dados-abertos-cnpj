@@ -32,6 +32,13 @@ Sistema visual: [`docs/design/dossie-editorial.md`](./docs/design/dossie-editori
 * **Rodar testes**: `uv run pytest tests/ -v` (60 unitários, cobertura 100% em `cnpj_lib/`)
 * **Lint moderno**: `uv run ruff check .`
 
+### Monitor (observabilidade do pipeline)
+
+* **Subir coletor + dashboard**: `monitor/start.sh` (loopback `http://127.0.0.1:8765/dashboard.html`)
+* **Parar**: `monitor/stop.sh`
+* **Status no terminal**: `monitor/status.sh` (ou `watch -n 5 monitor/status.sh`)
+* **Configuração opcional**: `MONITOR_HTTP_PORT` (default `8765`), `MONITOR_HTTP_BIND` (default `127.0.0.1` — não expor na LAN, dashboard sem auth)
+
 ---
 
 ## 🏗️ Arquitetura
@@ -72,6 +79,15 @@ migrations/              SQL idempotente (ANALYZE + 4 índices novos aplicados 2
 tests/unit/              60 testes pytest + Hypothesis, cobertura 100% em cnpj_lib/
 tests/integracao/        (vazio — backlog)
 tests/mcp/               (vazio — backlog)
+
+monitor/                 Observabilidade — stdlib only, não invasivo
+├── collect.py           Daemon que parseia dados-abertos-cnpj.log → status.json
+├── server.py            HTTP server (loopback) + POST /api/run + POST /api/stop
+├── dashboard.html       SPA Tailwind + Alpine consumindo status.json
+├── status.sh            Viewer Markdown colorido pro terminal
+├── notify.sh            notify-send local + placeholders Discord/Telegram
+├── start.sh · stop.sh   Lockfiles em monitor/.collect.pid e .http-server.pid
+└── STATUS_SCHEMA.md     Contrato versionado do status.json (schema_version=1)
 ```
 
 **As 9 tools do MCP**: `buscar_empresa`, `listar_socios`, `listar_filiais`, `vinculos_pj`, `cnaes_por_municipio`, `empresas_por_cnae`, `delta_mensal` (MVP), `validar_cnpj`, `descrever_codigo`. Todas paginadas manualmente com `limit/offset` + `tem_mais` (MCP não tem paginação nativa para `tools/call`).
