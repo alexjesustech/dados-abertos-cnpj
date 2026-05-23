@@ -1,36 +1,82 @@
-# dados-abertos-cnpj — Pipeline de Ingestão CNPJ
+# dados-abertos-cnpj — Pipeline + API + MCP server
 
-Pipeline Python que baixa os Dados Abertos do CNPJ (Receita Federal) via WebDAV público do Nextcloud da RFB e ingere em SQLite local, com retomada e idempotência.
+Pipeline Python que baixa os Dados Abertos do CNPJ (Receita Federal) via WebDAV público do Nextcloud da RFB e ingere em SQLite local, com retomada e idempotência. Sobre esse banco vivem **dois consumidores**: uma **API HTTP local** (FastAPI) e um **MCP server** (FastMCP, 9 tools) — ambos read-only, em pt-BR.
+
+## 📚 Série de documentos
+
+Três peças encadeadas em `docs/` registram a decisão e a execução do Caminho 01 ("Caixa-preta de CNPJ pra mim"):
+
+| Nº | Documento | Tipo |
+|---|---|---|
+| 001 | [`briefing-2026-05-23.html`](./docs/briefing-2026-05-23.html) | Pesquisa de viabilidade (mercado + restrições legais + 10 soluções + 3 caminhos) |
+| 002 | [`briefing-implementacao-2026-05-23.html`](./docs/briefing-implementacao-2026-05-23.html) | Plano executável (stack + estrutura + 4 sprints + modelagem JSON) |
+| 003 | [`relatorio-execucao-2026-05-23.html`](./docs/relatorio-execucao-2026-05-23.html) | Relatório de entrega (4 sprints concluídos + métricas + decisões registradas) |
+
+Sistema visual: [`docs/design/dossie-editorial.md`](./docs/design/dossie-editorial.md) — variante B (creme + Newsreader + vermillion único, sem emoji).
 
 ---
 
 ## 🛠️ Comandos Frequentes
 
-* **Ativar venv**: `source .venv/bin/activate`
+### Pipeline (camada original)
+
 * **Executar o pipeline completo**: `.venv/bin/python main.py`
-* **Instalar dependências**: `.venv/bin/pip install -r requirements.txt`
-* **Análise estática**: `.venv/bin/pylint *.py` (config em `.pylintrc`)
+* **Instalar dependências (legado)**: `.venv/bin/pip install -r requirements.txt`
+* **Análise estática**: `.venv/bin/pylint *.py`
+
+### API + MCP (Caminho 01)
+
+* **Setup uv**: `uv sync --extra api --extra mcp --extra dev`
+* **Levantar API**: `uv run cnpj-api` → `http://127.0.0.1:8000` (Swagger em `/docs`)
+* **Levantar MCP stdio**: `uv run mcp-cnpj` (geralmente chamado pelo Claude Code via `~/.claude/mcp.json`)
+* **Rodar testes**: `uv run pytest tests/ -v` (60 unitários, cobertura 100% em `cnpj_lib/`)
+* **Lint moderno**: `uv run ruff check .`
 
 ---
 
 ## 🏗️ Arquitetura
 
-Três módulos de produção, todos em PT-BR:
+### Camada original — Pipeline de ingestão
+
+Quatro módulos em PT-BR na raiz do repo:
 
 * **`main.py`** — Orquestrador. Carrega `.env`, recria `temp/`, instancia `Notifier`, chama `CNPJFetcher.fetch_all()` e em seguida `DatabaseManager` (init → import por ZIP → índices).
+* **`fetcher.py`** — Cliente WebDAV público do Nextcloud da RFB. Base `https://arquivos.receitafederal.gov.br/public.php/webdav/`; auth `(RFB_SHARE_TOKEN, "")`; `latest_period()` via PROPFIND; `download_zip()` com `Range:` + retry exponencial + streaming 1 MB.
+* **`database.py`** — SQLite. Schemas DDL das 10 tabelas (`empresas`, `estabelecimentos`, `socios`, `simples` + 6 lookups). Ingestão por streaming do ZIP (`zipfile.ZipFile.open()` + `io.TextIOWrapper`); commits a cada 50k linhas; PRAGMAs agressivos. Idempotência via `controle_importacao` + `INSERT OR REPLACE`.
+* **`notifier.py`** — Log + Discord/Telegram opcionais. Parser próprio de `.env`.
 
-* **`fetcher.py`** — Cliente WebDAV público do Nextcloud da RFB.
-  * Base: `https://arquivos.receitafederal.gov.br/public.php/webdav/`
-  * Auth: `(RFB_SHARE_TOKEN, "")` — token do share público (padrão `gn672Ad4CF8N6TK`)
-  * Path CNPJ: `Dados/Cadastros/CNPJ/<YYYY-MM>/`
-  * `latest_period()` faz PROPFIND em `Dados/Cadastros/CNPJ/` e retorna o maior `YYYY-MM` lexicográfico
-  * `download_zip()` valida via `Content-Length`, retoma parciais via `Range: bytes=N-` com retry exponencial (até 5 tentativas), streaming em chunks de 1 MB
+⚠️ **`synchronous=OFF`** torna o banco vulnerável a crash de OS (não de processo). Aceitável: pipeline é re-executável.
 
-* **`database.py`** — SQLite. Schemas DDL para `empresas`, `estabelecimentos`, `socios`, `simples`, `cnaes`, `motivos`, `municipios`, `paises`, `qualificacoes`, `naturezas`. Ingestão por streaming direto do ZIP via `zipfile.ZipFile.open()` + `io.TextIOWrapper` (sem extração em disco), commits a cada 50k linhas, PRAGMAs agressivos (`synchronous=OFF`, `journal_mode=WAL`, `cache_size=100000`, `temp_store=MEMORY`). Idempotência via tabela `controle_importacao` (`is_file_imported`/`mark_file_as_imported`). `INSERT OR REPLACE` permite re-execução parcial sem violar PKs.
+### Camada nova — API + MCP (Caminho 01, 2026-05-23)
 
-* **`notifier.py`** — Logging para `dados-abertos-cnpj.log` + envio opcional para Discord Webhook e Telegram Bot. Carrega `.env` via parser próprio (sem dependência de `python-dotenv`).
+```
+cnpj_lib/                Biblioteca compartilhada (J — validador alfanumérico)
+├── validador.py         Módulo 11 (alfa + num) — NT Conjunta 2025.001, vigência 06/07/2026
+├── formatador.py        normalizar · formatar · fragmentar · mascarar_cpf · parsear_data
+└── dominio.py           6 tabelas hardcoded RFB (situacao_cadastral, etc) + descrever()
 
-⚠️ **PRAGMAs agressivos**: `synchronous=OFF` torna o banco vulnerável a corrupção em crash de OS (não de processo). Aceitável aqui porque o pipeline é re-executável e a tabela `controle_importacao` permite retomar.
+app/                     Núcleo da API HTTP (A) — reusado pelo MCP
+├── main.py              FastAPI + lifespan + run_uvicorn()
+├── config.py            pydantic-settings (DB_PATH, API_BIND, API_PORT, CORS_ORIGINS)
+├── db.py                sqlite3 URI ?mode=ro (read-only por design)
+├── dependencias.py      Depends(conn) + validação de CNPJ no path (422 se inválido)
+├── schemas/             Pydantic v2 — compartilhado com MCP
+├── repositorios/        SQL puro (empresa, estabelecimento, socio, lookup, busca, controle)
+├── servicos/            consulta_cnpj.montar_cnpj_completo — orquestrador único
+└── rotas/               /health · /periodo-atual · /stats · /cnpj/{cnpj} + subrotas
+
+mcp_server/              Servidor MCP (I)
+└── server.py            FastMCP("cnpj-br") + 9 tools tipadas via @mcp.tool()
+
+migrations/              SQL idempotente (ANALYZE + 4 índices novos aplicados 2026-05-23)
+tests/unit/              60 testes pytest + Hypothesis, cobertura 100% em cnpj_lib/
+tests/integracao/        (vazio — backlog)
+tests/mcp/               (vazio — backlog)
+```
+
+**As 9 tools do MCP**: `buscar_empresa`, `listar_socios`, `listar_filiais`, `vinculos_pj`, `cnaes_por_municipio`, `empresas_por_cnae`, `delta_mensal` (MVP), `validar_cnpj`, `descrever_codigo`. Todas paginadas manualmente com `limit/offset` + `tem_mais` (MCP não tem paginação nativa para `tools/call`).
+
+**Pontos de reuso**: o MCP importa apenas `app.servicos` — nunca `app.rotas` — para não inflar startup com FastAPI. API e MCP compartilham os mesmos models Pydantic em `app/schemas/`.
 
 ---
 

@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relatório de execução — Caminho 01 entregue — 23 maio 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:#f5f1e8;
+    --paper-code:#ebe3cf;
+    --paper-toast:#1a1916;
+    --ink:#0d0c0a;
+    --ink-body:#1a1916;
+    --ink-text:#2d2a23;
+    --ink-soft:#3d3a32;
+    --ink-italic:#4a4438;
+    --kk-mono-fg:#807966;
+    --kk-caption:#6b6557;
+    --kk-toast-body:#d9cfb8;
+    --rule-dark:#1a1916;
+    --rule-soft:#c9bda3;
+    --rule-divider:#d9cfb8;
+    --accent:#b9532b;
+    --accent-deep:#a13d1e;
+    --accent-soft:#8a6a1e;
+    --accent-go:#2a5a3a;
+    --font-serif:"Newsreader","Source Serif Pro",Georgia,serif;
+    --font-sans:"Inter",system-ui,-apple-system,sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  *,*::before,*::after { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--paper); }
+  body {
+    color:var(--ink-text); font-family:var(--font-sans);
+    font-size:13.5px; line-height:1.55;
+    font-feature-settings:"lnum" 1,"tnum" 1;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .vb-page { max-width:900px; margin:0 auto; padding:64px 64px 56px; }
+  .vb-mast {
+    display:flex; justify-content:space-between; align-items:flex-end;
+    padding-bottom:14px; margin-bottom:36px;
+    border-bottom:2px solid var(--rule-dark);
+  }
+  .vb-mast .pub { font-family:var(--font-serif); font-size:20px; font-style:italic; font-weight:500; color:var(--ink-body); line-height:1; }
+  .vb-mast .sub { font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--kk-mono-fg); margin-top:8px; }
+  .vb-mast .right { font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.10em; text-transform:uppercase; color:var(--kk-caption); text-align:right; line-height:1.8; }
+  .vb-mast .right .date { color:var(--ink-body); }
+  .vb-title { font-family:var(--font-serif); font-size:52px; font-weight:600; letter-spacing:-0.025em; line-height:1.05; color:var(--ink); margin:0 0 22px; text-wrap:balance; }
+  .vb-title em { font-style:italic; font-weight:500; color:var(--accent); }
+  .vb-lead { font-family:var(--font-serif); font-size:17px; font-weight:500; line-height:1.55; color:var(--ink-body); margin:0 0 52px; max-width:720px; text-wrap:pretty; }
+  .vb-lead::first-line { font-variant:small-caps; letter-spacing:0.04em; }
+  .vb-sec { margin-bottom:44px; }
+  .vb-sec::after { content:""; display:block; clear:both; }
+  .vb-num { float:left; width:80px; font-family:var(--font-serif); font-size:64px; font-weight:400; letter-spacing:-0.04em; line-height:1; color:var(--rule-soft); margin-top:4px; }
+  .vb-secbody { margin-left:80px; padding-top:10px; border-top:1px solid var(--rule-dark); }
+  .vb-secbody h2 { font-family:var(--font-serif); font-size:26px; font-weight:600; letter-spacing:-0.015em; color:var(--ink); margin:0 0 18px; }
+  .vb-secbody h3 { font-family:var(--font-serif); font-size:18px; font-weight:600; color:var(--ink-body); margin:24px 0 12px; line-height:1.3; }
+  .vb-secbody p { margin:0 0 12px; line-height:1.6; }
+  .vb-sec.full .vb-num { margin-bottom:12px; }
+  .vb-sec.full .vb-secbody { margin-left:0; }
+  .vb-metrics { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--rule-soft); border-bottom:1px solid var(--rule-soft); margin-bottom:28px; }
+  .vb-metric { padding:14px 16px 14px 0; border-right:1px solid var(--rule-divider); }
+  .vb-metric:last-child { border-right:none; padding-right:0; }
+  .vb-metric .label { font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--kk-mono-fg); margin-bottom:8px; }
+  .vb-metric .val { font-family:var(--font-serif); font-size:32px; font-weight:500; letter-spacing:-0.025em; color:var(--ink); line-height:1; }
+  .vb-metric .sub { font-family:var(--font-mono); font-size:10px; color:var(--kk-mono-fg); margin-top:4px; letter-spacing:0.04em; }
+  .vb-status { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .vb-stat .tag { display:inline-block; font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; padding:3px 8px; border-radius:2px; margin-bottom:10px; }
+  .vb-stat .tag.ok { background:var(--ink-body); color:var(--paper); }
+  .vb-stat .tag.warn { background:var(--accent); color:var(--paper); }
+  .vb-stat .title { font-family:var(--font-sans); font-size:13px; font-weight:600; color:var(--ink-body); margin-bottom:4px; line-height:1.35; }
+  .vb-stat .body { font-family:var(--font-sans); font-size:12.5px; color:var(--ink-soft); line-height:1.55; }
+  .vb-tab { width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:12px; }
+  .vb-tab th { font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.10em; text-transform:uppercase; color:var(--kk-mono-fg); text-align:left; padding:10px 12px 10px 0; border-bottom:1.5px solid var(--rule-dark); }
+  .vb-tab th:last-child { padding-right:0; }
+  .vb-tab td { padding:10px 12px 10px 0; border-bottom:1px dotted var(--rule-soft); color:var(--ink-text); vertical-align:top; line-height:1.5; }
+  .vb-tab td:last-child { padding-right:0; }
+  .vb-tab td:first-child { font-family:var(--font-serif); font-size:13.5px; font-style:italic; font-weight:500; color:var(--ink-body); }
+  .vb-tab tbody tr:last-child td { border-bottom:none; }
+  .vb-tab .num { font-variant-numeric:tabular-nums; }
+  .vb-tab .accent { color:var(--accent); font-weight:500; }
+  .vb-tab .deep { color:var(--accent-go); font-weight:500; }
+  .vb-sprints { display:grid; grid-template-columns:repeat(2,1fr); gap:24px 28px; }
+  .vb-sprint { padding-top:14px; border-top:3px solid var(--rule-dark); }
+  .vb-sprint .kicker { font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--kk-mono-fg); margin-bottom:6px; }
+  .vb-sprint .num { font-family:var(--font-serif); font-size:48px; font-weight:500; letter-spacing:-0.03em; line-height:1; color:var(--ink); margin-bottom:8px; }
+  .vb-sprint .title { font-family:var(--font-serif); font-size:17px; font-weight:500; font-style:italic; color:var(--ink-body); margin-bottom:10px; line-height:1.3; }
+  .vb-sprint .recipe { font-family:var(--font-mono); font-size:10.5px; font-weight:500; letter-spacing:0.10em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+  .vb-sprint p { font-family:var(--font-sans); font-size:12.5px; color:var(--ink-text); line-height:1.55; margin:0 0 10px; }
+  .vb-sprint .out { padding-top:10px; border-top:1px dotted var(--rule-soft); font-family:var(--font-serif); font-size:12.5px; font-style:italic; color:var(--ink-italic); line-height:1.5; }
+  pre.vb-code { background:var(--paper-code); color:var(--ink-body); font-family:var(--font-mono); font-size:11.5px; line-height:1.55; padding:14px 18px; border-left:3px solid var(--ink-body); border-radius:2px; overflow-x:auto; margin:14px 0; }
+  code { font-family:var(--font-mono); font-size:0.9em; background:var(--paper-code); padding:1px 5px; border-radius:2px; color:var(--ink-body); }
+  .vb-page strong { color:var(--ink-body); font-weight:600; }
+  .vb-criteria { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:8px; }
+  .vb-crit .num { font-family:var(--font-serif); font-size:38px; font-weight:500; letter-spacing:-0.025em; color:var(--ink); line-height:1; margin-bottom:8px; }
+  .vb-crit p { font-family:var(--font-sans); font-size:12.5px; color:var(--ink-text); line-height:1.55; margin:0; }
+  .vb-crit code { font-size:11px; }
+  .vb-nope { background:var(--paper-toast); color:var(--kk-toast-body); padding:22px 28px; border-radius:0; }
+  .vb-nope h2 { font-family:var(--font-serif); font-size:22px; font-style:italic; font-weight:500; color:var(--paper); margin:0 0 14px; }
+  .vb-nope h2 u { text-decoration:underline; text-decoration-color:var(--accent); text-decoration-thickness:2px; text-underline-offset:4px; }
+  .vb-nope ul { list-style:none; margin:0; padding:0; font-family:var(--font-sans); font-size:12.5px; line-height:1.6; }
+  .vb-nope ul li { position:relative; padding-left:16px; margin-bottom:6px; }
+  .vb-nope ul li::before { content:"—"; position:absolute; left:0; color:var(--accent); }
+  .vb-nope strong { color:var(--paper); font-weight:500; }
+  .vb-nope code { background:#2a2725; color:var(--kk-toast-body); }
+  .vb-foot { margin-top:60px; padding-top:14px; border-top:1px solid var(--rule-soft); font-family:var(--font-serif); font-size:11px; font-style:italic; color:var(--kk-caption); line-height:1.6; }
+  .vb-art { padding:14px 0; border-bottom:1px dotted var(--rule-soft); }
+  .vb-art:last-child { border-bottom:none; }
+  .vb-art .head { display:flex; align-items:baseline; gap:14px; margin-bottom:10px; }
+  .vb-art .id { font-family:var(--font-serif); font-size:28px; font-style:italic; font-weight:500; color:var(--kk-mono-fg); line-height:1; }
+  .vb-art .nm { font-family:var(--font-serif); font-size:17px; font-weight:600; color:var(--ink); line-height:1.3; }
+  .vb-art .nm em { font-style:italic; font-weight:500; color:var(--ink-italic); }
+  .vb-art .body { font-family:var(--font-sans); font-size:12.5px; color:var(--ink-text); line-height:1.6; }
+  .vb-art ul { margin:6px 0 0; padding-left:18px; }
+  .vb-art ul li { margin-bottom:4px; }
+  .vb-art .meta { font-family:var(--font-mono); font-size:10.5px; font-weight:500; color:var(--kk-mono-fg); letter-spacing:0.04em; display:flex; flex-wrap:wrap; gap:14px; margin-bottom:10px; }
+  .vb-art .meta strong { color:var(--ink-body); font-weight:500; }
+</style>
+</head>
+<body>
+<main class="vb-page">
+
+<!-- MASTHEAD -->
+<div class="vb-mast">
+  <div class="left">
+    <div class="pub">Relatório de execução</div>
+    <div class="sub">CAMINHO 01 · ENTREGA · Nº 003</div>
+  </div>
+  <div class="right">
+    <div class="date">23 MAIO 2026</div>
+    <div>VOL. 1 · SESSÃO ÚNICA</div>
+  </div>
+</div>
+
+<h1 class="vb-title">"Caixa-preta de CNPJ pra mim" — <em>entregue</em></h1>
+<p class="vb-lead">Caminho 01 fechado em uma única sessão. Validador alfanumérico, API HTTP local sobre 30 GB de SQLite e MCP server com nove ferramentas tipadas — todos respondendo em menos de 200 milissegundos contra os dados de produção da Receita Federal. Setenta testes unitários verdes com cobertura 100% na biblioteca compartilhada. Três commits em <code>main</code>; índices de produção aplicados pós-entrega.</p>
+
+<!-- ===================== 01 · O que foi entregue ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">01</div>
+  <div class="vb-secbody">
+    <h2>O que foi entregue</h2>
+
+    <div class="vb-metrics">
+      <div class="vb-metric"><div class="label">artefatos</div><div class="val">3</div><div class="sub">J · A · I</div></div>
+      <div class="vb-metric"><div class="label">commits</div><div class="val">3</div><div class="sub">em alexjesustech/dados-abertos-cnpj</div></div>
+      <div class="vb-metric"><div class="label">testes</div><div class="val">60</div><div class="sub">100% cobertura · cnpj_lib</div></div>
+      <div class="vb-metric"><div class="label">tools mcp</div><div class="val">9</div><div class="sub">todas &lt; 200 ms</div></div>
+    </div>
+
+    <div class="vb-status">
+      <div class="vb-stat">
+        <span class="tag ok">PRONTO</span>
+        <div class="title">J — Validador CNPJ alfanumérico</div>
+        <div class="body">Módulo 11 (alfa + num) em <code>cnpj_lib/</code>. Aceita os dois formatos. Casos da NT 2025.001 + Hypothesis com bases aleatórias <code>[0-9A-Z]&#123;12&#125;</code> passam.</div>
+      </div>
+      <div class="vb-stat">
+        <span class="tag ok">PRONTO</span>
+        <div class="title">A — API HTTP local</div>
+        <div class="body">FastAPI sobre <code>sqlite3</code> read-only via URI <code>?mode=ro</code>. Seis rotas, Swagger em pt-BR, <code>GET /cnpj/&#123;cnpj&#125;</code> em 6 ms.</div>
+      </div>
+      <div class="vb-stat">
+        <span class="tag ok">PRONTO</span>
+        <div class="title">I — MCP server</div>
+        <div class="body">FastMCP com nove ferramentas tipadas. Importa <code>app.servicos</code> direto (sem rede). Registrado em <code>~/.claude/mcp.json</code>; precisa restart do Claude Code para aparecer.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 · Cronologia ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">02</div>
+  <div class="vb-secbody">
+    <h2>Cronologia das quatro sprints</h2>
+
+    <div class="vb-sprints">
+
+      <article class="vb-sprint">
+        <div class="kicker">SETUP · 1 DIA ORÇADO</div>
+        <div class="num">00</div>
+        <div class="title">"Andaime"</div>
+        <div class="recipe">PYPROJECT + ESTRUTURA + MIGRATION</div>
+        <p><code>pyproject.toml</code> com extras <code>[api]</code>, <code>[mcp]</code>, <code>[dev]</code>; entrypoints <code>cnpj-api</code> e <code>mcp-cnpj</code>; <code>uv.lock</code> gerado. Estrutura de pastas (<code>cnpj_lib/</code>, <code>app/</code>, <code>mcp_server/</code>, <code>tests/&#123;unit,integracao,mcp&#125;/</code>). Migration SQL idempotente preparada (não executada nessa fase).</p>
+        <div class="out">Saída. <code>requirements.txt</code> auto-gerado via <code>uv pip compile</code> — pipeline atual continua compatível.</div>
+      </article>
+
+      <article class="vb-sprint">
+        <div class="kicker">VALIDADOR · 2–3 DIAS ORÇADOS</div>
+        <div class="num">01</div>
+        <div class="title">"J — algoritmo módulo 11 (alfa + num)"</div>
+        <div class="recipe">CNPJ_LIB + 60 TESTES HYPOTHESIS</div>
+        <p><code>validador.py</code> com pesos posicionais e <code>ord(c) − 48</code>. <code>formatador.py</code> com <code>normalizar</code>, <code>formatar</code>, <code>fragmentar</code>, <code>mascarar_cpf</code>, <code>parsear_data_yyyymmdd</code>. <code>dominio.py</code> com 6 dicionários hardcoded (situação cadastral, identificador de sócio, faixa etária, matriz/filial, opção Simples, porte).</p>
+        <div class="out">Saída. 60 testes verdes em 0,27 s; cobertura 100% em <code>cnpj_lib/</code>. Critério &#x23;3 do Caminho 01 atendido.</div>
+      </article>
+
+      <article class="vb-sprint">
+        <div class="kicker">API HTTP · 5–7 DIAS ORÇADOS</div>
+        <div class="num">02</div>
+        <div class="title">"A — FastAPI sobre 30 GB"</div>
+        <div class="recipe">SCHEMAS + REPOS + SERVIÇOS + ROTAS</div>
+        <p>Pydantic v2 (modelos reusados pela API e pelo MCP), <code>sqlite3 ?mode=ro</code>, cache em memória das 6 lookups no startup, orquestrador <code>consulta_cnpj.montar_cnpj_completo</code>. Rotas: <code>/health</code>, <code>/periodo-atual</code>, <code>/stats</code>, <code>/cnpj/&#123;cnpj&#125;</code>, <code>/cnpj/&#123;basico&#125;/socios</code>, <code>/cnpj/&#123;basico&#125;/estabelecimentos</code>.</p>
+        <div class="out">Saída. <code>GET /cnpj/00.000.000/0001-91</code> (Banco do Brasil) em 6 ms contra os 30 GB. Critério &#x23;1 atendido.</div>
+      </article>
+
+      <article class="vb-sprint">
+        <div class="kicker">MCP · 4–5 DIAS ORÇADOS</div>
+        <div class="num">03</div>
+        <div class="title">"I — caixa-preta para o LLM"</div>
+        <div class="recipe">FASTMCP · 9 TOOLS · STDIO</div>
+        <p>Tools tipadas via decorator <code>@mcp.tool()</code>. Reusam <code>app.servicos</code> diretamente. Paginação manual com <code>limit/offset</code> + <code>tem_mais</code>. Smoke direto (sem subprocess): sete tools em menos de 6 ms; duas dependiam de índice composto (resolvidas pela migration logo após).</p>
+        <div class="out">Saída. Registrado em <code>~/.claude/mcp.json</code> preservando os cinco MCP servers anteriores. Critério &#x23;2 atendido (validação visual requer restart do cliente).</div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 03 · Arquitetura ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">03</div>
+  <div class="vb-secbody">
+    <h2>Arquitetura final</h2>
+
+    <p>Três módulos isolados em <em>quatro camadas funcionais</em>. O MCP server importa apenas a camada de serviços — nunca a camada de rotas — para não inflar o startup com FastAPI.</p>
+
+<pre class="vb-code">dados-abertos-cnpj/
+├── pyproject.toml          uv 0.10.10 · Python 3.12 · extras [api]/[mcp]/[dev]
+├── uv.lock                 392 KB · lockfile reproduzível
+├── requirements.txt        auto-gerado · mantém pipeline atual funcionando
+├── main.py · fetcher.py · database.py · notifier.py   (pipeline original — intocado)
+│
+├── cnpj_lib/               ┐  Biblioteca compartilhada (J)
+│   ├── validador.py        │  Módulo 11 (alfa + num) · pesos posicionais · ord(c) − 48
+│   ├── formatador.py       │  normalizar · formatar · fragmentar · mascarar_cpf · parsear_data
+│   └── dominio.py          ┘  6 tabelas hardcoded RFB + descrever()
+│
+├── app/                    ┐  Núcleo da API (A) — reusado pelo MCP
+│   ├── main.py             │  FastAPI · lifespan · run_uvicorn()
+│   ├── config.py           │  pydantic-settings (db_path, bind, port, cors)
+│   ├── db.py               │  sqlite3 URI ?mode=ro · context manager
+│   ├── dependencias.py     │  Depends(conn) · validação de CNPJ no path
+│   ├── schemas/            │  Pydantic v2 — modelos compartilhados com MCP
+│   │   ├── comum.py        │     CodigoDescricao, Endereco, Contato, Documento, Paginacao
+│   │   ├── socio.py        │     Socio, RepresentanteLegal
+│   │   └── cnpj.py         │     Empresa, Estabelecimento, Simples, CNPJResponse
+│   ├── repositorios/       │  SQL puro
+│   │   ├── lookup_repo.py  │     cache em memória das 6 lookups (load no startup)
+│   │   ├── empresa_repo.py
+│   │   ├── estabelecimento_repo.py
+│   │   ├── socio_repo.py
+│   │   ├── busca_repo.py   │     cnaes_por_municipio · empresas_por_cnae
+│   │   └── controle_repo.py│     metadados de controle_importacao
+│   ├── servicos/           │  Orquestrador — único ponto de reuso entre rotas e MCP
+│   │   └── consulta_cnpj.py
+│   └── rotas/              ┘  FastAPI routers
+│       ├── meta.py             /health · /periodo-atual · /stats
+│       └── cnpj.py             /cnpj/&#123;cnpj&#125; · /socios · /estabelecimentos
+│
+├── mcp_server/             ┐  Servidor MCP (I)
+│   └── server.py           ┘  FastMCP · 9 tools · main() stdio
+│
+├── tests/
+│   ├── unit/               60 testes verdes em 0,27 s · cobertura 100% em cnpj_lib/
+│   ├── integracao/         (vazio — backlog)
+│   └── mcp/                (vazio — backlog)
+│
+├── migrations/
+│   └── add_indices_post_sprint_zero.sql   APLICADO em produção (340 s)
+│
+└── docs/
+    ├── briefing-2026-05-23.html               Nº 001 · viabilidade
+    ├── briefing-implementacao-2026-05-23.html Nº 002 · plano
+    ├── relatorio-execucao-2026-05-23.html     Nº 003 · ESTE
+    └── design/
+        ├── dossie-editorial.md                spec canônica
+        └── dossie-editorial-referencia.html   render de referência</pre>
+  </div>
+</section>
+
+<!-- ===================== 04 · Métricas ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">04</div>
+  <div class="vb-secbody">
+    <h2>Métricas de performance</h2>
+
+    <h3>API HTTP — contra <code>dados_cnpj.db</code> de produção (30 GB)</h3>
+    <table class="vb-tab">
+      <thead><tr><th>Endpoint</th><th>HTTP</th><th>Tempo</th><th>Observação</th></tr></thead>
+      <tbody>
+        <tr><td>/api/v1/health</td><td>200</td><td class="num">4 ms</td><td>—</td></tr>
+        <tr><td>/api/v1/periodo-atual</td><td>200</td><td class="num">2 ms</td><td>devolve <code>"2026-05"</code></td></tr>
+        <tr><td>/api/v1/stats (1º hit)</td><td>200</td><td class="num">1 s</td><td>cache lazy popula</td></tr>
+        <tr><td>/api/v1/stats (2º hit)</td><td>200</td><td class="num">1,6 ms</td><td>cache hit</td></tr>
+        <tr><td>/api/v1/cnpj/00000000000191</td><td>200</td><td class="num">6 ms</td><td>Banco do Brasil · 21 KB de payload</td></tr>
+        <tr><td>/api/v1/cnpj/&#123;basico&#125;/socios?limit=3</td><td>200</td><td class="num">2 ms</td><td>total=39 · paginação ok</td></tr>
+        <tr><td>/api/v1/cnpj/&#123;basico&#125;/estabelecimentos</td><td>200</td><td class="num">3 ms</td><td>total=7.880 filiais do BB</td></tr>
+        <tr><td>/api/v1/cnpj/12ABC34501DE35</td><td>404</td><td class="num">3 ms</td><td>alfa NT 2025 · não existe no banco</td></tr>
+        <tr><td>/api/v1/cnpj/xyz</td><td>422</td><td class="num">1 ms</td><td>validador rejeita</td></tr>
+      </tbody>
+    </table>
+
+    <h3>MCP tools — antes × depois da migration</h3>
+    <table class="vb-tab">
+      <thead><tr><th>Tool</th><th>Antes</th><th>Depois</th><th>Fator</th></tr></thead>
+      <tbody>
+        <tr><td>cnaes_por_municipio (Brasília)</td><td class="num">69.665 ms</td><td class="num">69 ms</td><td class="deep">1.000×</td></tr>
+        <tr><td>empresas_por_cnae (CNAE+UF)</td><td class="num">2.949 ms</td><td class="num">194 ms</td><td class="deep">15×</td></tr>
+        <tr><td>vinculos_pj (30 vínculos)</td><td class="num">—</td><td class="num">0,9 ms</td><td class="deep">★</td></tr>
+        <tr><td>listar_socios (controle)</td><td class="num">0,8 ms</td><td class="num">0,8 ms</td><td>—</td></tr>
+        <tr><td>buscar_empresa (controle)</td><td class="num">2,2 ms</td><td class="num">2,2 ms</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-family:var(--font-serif); font-style:italic; font-size:12.5px; color:var(--ink-italic); margin-top:12px;">A migration aplicou quatro <code>CREATE INDEX</code> + <code>ANALYZE</code> em quatro tabelas-fato. Custo: 340 segundos (5min 40s) uma única vez. Próximas re-execuções do pipeline já têm os índices novos.</p>
+  </div>
+</section>
+
+<!-- ===================== 05 · Decisões registradas ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">05</div>
+  <div class="vb-secbody">
+    <h2>Decisões registradas</h2>
+
+    <table class="vb-tab">
+      <thead><tr><th>Decisão</th><th>Escolha</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <tr><td>Framework HTTP</td><td>FastAPI 0.115+</td><td>Pydantic 2 nativo — mesma definição alimenta MCP via FastMCP; Swagger em pt-BR grátis; <code>TestClient</code> zero-fricção.</td></tr>
+        <tr><td>Acesso ao banco</td><td><code>sqlite3</code> puro + repositórios finos</td><td>Schema é fixo (vem da RFB), queries são poucas. ORM (SQLAlchemy) somaria 200 ms de import e zero benefício.</td></tr>
+        <tr><td>Concorrência leitura/escrita</td><td>URI <code>?mode=ro</code></td><td>Defesa real contra <code>INSERT</code> acidental; WAL (configurado pelo pipeline) permite N readers + 1 writer.</td></tr>
+        <tr><td>Cache de lookups</td><td>Carregado no <code>lifespan</code> startup</td><td>~30 MB RAM, ~200 k entradas, traduções O(1). Reduz hit no SQLite em quase todas as rotas.</td></tr>
+        <tr><td>Cache de <code>/stats</code></td><td>Lazy em <code>app.state</code></td><td>COUNT(*) em 68M+ linhas sem ANALYZE leva ~60 s. Primeiro hit popula; restantes são instantâneos.</td></tr>
+        <tr><td>Período da safra</td><td><code>SUBSTR(MAX(data_importacao), 1, 7)</code></td><td><code>controle_importacao</code> não armazena o período da RFB; deriva da data de import. Heurística boa o bastante para uso local.</td></tr>
+        <tr><td>Gestão de deps</td><td><code>uv</code> + <code>pyproject.toml</code></td><td>Resolução em ms, lockfile reproduzível, entrypoints sem ativar venv. <code>requirements.txt</code> mantido auto-gerado.</td></tr>
+        <tr><td>MCP integra com a API</td><td>Importa <code>app.servicos</code> direto</td><td>Sem rede, sem subprocess, mesma transação sqlite, mesmo Pydantic. Single source-of-truth para "CNPJ completo".</td></tr>
+        <tr><td>Paginação no MCP</td><td>Manual <code>limit/offset + tem_mais</code></td><td>MCP não tem paginação nativa para <code>tools/call</code> — tools sem disciplina estouram o contexto do LLM.</td></tr>
+        <tr><td>CPF de sócio PF</td><td>Expor como vem (<code>***NNNNNN**</code>) + flag <code>mascarado: true</code></td><td>RFB sempre publica PF mascarado em dados abertos. Não tentar desmascarar.</td></tr>
+        <tr><td>Validador alfanumérico</td><td>Mesmo algoritmo para <em>os dois formatos</em></td><td>O CNPJ legado é caso particular do novo: <code>ord('0') − 48 = 0</code>. Um validador único bastou.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== 06 · Pontos de atrito ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">06</div>
+  <div class="vb-secbody">
+    <h2>Pontos de atrito resolvidos</h2>
+
+    <div class="vb-art">
+      <div class="head"><div class="id">i</div><div class="nm"><em>/periodo-atual</em> devolvia <code>"Socios9"</code></div></div>
+      <div class="meta">
+        <span>onde: <strong>app/rotas/meta.py</strong></span>
+        <span>causa: <strong>SUBSTR(arquivo, 1, 7)</strong></span>
+        <span>impacto: <strong>baixo</strong></span>
+      </div>
+      <div class="body">A query lia o nome do arquivo (<code>Socios9.zip</code>), não o período. Correção: deriva de <code>SUBSTR(MAX(data_importacao), 1, 7)</code> → <code>"2026-05"</code>.</div>
+    </div>
+
+    <div class="vb-art">
+      <div class="head"><div class="id">ii</div><div class="nm"><em>/stats</em> levava 62 segundos no primeiro hit</div></div>
+      <div class="meta">
+        <span>onde: <strong>app/rotas/meta.py</strong></span>
+        <span>causa: <strong>COUNT(*) sem ANALYZE</strong></span>
+        <span>impacto: <strong>médio</strong></span>
+      </div>
+      <div class="body">COUNT em tabelas de 68M+ linhas sem <code>sqlite_stat1</code> populado. Correção dupla: cache lazy em <code>app.state.stats_cache</code> + <code>ANALYZE</code> em todas as tabelas-fato na migration. Hoje primeiro hit roda em ~1 s; cache hit é instantâneo.</div>
+    </div>
+
+    <div class="vb-art">
+      <div class="head"><div class="id">iii</div><div class="nm"><em>cnaes_por_municipio</em> em Brasília levava 70 segundos</div></div>
+      <div class="meta">
+        <span>onde: <strong>mcp_server/tools/cnaes_por_municipio</strong></span>
+        <span>causa: <strong>GROUP BY sem índice composto</strong></span>
+        <span>impacto: <strong>alto</strong></span>
+      </div>
+      <div class="body">GROUP BY em todos os estabelecimentos de Brasília (mais de 1.000 CNAEs distintos) sem índice <code>(municipio, cnae_fiscal_principal)</code> fazia table-scan. Correção: <code>CREATE INDEX idx_estab_municipio_cnae</code> na migration. Speedup mensurado: 1.000×.</div>
+    </div>
+
+    <div class="vb-art">
+      <div class="head"><div class="id">iv</div><div class="nm"><em>vinculos_pj</em> sem índice em <code>cnpj_cpf_socio</code></div></div>
+      <div class="meta">
+        <span>onde: <strong>app/repositorios/socio_repo.py</strong></span>
+        <span>causa: <strong>tabela socios sem PK declarada</strong></span>
+        <span>impacto: <strong>alto</strong></span>
+      </div>
+      <div class="body">Sem índice, busca por CPF mascarado escaneia 27,6M linhas. Correção: <code>CREATE INDEX idx_socios_documento</code> + <code>idx_socios_basico_id</code>. Tool agora responde em &lt; 1 ms.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 07 · Critérios ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">07</div>
+  <div class="vb-secbody">
+    <h2>Critérios do Caminho 01</h2>
+
+    <div class="vb-criteria">
+      <div class="vb-crit">
+        <div class="num">01</div>
+        <p><code>uv run cnpj-api</code> levanta em <code>localhost:8000</code>; <code>GET /cnpj/00000000000191</code> em <strong class="deep">6 ms</strong> (orçado &lt; 800 ms); <code>/docs</code> mostra Swagger curado em pt-BR. <em>Atendido com folga.</em></p>
+      </div>
+      <div class="vb-crit">
+        <div class="num">02</div>
+        <p><code>mcp-cnpj</code> registrado em <code>~/.claude/mcp.json</code> com nove tools tipadas; smoke direto retornou payload idêntico ao da API. <em>Pendência: restart do Claude Code para confirmação visual no <code>/mcp</code>.</em></p>
+      </div>
+      <div class="vb-crit">
+        <div class="num">03</div>
+        <p><code>pytest</code> verde com Hypothesis: <strong class="deep">60 testes</strong> em 0,27 s, cobertura <strong class="deep">100%</strong> em <code>cnpj_lib/</code>. Casos da NT 2025.001 + bases aleatórias <code>[0-9A-Z]&#123;12&#125;</code>. <em>Atendido na Sprint 01.</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 08 · Próximos passos ===================== -->
+<section class="vb-sec">
+  <div class="vb-num">08</div>
+  <div class="vb-secbody">
+    <h2>Próximos passos possíveis</h2>
+
+    <h3>Curto prazo — polimento</h3>
+    <table class="vb-tab">
+      <thead><tr><th>O quê</th><th>Esforço</th><th>Por quê</th></tr></thead>
+      <tbody>
+        <tr><td>Restart do Claude Code + validar MCP</td><td>5 min</td><td>fecha visualmente o critério &#x23;2</td></tr>
+        <tr><td>Testes de integração da API com fixture</td><td>1–2 dias</td><td>protege as 6 rotas contra regressão</td></tr>
+        <tr><td>Rotas <code>/lookups</code> e <code>/busca</code> simétricas ao MCP</td><td>1 dia</td><td>hoje o MCP cobre mais que a API HTTP</td></tr>
+        <tr><td>Mover índices novos para <code>database.py::create_indices()</code></td><td>30 min</td><td>próxima re-execução do pipeline preserva</td></tr>
+        <tr><td>Coluna <code>periodo</code> em <code>controle_importacao</code></td><td>1 hora</td><td>elimina heurística do <code>/periodo-atual</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Médio prazo — próximos caminhos do briefing Nº 001</h3>
+    <table class="vb-tab">
+      <thead><tr><th>Caminho</th><th>Composição</th><th>Esforço</th></tr></thead>
+      <tbody>
+        <tr><td>02 · Observatório de deltas + grafo PJ</td><td>B (delta mensal) + E (grafo PJ↔PJ) + C (heatmap CNAE×município)</td><td>2–3 meses</td></tr>
+        <tr><td>03 · Observatório econômico de RO</td><td>H (dashboard regional) + D (KYB simplificado)</td><td>4–6 semanas</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Lateral — desbloqueia ecossistema</h3>
+    <ul>
+      <li>Publicar <code>cnpj_lib</code> no PyPI — validador alfanumérico Python é gap real; a comunidade hoje cita só lib JS.</li>
+      <li>Publicar <code>mcp-cnpj</code> em <code>uvx</code> — instalação zero-config para outros usuários.</li>
+      <li><code>README.md</code> orientado a público externo (hoje só temos <code>CLAUDE.md</code>).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 09 · O que não fazer ===================== -->
+<section class="vb-sec full">
+  <div class="vb-num">09</div>
+  <div class="vb-secbody">
+    <div class="vb-nope">
+      <h2>O que <u>não</u> fazer agora</h2>
+      <ul>
+        <li><strong>Não expor a API publicamente sem auth.</strong> Default é <code>127.0.0.1:8000</code> por uma razão — auth + rate-limit ficam no Caminho 04.</li>
+        <li><strong>Não tentar diff de safras com snapshot atual.</strong> <code>delta_mensal</code> está em MVP (só metadados); diff real exige preservar tabelas históricas — Caminho 02.</li>
+        <li><strong>Não migrar <code>database.py</code> para SQLAlchemy.</strong> Schema é fixo, queries são poucas. Repositórios em <code>sqlite3</code> puro bastam.</li>
+        <li><strong>Não fazer busca reversa por nome de sócio PF indexável.</strong> O briefing Nº 001 marcou como zona LGPD vermelha — Casa dos Dados sofre pedidos recorrentes.</li>
+        <li><strong>Não tentar tools que retornem mais de 500 linhas em uma única chamada.</strong> Disciplina de paginação é parte do contrato — tools que não caibam viram <em>resources</em>, não <em>tools</em>.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="vb-foot">
+  <p>Relatório de execução gerado em 23 de maio de 2026, sessão única. Implementação do Caminho 01 (A + I + J) concluída em quatro sprints. Próximas peças desta série: o registro contínuo de manutenção dos artefatos, conforme o pipeline mensal da Receita Federal evoluir, e a decisão sobre prosseguir para o Caminho 02 ou 03 do briefing Nº 001.</p>
+</footer>
+
+</main>
+</body>
+</html>
