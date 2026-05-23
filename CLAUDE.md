@@ -2,6 +2,8 @@
 
 Pipeline Python que baixa os Dados Abertos do CNPJ (Receita Federal) via WebDAV público do Nextcloud da RFB e ingere em SQLite local, com retomada e idempotência. Sobre esse banco vivem **dois consumidores**: uma **API HTTP local** (FastAPI) e um **MCP server** (FastMCP, 9 tools) — ambos read-only, em pt-BR.
 
+> **📍 Estado em 2026-05-23 (pausa)** — pipeline executado (banco com 37 GB, período `2026-05`), monitor + API integ + MCP tests no commits `a7b4693`/`d2707c2`/`45496e2`/`origin/main`. **WIP não commitado:** suite `tests/mcp/` (4 arquivos + conftest, 37 testes verde) + refator de `tests/conftest.py` (compartilha `tmp_db_path`/`cnpjs`) — `git status` mostra o set. Próximo passo: split em 2 commits (refactor + test) e push.
+
 ## 📚 Série de documentos
 
 Três peças encadeadas em `docs/` registram a decisão e a execução do Caminho 01 ("Caixa-preta de CNPJ pra mim"):
@@ -11,6 +13,7 @@ Três peças encadeadas em `docs/` registram a decisão e a execução do Caminh
 | 001 | [`briefing-2026-05-23.html`](./docs/briefing-2026-05-23.html) | Pesquisa de viabilidade (mercado + restrições legais + 10 soluções + 3 caminhos) |
 | 002 | [`briefing-implementacao-2026-05-23.html`](./docs/briefing-implementacao-2026-05-23.html) | Plano executável (stack + estrutura + 4 sprints + modelagem JSON) |
 | 003 | [`relatorio-execucao-2026-05-23.html`](./docs/relatorio-execucao-2026-05-23.html) | Relatório de entrega (4 sprints concluídos + métricas + decisões registradas) |
+| 004 | [`backlog-2026-05-23.html`](./docs/backlog-2026-05-23.html) | Backlog &amp; alternativas pós-pausa (estado, polimento, caminhos 02/03, 10 soluções, decisões válidas) |
 
 Sistema visual: [`docs/design/dossie-editorial.md`](./docs/design/dossie-editorial.md) — variante B (creme + Newsreader + vermillion único, sem emoji).
 
@@ -76,9 +79,10 @@ mcp_server/              Servidor MCP (I)
 └── server.py            FastMCP("cnpj-br") + 9 tools tipadas via @mcp.tool()
 
 migrations/              SQL idempotente (ANALYZE + 4 índices novos aplicados 2026-05-23)
+tests/conftest.py        Fixtures compartilhadas: tmp_db_path + cnpjs (WIP, 2026-05-23)
 tests/unit/              60 testes pytest + Hypothesis, cobertura 100% em cnpj_lib/
-tests/integracao/        (vazio — backlog)
-tests/mcp/               (vazio — backlog)
+tests/integracao/        27 testes — FastAPI TestClient contra SQLite descartável (commit 45496e2)
+tests/mcp/               37 testes — chamada direta das 9 tools FastMCP (WIP, 2026-05-23)
 
 monitor/                 Observabilidade — stdlib only, não invasivo
 ├── collect.py           Daemon que parseia dados-abertos-cnpj.log → status.json

@@ -259,6 +259,10 @@
     font-family:var(--font-serif); font-size:11px; font-style:italic;
     color:var(--kk-caption); line-height:1.6;
   }
+  a { color:var(--ink-body); text-decoration:underline; text-decoration-color:var(--rule-soft); text-decoration-thickness:1px; text-underline-offset:2px; }
+  a:hover { text-decoration-color:var(--ink-body); }
+  .vb-foot a { color:var(--ink-italic); }
+  .vb-foot a:hover { color:var(--ink-body); }
 </style>
 </head>
 <body>
@@ -277,7 +281,7 @@
 </div>
 
 <h1 class="vb-title">"Caixa-preta de CNPJ pra mim" — <em>plano executável</em></h1>
-<p class="vb-lead">Três artefatos — validador, API local e MCP server — em três sprints úteis. Stack: FastAPI sobre <code>sqlite3</code> puro, <code>uv</code> gerindo deps, FastMCP expondo nove ferramentas tipadas. Começa por J (validador alfanumérico) porque a vigência do CNPJ alfa é 06/07/2026 e o algoritmo é dependência limpa de A e I. Total: três semanas e meia úteis, com margem de buffer dentro do orçamento de quatro do briefing Nº 001.</p>
+<p class="vb-lead">Três artefatos — validador, API local e MCP server — em três sprints úteis. Stack: FastAPI sobre <code>sqlite3</code> puro, <code>uv</code> gerindo deps, FastMCP expondo nove ferramentas tipadas. Começa por J (validador alfanumérico) porque a vigência do CNPJ alfa é 06/07/2026 e o algoritmo é dependência limpa de A e I. Total: três semanas e meia úteis, com margem de buffer dentro do orçamento de quatro do <a href="./briefing-2026-05-23.html">Briefing Nº 001</a>.</p>
 
 <!-- ===================== 01 — STACK ===================== -->
 <section class="vb-sec">
@@ -626,6 +630,7 @@
 
 <footer class="vb-foot">
   <p>Briefing de implementação gerado em 23 de maio de 2026 por equipe técnica — Explore (codebase + schema real), general-purpose (MCP Python SDK + spec NT 2025.001) e Plan (síntese arquitetural). Material bruto preservado nos transcripts. Próximo passo factual: aprovar plano e iniciar Sprint 00 + Sprint 01.</p>
+  <p>Origem: <a href="./briefing-2026-05-23.html">Briefing Nº 001</a> (viabilidade e três caminhos). Peças que derivaram desta: <a href="./relatorio-execucao-2026-05-23.html">Relatório de execução Nº 003</a> (entrega dos quatro sprints) e <a href="./backlog-2026-05-23.html">Backlog &amp; alternativas Nº 004</a> (consolidação da pausa).</p>
 </footer>
 
 </main>
