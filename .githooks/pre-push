@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# .githooks/pre-push — Gate de CI local antes de push para main
+#
+# Padrão "CI local 3 camadas" (ref: docs/CI-LOCAL.md, origem em projeto nous).
+# Adotado em 2026-05-23.
+#
+# Regras:
+#   0. Roda `make ci-fast` antes de push para `main`.
+#      Falha bloqueia o push.
+#   1. Pula em branches `feature/*`, `experiments/*` etc — commits intermediários
+#      não disparam CI.
+#
+# Escape (documentar no PR/commit):
+#   CNPJ_SKIP_PREPUSH=1 git push ...
+#
+# Instalar: make install-ci-hooks (seta core.hooksPath = .githooks)
+
+set -uo pipefail
+
+PROJECT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+[ -z "$PROJECT_ROOT" ] && exit 0
+
+mapfile -t PUSH_REFS
+
+SHOULD_RUN=0
+for line in "${PUSH_REFS[@]}"; do
+    read -r _local_ref _local_sha remote_ref _remote_sha <<< "$line"
+    case "$remote_ref" in
+        refs/heads/main)
+            SHOULD_RUN=1
+            ;;
+    esac
+done
+
+if [ "$SHOULD_RUN" -eq 0 ]; then
+    echo "▸ pre-push: branch não-protegida — pulando ci-fast" >&2
+    echo "  (rode 'make ci' manualmente antes de mergear)" >&2
+    exit 0
+fi
+
+if [ "${CNPJ_SKIP_PREPUSH:-0}" = "1" ]; then
+    echo "▸ pre-push: ci-fast PULADO (CNPJ_SKIP_PREPUSH=1)" >&2
+    exit 0
+fi
+
+echo "▸ pre-push: branch protegida (main) — rodando 'make ci-fast'..." >&2
+
+cd "$PROJECT_ROOT" || exit 1
+if ! make --no-print-directory ci-fast >&2; then
+    cat >&2 <<'EOF'
+
+❌ pre-push: 'make ci-fast' falhou — push BLOQUEADO.
+
+Diagnóstico:
+  1. Rode 'make ci-fast' local (ou 'make lint' + 'make format-check').
+  2. Conserte: 'make format' aplica fixes do ruff automaticamente.
+  3. Para CI completo (mais lento): 'make ci' (inclui pytest).
+
+Escape (raro, documentar):
+  CNPJ_SKIP_PREPUSH=1 git push ...
+
+EOF
+    exit 1
+fi
+
+echo "▸ pre-push: CI local verde — prosseguindo." >&2
+exit 0
