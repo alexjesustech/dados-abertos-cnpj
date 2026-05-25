@@ -19,6 +19,41 @@ Sistema visual: [`docs/design/dossie-editorial.md`](./docs/design/dossie-editori
 
 ---
 
+## 🤖 Diretrizes para Agentes de IA
+
+Este projeto é lido tanto pelo Claude Code quanto por agentes Gemini (Antigravity, Code Assist, CLI) — ambos consomem este mesmo arquivo via symlink `GEMINI.md → CLAUDE.md`, conforme política global em [`../CLAUDE.md`](../CLAUDE.md). Regras específicas deste repo (consolidadas do antigo `GEMINI.md` em 2026-05-25):
+
+### Convenções de código
+
+* PEP 8 + regras de `.pylintrc`. Comentários só onde o porquê não for óbvio.
+* **Sem `print()` direto** em código de produção — usar sempre `Notifier.log_and_notify(message, level=logging.INFO|WARNING|ERROR)`; cuida de log em arquivo + Discord/Telegram opcionais.
+* Path resolution via `pathlib.Path`, **nunca** `os.path.join`.
+* Strings de log em pt-BR (segue a política global do workspace).
+
+### Antes de mudar
+
+* **Arquitetura:** preserve a divisão `main → fetcher → database → notifier` (ver "Arquitetura" abaixo). Se for refatorar, justifique o desvio.
+* **Dependências:** avaliar stdlib primeiro. A camada original tem só `requests` justamente pra manter a árvore enxuta; a camada nova (API+MCP) entra via `uv` com extras (`--extra api`, `--extra mcp`, `--extra dev`).
+* **Schema do SQLite:** verificar `controle_importacao` — DDL muda comportamento em bancos já populados em produção.
+* **`fetcher.py`:** a fonte é HTTP estático via WebDAV público da RFB. Se `RFB_SHARE_TOKEN` ou path mudar, é configuração — **não** reescrever pra usar Selenium ou outra fonte (POCs antigas estão preservadas na branch `experiments/spa-scraping`).
+
+### Checklist pré-commit
+
+1. `pylint *.py` (camada original) e/ou `uv run ruff check .` (camada nova) sem regressões.
+2. Logs novos em pt-BR.
+3. Sem token, webhook ou path absoluto do usuário no diff.
+4. Se mexeu em DDL, atualizou o trecho correspondente em "Arquitetura".
+5. Mensagem de commit em pt-BR, imperativo (`adiciona X`, `corrige Y`, `remove Z`).
+
+### Não faça
+
+* **Sem Selenium / geckodriver / drivers de navegador** — a fonte é HTTP estático via WebDAV.
+* **Sem baixar ZIP pra disco antes de ingerir** — o pipeline já faz streaming direto do ZIP; reverter custa ~50 GB de pico de disco.
+* **Sem trocar `INSERT OR REPLACE` por `INSERT` puro** em tabelas com PK — quebra idempotência em re-execuções parciais.
+* **Sem hardcode do `RFB_SHARE_TOKEN`** no código — sempre via env (o default em `fetcher.py` é só fallback).
+
+---
+
 ## 🛠️ Comandos Frequentes
 
 > Comandos que leem envs (DB_PATH, TELEGRAM_BOT_TOKEN, etc.) devem ser prefixados por `bin/with-env` desde a migração SOPS+age de 2026-05-24 — vide seção "Segredos" no final deste documento.
