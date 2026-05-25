@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# bin/with-env — executa um comando com as vars de .env.sops.yaml injetadas no env do subprocess.
+#
+# Uso:
+#   bin/with-env <comando> [args...]
+#
+# Exemplos:
+#   bin/with-env python main.py
+#   bin/with-env .venv/bin/uvicorn monitor.server:app --reload
+#
+# As vars NUNCA entram no env do shell pai — só no subprocess executado.
+# Pra editar valores: SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt EDITOR=micro sops .env.sops.yaml
+# Howto canônico: ~/projects/docs/sops-secrets-howto.md
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SOPS_FILE="${REPO_ROOT}/.env.sops.yaml"
+
+if [ ! -f "$SOPS_FILE" ]; then
+  echo "erro: $SOPS_FILE não existe. Cifre via: sops --age \$PUBKEY --input-type dotenv --output-type yaml -e .env > .env.sops.yaml" >&2
+  exit 1
+fi
+
+export SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}"
+exec sops exec-env "$SOPS_FILE" "$*"

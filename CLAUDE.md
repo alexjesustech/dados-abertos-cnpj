@@ -21,18 +21,20 @@ Sistema visual: [`docs/design/dossie-editorial.md`](./docs/design/dossie-editori
 
 ## 🛠️ Comandos Frequentes
 
+> Comandos que leem envs (DB_PATH, TELEGRAM_BOT_TOKEN, etc.) devem ser prefixados por `bin/with-env` desde a migração SOPS+age de 2026-05-24 — vide seção "Segredos" no final deste documento.
+
 ### Pipeline (camada original)
 
-* **Executar o pipeline completo**: `.venv/bin/python main.py`
+* **Executar o pipeline completo**: `bin/with-env .venv/bin/python main.py`
 * **Instalar dependências (legado)**: `.venv/bin/pip install -r requirements.txt`
 * **Análise estática**: `.venv/bin/pylint *.py`
 
 ### API + MCP (Caminho 01)
 
 * **Setup uv**: `uv sync --extra api --extra mcp --extra dev`
-* **Levantar API**: `uv run cnpj-api` → `http://127.0.0.1:8000` (Swagger em `/docs`)
-* **Levantar MCP stdio**: `uv run mcp-cnpj` (geralmente chamado pelo Claude Code via `~/.claude/mcp.json`)
-* **Rodar testes**: `uv run pytest tests/ -v` (60 unitários, cobertura 100% em `cnpj_lib/`)
+* **Levantar API**: `bin/with-env uv run cnpj-api` → `http://127.0.0.1:8000` (Swagger em `/docs`)
+* **Levantar MCP stdio**: `bin/with-env uv run mcp-cnpj` (geralmente chamado pelo Claude Code via `~/.claude/mcp.json`)
+* **Rodar testes**: `bin/with-env uv run pytest tests/ -v` (60 unitários, cobertura 100% em `cnpj_lib/`)
 * **Lint moderno**: `uv run ruff check .`
 
 ### Monitor (observabilidade do pipeline)
@@ -157,3 +159,38 @@ Período `2026-05` (referência):
 * 37 ZIPs, ~8 GB comprimidos
 * `Estabelecimentos0.zip` é o maior individual (~2 GB)
 * Banco final descomprimido: ~50 GB
+
+
+---
+
+## Segredos
+
+Migrado para **SOPS + age** em 2026-05-24 (substitui o `.env` plaintext legado). Stack do projeto:
+
+| Item | Onde | Notas |
+|---|---|---|
+| `.env.sops.yaml` | raiz do repo, **versionado** | Ciphertext. Cifrado pra public key age `age17utcae5zrq0qfhaundd7u7wa74nm54a597pjg7q2ukl8s8883f9srky767` (workstation `base-station`). |
+| `.sops.yaml` | raiz do repo, versionado | Config file: declara o recipient age pro `creation_rules`. Evita ter que passar `--age` em cada operação. |
+| `.env` plaintext | `~/projects/dados-abertos-cnpj/.env`, **gitignored** | Mantido localmente como fallback (pydantic_settings lê do arquivo OU do env — env vence). **Deve ser shredded** após validação total. |
+| `bin/with-env` | versionado, +x | Wrapper que injeta vars do `.env.sops.yaml` no subprocess via `sops exec-env`. Vars **não vazam** pro env do shell pai. |
+
+### Como rodar comandos que precisam de envs
+
+Prefixar comandos com `bin/with-env`:
+
+```bash
+bin/with-env .venv/bin/python main.py
+bin/with-env uv run cnpj-api
+bin/with-env uv run mcp-cnpj
+bin/with-env uv run pytest tests/ -v
+```
+
+### Como editar valores
+
+```bash
+SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt EDITOR=micro sops .env.sops.yaml
+```
+
+(Editor `micro` é o default da workstation — substituir por `nano`/`vim`/`code -w` se preferir.)
+
+**NUNCA editar `.env.sops.yaml` direto via `micro .env.sops.yaml`** — quebra o MAC e o arquivo vira inválido. Howto canônico (humanos + agentes): [`../docs/sops-secrets-howto.md`](../docs/sops-secrets-howto.md). Política global: [`../CLAUDE.md`](../CLAUDE.md) "Segredos & envs (SOPS + age)".
