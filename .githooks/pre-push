@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+
+# === gate de CHANGELOG (diretiva de documentação obrigatória, 2026-05-30) ===
+# Push pra main/develop com mudança de CÓDIGO sem atualizar CHANGELOG.md => bloqueia.
+# Escape declarado: SKIP_CHANGELOG_GATE=1 (documente o porquê).
+__cg_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+if { [ "$__cg_branch" = "main" ] || [ "$__cg_branch" = "develop" ]; } \
+   && [ "${SKIP_CHANGELOG_GATE:-0}" != "1" ] \
+   && git rev-parse --abbrev-ref '@{upstream}' >/dev/null 2>&1; then
+  __cg_changed="$(git diff --name-only '@{upstream}..HEAD' 2>/dev/null || true)"
+  __cg_code="$(printf '%s\n' "$__cg_changed" | grep -vE '^(CHANGELOG\.md$|docs/|\.githooks/|\.gitea/|\.github/|.*\.md$)' | grep -v '^$' || true)"
+  __cg_clog="$(printf '%s\n' "$__cg_changed" | grep -E '^CHANGELOG\.md$' || true)"
+  if [ -n "$__cg_code" ] && [ -z "$__cg_clog" ]; then
+    echo "✗ changelog-gate: mudança de código a empurrar sem entrada nova em CHANGELOG.md [Unreleased]." >&2
+    echo "  Atualize o CHANGELOG (diretiva de documentação obrigatória) ou use SKIP_CHANGELOG_GATE=1 (documente)." >&2
+    exit 1
+  fi
+fi
+# === fim do gate de CHANGELOG ===
 # .githooks/pre-push — Gate de CI local antes de push para main
 #
 # Padrão "CI local 3 camadas" (ref: docs/CI-LOCAL.md, origem em projeto nous).
