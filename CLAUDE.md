@@ -2,14 +2,15 @@
 
 Pipeline Python que baixa os Dados Abertos do CNPJ (Receita Federal) via WebDAV público do Nextcloud da RFB e ingere em SQLite local, com retomada e idempotência. Sobre esse banco vivem **dois consumidores**: uma **API HTTP local** (FastAPI) e um **MCP server** (FastMCP, 9 tools) — ambos read-only, em pt-BR.
 
-> **📍 Estado em 2026-05-23 (pausa)** — pipeline executado (banco com 37 GB, período `2026-05`), monitor + API integ + MCP tests no commits `a7b4693`/`d2707c2`/`45496e2`/`origin/main`. **WIP não commitado:** suite `tests/mcp/` (4 arquivos + conftest, 37 testes verde) + refator de `tests/conftest.py` (compartilha `tmp_db_path`/`cnpjs`) — `git status` mostra o set. Próximo passo: split em 2 commits (refactor + test) e push.
+> **📍 Estado** — pipeline executado (banco com 37 GB, período `2026-05`); monitor + API integ + MCP tests já commitados. A suite `tests/mcp/` (chamada direta das 9 tools FastMCP, commit `812e8bb`) e o refator de `tests/conftest.py` (fixtures compartilhadas `tmp_db_path`/`cnpjs`, commit `548bab1`) entraram na história — não há mais WIP pendente desses itens. `git log` mostra como topo `b709aa0` (GEMINI.md symlink + merge das diretrizes de agentes no CLAUDE.md).
 
 ## 📚 Série de documentos
 
-Três peças encadeadas em `docs/` registram a decisão e a execução do Caminho 01 ("Caixa-preta de CNPJ pra mim"):
+As peças encadeadas em `docs/` registram a decisão e a execução do Caminho 01 ("Caixa-preta de CNPJ pra mim"):
 
 | Nº | Documento | Tipo |
 |---|---|---|
+| 000 | [`planejamento-2026-05-23.html`](./docs/planejamento-2026-05-23.html) | Planejamento de produto — o que dá pra construir (estado atual + mercado + restrições legais + datasets cruzáveis + catálogo de soluções + 3 caminhos). Peça fundadora que originou a série. |
 | 001 | [`briefing-2026-05-23.html`](./docs/briefing-2026-05-23.html) | Pesquisa de viabilidade (mercado + restrições legais + 10 soluções + 3 caminhos) |
 | 002 | [`briefing-implementacao-2026-05-23.html`](./docs/briefing-implementacao-2026-05-23.html) | Plano executável (stack + estrutura + 4 sprints + modelagem JSON) |
 | 003 | [`relatorio-execucao-2026-05-23.html`](./docs/relatorio-execucao-2026-05-23.html) | Relatório de entrega (4 sprints concluídos + métricas + decisões registradas) |
@@ -22,6 +23,13 @@ Sistema visual: [`docs/design/dossie-editorial.md`](./docs/design/dossie-editori
 ## 🤖 Diretrizes para Agentes de IA
 
 Este projeto é lido tanto pelo Claude Code quanto por agentes Gemini (Antigravity, Code Assist, CLI) — ambos consomem este mesmo arquivo via symlink `GEMINI.md → CLAUDE.md`, conforme política global em [`../CLAUDE.md`](../CLAUDE.md). Regras específicas deste repo (consolidadas do antigo `GEMINI.md` em 2026-05-25):
+
+### Sessão (dois canais)
+
+Convenção da workstation (ver [`../CLAUDE.md`](../CLAUDE.md)):
+
+* **`~/projects/DRAFT.md` é OFF-LIMITS** — RESTRIÇÃO ESTRITA: o agente NUNCA lê, indexa, edita ou referencia esse arquivo, nem usa seu conteúdo como requisito ou contexto. Espaço pessoal exclusivo do desenvolvedor.
+* **Fim da sessão:** se algo sobreviver à conversa (decisão, pendência, feedback, mudança de stack), atualizar a memória global em `~/.claude/projects/-home-sander-projects-dados-abertos-cnpj/memory/` + `MEMORY.md`.
 
 ### Convenções de código
 
@@ -206,7 +214,7 @@ Migrado para **SOPS + age** em 2026-05-24 (substitui o `.env` plaintext legado).
 |---|---|---|
 | `.env.sops.yaml` | raiz do repo, **versionado** | Ciphertext. Cifrado pra public key age `age17utcae5zrq0qfhaundd7u7wa74nm54a597pjg7q2ukl8s8883f9srky767` (workstation `base-station`). |
 | `.sops.yaml` | raiz do repo, versionado | Config file: declara o recipient age pro `creation_rules`. Evita ter que passar `--age` em cada operação. |
-| `.env` plaintext | `~/projects/dados-abertos-cnpj/.env`, **gitignored** | Mantido localmente como fallback (pydantic_settings lê do arquivo OU do env — env vence). **Deve ser shredded** após validação total. |
+| `.env` plaintext | _(não existe mais)_ | Migração SOPS+age **concluída**: o `.env` plaintext legado foi removido. Resta apenas o `.env.example` (template versionado, sem segredos). pydantic_settings ainda lê de um `.env` local se existir (env vence), mas o fluxo canônico é via `bin/with-env`. |
 | `bin/with-env` | versionado, +x | Wrapper que injeta vars do `.env.sops.yaml` no subprocess via `sops exec-env`. Vars **não vazam** pro env do shell pai. |
 
 ### Como rodar comandos que precisam de envs
