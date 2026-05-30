@@ -1,4 +1,5 @@
 """Tool delta_mensal — MVP que devolve metadados de controle_importacao."""
+
 from __future__ import annotations
 
 from types import ModuleType

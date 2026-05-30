@@ -1,4 +1,5 @@
 """SELECTs nas tabelas `empresas` e `simples` (PK = cnpj_basico em ambas)."""
+
 from __future__ import annotations
 
 import sqlite3

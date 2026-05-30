@@ -4,6 +4,7 @@ Carrega todas no startup da API em dicionários de memória. Tamanho fixo
 conhecido (~200k entradas no total, ~30 MB RAM). Após carregado, traduções
 são O(1) e zero hit no SQLite.
 """
+
 from __future__ import annotations
 
 import sqlite3

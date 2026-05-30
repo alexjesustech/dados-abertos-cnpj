@@ -1,11 +1,11 @@
 """Rotas /cnpj/{cnpj} e subrotas /socios e /estabelecimentos."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Query, Request, status
 
 from app.dependencias import BasicoValidado, CNPJValidado, ConnDep
-from app.schemas.cnpj import CNPJResponse, SociosResumo
-from app.schemas.cnpj import EstabelecimentosFiliaisResumo
+from app.schemas.cnpj import CNPJResponse, EstabelecimentosFiliaisResumo, SociosResumo
 from app.servicos.consulta_cnpj import (
     CNPJNaoEncontrado,
     listar_estabelecimentos_paginados,
@@ -40,7 +40,9 @@ def consultar_cnpj(
             periodo_dados=periodo,
         )
     except CNPJNaoEncontrado as exc:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"CNPJ {cnpj} não encontrado.") from exc
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"CNPJ {cnpj} não encontrado."
+        ) from exc
 
 
 @router.get(

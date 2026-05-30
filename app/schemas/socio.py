@@ -1,4 +1,5 @@
 """Schemas de sócio e representante legal."""
+
 from __future__ import annotations
 
 from pydantic import BaseModel, Field
@@ -19,5 +20,7 @@ class Socio(BaseModel):
     qualificacao: CodigoDescricao | None = None
     data_entrada: str | None = Field(None, description="ISO 8601 (YYYY-MM-DD); None se vazio.")
     pais: CodigoDescricao | None = None
-    faixa_etaria: CodigoDescricao | None = Field(None, description="Apenas para PF; 'Não se aplica' para PJ.")
+    faixa_etaria: CodigoDescricao | None = Field(
+        None, description="Apenas para PF; 'Não se aplica' para PJ."
+    )
     representante_legal: RepresentanteLegal | None = None

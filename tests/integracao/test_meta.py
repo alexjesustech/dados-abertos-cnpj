@@ -1,4 +1,5 @@
 """Rotas /api/v1/health, /periodo-atual e /stats contra o SQLite descartável."""
+
 from __future__ import annotations
 
 from pathlib import Path

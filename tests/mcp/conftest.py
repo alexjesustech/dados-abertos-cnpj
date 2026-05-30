@@ -8,6 +8,7 @@ subir um cliente MCP por stdio.
 Cada tool abre/fecha sua própria conexão SQLite via `get_settings()`, que
 relê a env a cada call — basta `DB_PATH` estar setado quando a tool roda.
 """
+
 from __future__ import annotations
 
 import os

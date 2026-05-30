@@ -3,10 +3,11 @@
 É o ponto de reuso entre rotas HTTP e tools MCP — nenhuma rota nem tool deve
 falar com repos diretamente.
 """
+
 from __future__ import annotations
 
 import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
@@ -37,11 +38,12 @@ from cnpj_lib.formatador import formatar, fragmentar, parsear_data_yyyymmdd
 from cnpj_lib.validador import eh_alfanumerico
 
 
-class CNPJNaoEncontrado(Exception):
+class CNPJNaoEncontrado(Exception):  # noqa: N818
     """Raised quando empresa+estabelecimento não existem no banco."""
 
 
 # ============================ HELPERS DE TRADUÇÃO ============================
+
 
 def _cd_lookup(lookups: LookupCache, tabela: str, codigo: str | None) -> CodigoDescricao | None:
     if codigo is None or codigo == "":
@@ -92,6 +94,7 @@ def _cnaes_secundarios(lookups: LookupCache, raw: str | None) -> list[CodigoDesc
 
 # ============================== MONTADORES ===================================
 
+
 def _montar_simples(linha: dict[str, Any] | None) -> Simples | None:
     if linha is None:
         return None
@@ -130,12 +133,16 @@ def _montar_empresa(
 
 def _montar_estabelecimento(linha: dict[str, Any], lookups: LookupCache) -> Estabelecimento:
     return Estabelecimento(
-        matriz_filial=_cd_dominio("identificador_matriz_filial", linha.get("identificador_matriz_filial"))
+        matriz_filial=_cd_dominio(
+            "identificador_matriz_filial", linha.get("identificador_matriz_filial")
+        )
         or CodigoDescricao(codigo="?", descricao=None),
         nome_fantasia=linha.get("nome_fantasia") or None,
         situacao=SituacaoEstabelecimento(
             codigo=str(linha.get("situacao_cadastral") or ""),
-            descricao=dominio.descrever("situacao_cadastral", str(linha.get("situacao_cadastral") or "")),
+            descricao=dominio.descrever(
+                "situacao_cadastral", str(linha.get("situacao_cadastral") or "")
+            ),
             data=parsear_data_yyyymmdd(linha.get("data_situacao_cadastral")),
             motivo=_cd_lookup(lookups, "motivos", linha.get("motivo_situacao_cadastral")),
         ),
@@ -200,6 +207,7 @@ def _montar_socio(linha: dict[str, Any], lookups: LookupCache) -> Socio:
 
 # ============================ ORQUESTRADOR ===================================
 
+
 def montar_cnpj_completo(
     conn: sqlite3.Connection,
     cnpj14: str,
@@ -258,7 +266,7 @@ def montar_cnpj_completo(
         ),
         metadados=Metadados(
             periodo_dados=periodo_dados,
-            consultado_em=datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+            consultado_em=datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z"),
         ),
     )
 

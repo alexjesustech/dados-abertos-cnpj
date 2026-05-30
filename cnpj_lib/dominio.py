@@ -6,6 +6,7 @@ consigam expor ``{codigo, descricao}`` consistente com as 6 lookups que
 vêm como CSV (``cnaes``, ``motivos``, ``municipios``, ``paises``,
 ``qualificacoes``, ``naturezas``).
 """
+
 from __future__ import annotations
 
 # Situação cadastral do estabelecimento

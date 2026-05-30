@@ -1,4 +1,5 @@
 """Schemas de empresa, estabelecimento, simples e CNPJ completo."""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -39,7 +40,9 @@ class Empresa(BaseModel):
     natureza_juridica: CodigoDescricao | None = None
     qualificacao_responsavel: CodigoDescricao | None = None
     porte: CodigoDescricao | None = None
-    capital_social: Decimal | None = Field(None, description="Capital social em reais (preserva precisão).")
+    capital_social: Decimal | None = Field(
+        None, description="Capital social em reais (preserva precisão)."
+    )
     capital_social_formatado: str | None = Field(None, description="R$ x.xxx.xxx,xx em pt-BR.")
     ente_federativo_responsavel: str | None = None
     simples: Simples | None = None

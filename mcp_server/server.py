@@ -20,6 +20,7 @@ controla):
       }
     }
 """
+
 from __future__ import annotations
 
 from typing import Annotated, Any
@@ -71,8 +72,10 @@ def _lookups() -> LookupCache:
 
 # ============================ MODELS DE I/O ==================================
 
+
 class Pagina(BaseModel):
     """Sumário de paginação comum a todas as tools que listam."""
+
     total: int
     retornados: int
     tem_mais: bool
@@ -109,6 +112,7 @@ class PeriodoImportado(BaseModel):
 
 # ============================ HELPERS ========================================
 
+
 def _cd(tabela: str, codigo: str | None, *, lookup: bool = True) -> dict[str, str | None]:
     """Devolve dict {codigo, descricao} pra serialização compacta nas tools."""
     if codigo is None or codigo == "":
@@ -126,11 +130,13 @@ def _pagina(total: int, retornados: int, offset: int) -> Pagina:
 
 # ============================ TOOLS ==========================================
 
+
 @mcp.tool(description="Devolve dados completos de um CNPJ (numérico legado ou alfanumérico).")
 def buscar_empresa(
     cnpj: Annotated[str, Field(description="CNPJ de 14 chars, com ou sem máscara.")],
-    socios_limite: Annotated[int, Field(default=20, ge=1, le=200,
-                                        description="Quantos sócios incluir inline.")] = 20,
+    socios_limite: Annotated[
+        int, Field(default=20, ge=1, le=200, description="Quantos sócios incluir inline.")
+    ] = 20,
 ) -> dict[str, Any]:
     if not validar(cnpj):
         raise ValueError(f"CNPJ inválido: {cnpj!r}")
@@ -140,8 +146,11 @@ def buscar_empresa(
         lookups = _lookups()
         try:
             resp = montar_cnpj_completo(
-                conn, cnpj14=cnpj14, lookups=lookups,
-                socios_limite=socios_limite, periodo_dados=_periodo_cache,
+                conn,
+                cnpj14=cnpj14,
+                lookups=lookups,
+                socios_limite=socios_limite,
+                periodo_dados=_periodo_cache,
             )
         except CNPJNaoEncontrado as exc:
             raise ValueError(f"CNPJ {cnpj14} não encontrado.") from exc
@@ -180,7 +189,11 @@ def listar_filiais(
     with conectar(settings.db_path) as conn:
         lookups = _lookups()
         lista, total = listar_estabelecimentos_paginados(
-            conn, basico, lookups, limit=limit, offset=offset,
+            conn,
+            basico,
+            lookups,
+            limit=limit,
+            offset=offset,
         )
     return {
         "pagina": _pagina(total, len(lista), offset).model_dump(),
@@ -198,11 +211,12 @@ def vinculos_pj(
     with conectar(settings.db_path) as conn:
         total = socio_repo.contar_por_documento(conn, documento)
         rows = socio_repo.listar_por_documento(conn, documento, limit, offset)
-        lookups = _lookups()
         socios_out = [
             ResumoSocio(
                 cnpj_basico=r["cnpj_basico"],
-                identificador=_cd("identificador_socio", r.get("identificador_socio"), lookup=False),
+                identificador=_cd(
+                    "identificador_socio", r.get("identificador_socio"), lookup=False
+                ),
                 nome_razao_social=r.get("nome_socio_razao_social"),
                 documento=r.get("cnpj_cpf_socio") or "",
                 qualificacao=_cd("qualificacoes", r.get("qualificacao_socio")),
@@ -217,7 +231,9 @@ def vinculos_pj(
 
 @mcp.tool(description="Top CNAEs por contagem de estabelecimentos em um município (código RFB).")
 def cnaes_por_municipio(
-    municipio_codigo: Annotated[str, Field(description="Código RFB do município (ver lookup `municipios`).")],
+    municipio_codigo: Annotated[
+        str, Field(description="Código RFB do município (ver lookup `municipios`).")
+    ],
     limit: Annotated[int, Field(default=50, ge=1, le=500)] = 50,
     offset: Annotated[int, Field(default=0, ge=0)] = 0,
 ) -> dict[str, Any]:
@@ -260,7 +276,9 @@ def empresas_por_cnae(
                 cnpj_ordem=r["cnpj_ordem"],
                 cnpj_dv=r["cnpj_dv"],
                 razao_social=r.get("razao_social"),
-                situacao_cadastral=_cd("situacao_cadastral", r.get("situacao_cadastral"), lookup=False),
+                situacao_cadastral=_cd(
+                    "situacao_cadastral", r.get("situacao_cadastral"), lookup=False
+                ),
                 municipio=_cd("municipios", r.get("municipio")),
                 uf=r.get("uf"),
             ).model_dump()
@@ -284,9 +302,7 @@ def delta_mensal() -> dict[str, Any]:
     with conectar(settings.db_path) as conn:
         periodos = controle_repo.listar_periodos(conn)
     return {
-        "periodos": [
-            PeriodoImportado(**p).model_dump() for p in periodos
-        ],
+        "periodos": [PeriodoImportado(**p).model_dump() for p in periodos],
         "aviso": (
             "MVP: diff real entre safras exige snapshots históricos. "
             "Por enquanto só metadados da controle_importacao."
@@ -306,13 +322,20 @@ def validar_cnpj(
     }
 
 
-@mcp.tool(description="Descrição humana de um código (de lookup RFB ou tabela de domínio hardcoded).")
+@mcp.tool(
+    description="Descrição humana de um código (de lookup RFB ou tabela de domínio hardcoded)."
+)
 def descrever_codigo(
-    tabela: Annotated[str, Field(description=(
-        "Lookup: cnaes|motivos|municipios|paises|qualificacoes|naturezas. "
-        "Domínio: situacao_cadastral|identificador_socio|faixa_etaria|"
-        "identificador_matriz_filial|opcao_simples|porte_empresa."
-    ))],
+    tabela: Annotated[
+        str,
+        Field(
+            description=(
+                "Lookup: cnaes|motivos|municipios|paises|qualificacoes|naturezas. "
+                "Domínio: situacao_cadastral|identificador_socio|faixa_etaria|"
+                "identificador_matriz_filial|opcao_simples|porte_empresa."
+            )
+        ),
+    ],
     codigo: Annotated[str, Field(description="Código original da RFB.")],
 ) -> dict[str, str | None]:
     if tabela in dominio.TABELAS:
@@ -321,6 +344,7 @@ def descrever_codigo(
 
 
 # ============================ ENTRYPOINT =====================================
+
 
 def main() -> None:
     """Roda servidor MCP stdio (chamado pelo entrypoint `mcp-cnpj`)."""

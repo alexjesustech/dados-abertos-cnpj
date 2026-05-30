@@ -1,4 +1,5 @@
 """Formatação, normalização e parsing de strings vindas do dataset RFB."""
+
 from __future__ import annotations
 
 from datetime import date

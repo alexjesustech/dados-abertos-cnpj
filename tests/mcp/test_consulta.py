@@ -1,4 +1,5 @@
 """Tools de consulta por CNPJ: buscar_empresa + listar_socios + listar_filiais."""
+
 from __future__ import annotations
 
 from types import ModuleType
@@ -6,6 +7,7 @@ from types import ModuleType
 import pytest
 
 # ---------- buscar_empresa ----------
+
 
 def test_buscar_empresa_devolve_dict_serializavel(
     mcp_module: ModuleType,
@@ -57,6 +59,7 @@ def test_buscar_empresa_cnpj_inexistente_levanta_value_error(
 
 # ---------- listar_socios ----------
 
+
 def test_listar_socios_pagina_inicial(mcp_module: ModuleType) -> None:
     out = mcp_module.listar_socios(cnpj_basico="11222333", limit=2, offset=0)
     assert out["pagina"] == {"total": 5, "retornados": 2, "tem_mais": True}
@@ -86,6 +89,7 @@ def test_listar_socios_aceita_mascara_no_basico(mcp_module: ModuleType) -> None:
 
 
 # ---------- listar_filiais ----------
+
 
 def test_listar_filiais_total_corresponde(mcp_module: ModuleType) -> None:
     out = mcp_module.listar_filiais(cnpj_basico="11222333", limit=10)

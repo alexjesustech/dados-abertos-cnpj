@@ -3,6 +3,7 @@
 Rode da raiz do projeto: `.venv/bin/python tests/smoke_test.py`.
 Baixa ~70 KB e popula um banco descartável em segundos — não toca o `dados_cnpj.db` real.
 """
+
 import os
 import shutil
 import sqlite3
@@ -11,12 +12,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from notifier import Notifier, load_env
-from fetcher import CNPJFetcher
 from database import DatabaseManager
+from fetcher import CNPJFetcher
+from notifier import Notifier, load_env
 
-SMALL_ZIPS = {"Cnaes.zip", "Motivos.zip", "Municipios.zip",
-              "Naturezas.zip", "Paises.zip", "Qualificacoes.zip"}
+SMALL_ZIPS = {
+    "Cnaes.zip",
+    "Motivos.zip",
+    "Municipios.zip",
+    "Naturezas.zip",
+    "Paises.zip",
+    "Qualificacoes.zip",
+}
 
 
 def main():
@@ -38,9 +45,7 @@ def main():
 
     zips = fetcher.list_zips(period)
     small = [z for z in zips if z["name"] in SMALL_ZIPS]
-    notifier.log_and_notify(
-        f"[smoke] {len(small)} ZIPs pequenos a baixar (de {len(zips)} total)."
-    )
+    notifier.log_and_notify(f"[smoke] {len(small)} ZIPs pequenos a baixar (de {len(zips)} total).")
 
     downloaded = []
     for z in small:

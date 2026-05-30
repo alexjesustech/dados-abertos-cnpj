@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Coletor de status do pipeline `dados-abertos-cnpj`.
 
@@ -67,9 +66,7 @@ RE_RESUME = re.compile(
     r"^\[resume\]\s+(?P<name>\S+)\s+de\s+(?P<a>\d+)/(?P<b>\d+)\s+bytes,\s+"
     r"tentativa\s+(?P<att>\d+)\)\.?"
 )
-RE_SKIP = re.compile(
-    r"^\[skip\]\s+(?P<name>\S+)\s+já presente\s+\((?P<bytes>\d+)\s+bytes\)\.?"
-)
+RE_SKIP = re.compile(r"^\[skip\]\s+(?P<name>\S+)\s+já presente\s+\((?P<bytes>\d+)\s+bytes\)\.?")
 RE_WARN_TAMANHO = re.compile(r"^\[warn\]\s+(?P<name>\S+):\s+tamanho final")
 RE_ERR_TENT = re.compile(r"^\[err\]\s+(?P<name>\S+)\s+tentativa\s+\d+/\d+:")
 RE_DOWNLOAD_OK = re.compile(
@@ -424,9 +421,7 @@ class CollectorState:
                 self.downloads.append(existing)
             else:
                 existing["resumed"] = True
-                existing["attempts"] = max(
-                    existing.get("attempts", 1), int(m_resume.group("att"))
-                )
+                existing["attempts"] = max(existing.get("attempts", 1), int(m_resume.group("att")))
             return
 
         m_skip = RE_SKIP.match(msg)
@@ -886,9 +881,7 @@ def main() -> int:
     terminal_deadline: float | None = None
     while not stop_flag["stop"]:
         try:
-            snap = tick(
-                state, tailer, args.run_out, args.status, notify_sent_path, monitor_dir
-            )
+            snap = tick(state, tailer, args.run_out, args.status, notify_sent_path, monitor_dir)
         except Exception as exc:  # pylint: disable=broad-except
             log.error("erro no tick (continuando): %s", exc, exc_info=True)
             snap = None

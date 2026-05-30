@@ -1,4 +1,5 @@
 """Fetcher dos Dados Abertos do CNPJ via WebDAV público do Nextcloud da RFB."""
+
 import logging
 import os
 import re
@@ -17,8 +18,14 @@ _PERIOD_RE = re.compile(r"/(\d{4}-\d{2})/$")
 
 
 class CNPJFetcher:
-    def __init__(self, dir_temp, notifier, share_token: str | None = None,
-                 chunk_size: int = 1024 * 1024, max_retries: int = 5):
+    def __init__(
+        self,
+        dir_temp,
+        notifier,
+        share_token: str | None = None,
+        chunk_size: int = 1024 * 1024,
+        max_retries: int = 5,
+    ):
         self.dir_temp = Path(dir_temp)
         self.dir_temp.mkdir(parents=True, exist_ok=True)
         self.notifier = notifier
@@ -111,7 +118,7 @@ class CNPJFetcher:
                     f"[err] {name} tentativa {attempt}/{self.max_retries}: {e}",
                     level=logging.WARNING,
                 )
-                time.sleep(min(2 ** attempt, 30))
+                time.sleep(min(2**attempt, 30))
 
         raise RuntimeError(f"Falha ao baixar {name} após {self.max_retries} tentativas.")
 
