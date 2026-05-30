@@ -1,4 +1,5 @@
 """SELECTs na tabela `estabelecimentos` (PK = basico + ordem + dv)."""
+
 from __future__ import annotations
 
 import sqlite3

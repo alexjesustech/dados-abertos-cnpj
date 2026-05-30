@@ -4,6 +4,7 @@ A API nunca escreve. Abrir com URI ``?mode=ro`` é a única defesa real
 contra um INSERT/UPDATE acidental. WAL (configurado pelo pipeline) permite
 N readers concorrentes mesmo durante import.
 """
+
 from __future__ import annotations
 
 import sqlite3

@@ -1,10 +1,12 @@
 """Testes de cnpj_lib.validador — algoritmo módulo 11 (alfa + num)."""
+
 from __future__ import annotations
 
 from string import ascii_uppercase, digits
 
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given
+from hypothesis import strategies as st
 
 from cnpj_lib.validador import (
     calcular_dv,
@@ -20,25 +22,25 @@ CASOS_VALIDOS_ALFA = [
 
 # CNPJs antigos famosos — todos retiráveis de uma busca no próprio dataset RFB
 CASOS_VALIDOS_NUM = [
-    "00.000.000/0001-91",   # Banco do Brasil
-    "33.000.167/0001-01",   # Petrobras
-    "60.701.190/0001-04",   # Itaú Unibanco
-    "47.960.950/0001-21",   # Magazine Luiza
-    "76.535.764/0001-43",   # Copel
-    "61.198.164/0001-60",   # SBT
+    "00.000.000/0001-91",  # Banco do Brasil
+    "33.000.167/0001-01",  # Petrobras
+    "60.701.190/0001-04",  # Itaú Unibanco
+    "47.960.950/0001-21",  # Magazine Luiza
+    "76.535.764/0001-43",  # Copel
+    "61.198.164/0001-60",  # SBT
 ]
 
 CASOS_INVALIDOS = [
     "",
     "xyz",
-    "00.000.000/0001-92",       # DV1 errado
-    "00.000.000/0001-90",       # DV2 errado
-    "12.ABC.345/01DE-36",       # DV alfa errado
-    "1234567890123",            # 13 chars
-    "123456789012345",          # 15 chars
-    "AAAA-BBBB-CCCC",           # estrutura errada
-    "00.000.000/0001-9A",       # DV não-numérico
-    "00.000.000/0001-9*",       # caractere inválido em DV
+    "00.000.000/0001-92",  # DV1 errado
+    "00.000.000/0001-90",  # DV2 errado
+    "12.ABC.345/01DE-36",  # DV alfa errado
+    "1234567890123",  # 13 chars
+    "123456789012345",  # 15 chars
+    "AAAA-BBBB-CCCC",  # estrutura errada
+    "00.000.000/0001-9A",  # DV não-numérico
+    "00.000.000/0001-9*",  # caractere inválido em DV
 ]
 
 

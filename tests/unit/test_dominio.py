@@ -1,4 +1,5 @@
 """Testes de cnpj_lib.dominio — tabelas hardcoded da RFB."""
+
 from __future__ import annotations
 
 import pytest

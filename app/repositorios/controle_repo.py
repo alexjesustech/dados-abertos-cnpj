@@ -1,4 +1,5 @@
 """SELECTs na tabela `controle_importacao` — apoia tool delta_mensal."""
+
 from __future__ import annotations
 
 import sqlite3

@@ -1,4 +1,5 @@
 """Tools utilitárias: validar_cnpj + descrever_codigo."""
+
 from __future__ import annotations
 
 from types import ModuleType
@@ -22,7 +23,9 @@ def test_validar_cnpj_invalido_marca_falso(mcp_module: ModuleType) -> None:
 
 def test_validar_cnpj_aceita_mascara(mcp_module: ModuleType, cnpjs: dict[str, str]) -> None:
     completo = cnpjs["matriz_a"]
-    com_mascara = f"{completo[0:2]}.{completo[2:5]}.{completo[5:8]}/{completo[8:12]}-{completo[12:14]}"
+    com_mascara = (
+        f"{completo[0:2]}.{completo[2:5]}.{completo[5:8]}/{completo[8:12]}-{completo[12:14]}"
+    )
     out = mcp_module.validar_cnpj(com_mascara)
     assert out["valido"] is True
 

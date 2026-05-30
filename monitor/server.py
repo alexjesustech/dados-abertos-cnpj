@@ -30,42 +30,51 @@ class MonitorHandler(http.server.SimpleHTTPRequestHandler):
     monitor_dir: Path = None  # type: ignore
 
     def log_message(self, fmt, *args):
-        sys.stderr.write("[%s] %s - %s\n" % (
-            self.log_date_time_string(), self.address_string(), fmt % args
-        ))
+        sys.stderr.write(
+            f"[{self.log_date_time_string()}] {self.address_string()} - {fmt % args}\n"
+        )
 
     # ---------- POST ----------
     def do_POST(self):
-        path = self.path.split('?', 1)[0].rstrip('/')
-        if path == '/api/run':
+        path = self.path.split("?", 1)[0].rstrip("/")
+        if path == "/api/run":
             return self._handle_run()
-        if path == '/api/stop':
+        if path == "/api/stop":
             return self._handle_stop()
         self._json(404, {"ok": False, "error": "endpoint desconhecido"})
 
     def _handle_run(self):
         pid = self._current_pipeline_pid()
         if pid:
-            return self._json(409, {
-                "ok": False,
-                "error": "pipeline já em execução",
-                "pid": pid,
-            })
+            return self._json(
+                409,
+                {
+                    "ok": False,
+                    "error": "pipeline já em execução",
+                    "pid": pid,
+                },
+            )
 
         python = self._project_python()
         if not python:
-            return self._json(500, {
-                "ok": False,
-                "error": ".venv/bin/python não encontrado no projeto",
-            })
+            return self._json(
+                500,
+                {
+                    "ok": False,
+                    "error": ".venv/bin/python não encontrado no projeto",
+                },
+            )
 
         run_out = self.project_dir / "run.out"
         main_py = self.project_dir / "main.py"
         if not main_py.is_file():
-            return self._json(500, {
-                "ok": False,
-                "error": f"main.py não encontrado em {self.project_dir}",
-            })
+            return self._json(
+                500,
+                {
+                    "ok": False,
+                    "error": f"main.py não encontrado em {self.project_dir}",
+                },
+            )
 
         try:
             fp = open(run_out, "ab")
@@ -82,30 +91,39 @@ class MonitorHandler(http.server.SimpleHTTPRequestHandler):
         except Exception as e:
             return self._json(500, {"ok": False, "error": f"falha ao iniciar: {e}"})
 
-        return self._json(200, {
-            "ok": True,
-            "pid": proc.pid,
-            "message": f"pipeline iniciado (PID={proc.pid})",
-        })
+        return self._json(
+            200,
+            {
+                "ok": True,
+                "pid": proc.pid,
+                "message": f"pipeline iniciado (PID={proc.pid})",
+            },
+        )
 
     def _handle_stop(self):
         pid = self._current_pipeline_pid()
         if not pid:
-            return self._json(404, {
-                "ok": False,
-                "error": "nenhum pipeline ativo",
-            })
+            return self._json(
+                404,
+                {
+                    "ok": False,
+                    "error": "nenhum pipeline ativo",
+                },
+            )
         try:
             os.kill(pid, signal.SIGTERM)
         except ProcessLookupError:
             return self._json(404, {"ok": False, "error": "processo não existe mais"})
         except PermissionError:
             return self._json(403, {"ok": False, "error": "sem permissão (UID diferente)"})
-        return self._json(200, {
-            "ok": True,
-            "pid": pid,
-            "message": f"SIGTERM enviado para PID={pid}",
-        })
+        return self._json(
+            200,
+            {
+                "ok": True,
+                "pid": pid,
+                "message": f"SIGTERM enviado para PID={pid}",
+            },
+        )
 
     # ---------- helpers ----------
     def _current_pipeline_pid(self):
@@ -145,11 +163,14 @@ class MonitorHandler(http.server.SimpleHTTPRequestHandler):
 def make_handler(monitor_dir: Path, project_dir: Path):
     class Handler(MonitorHandler):
         pass
+
     Handler.monitor_dir = monitor_dir
     Handler.project_dir = project_dir
+
     # SimpleHTTPRequestHandler usa o cwd; injetamos `directory=` no init.
     def init(self, *args, **kw):
         super(Handler, self).__init__(*args, directory=str(monitor_dir), **kw)
+
     Handler.__init__ = init
     return Handler
 
@@ -161,24 +182,21 @@ class ThreadingServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int,
-                        default=int(os.environ.get("MONITOR_HTTP_PORT", "8765")))
-    parser.add_argument("--bind",
-                        default=os.environ.get("MONITOR_HTTP_BIND", "127.0.0.1"))
-    parser.add_argument("--monitor-dir",
-                        default=str(Path(__file__).resolve().parent))
-    parser.add_argument("--project-dir",
-                        default=str(Path(__file__).resolve().parent.parent))
+    parser.add_argument(
+        "--port", type=int, default=int(os.environ.get("MONITOR_HTTP_PORT", "8765"))
+    )
+    parser.add_argument("--bind", default=os.environ.get("MONITOR_HTTP_BIND", "127.0.0.1"))
+    parser.add_argument("--monitor-dir", default=str(Path(__file__).resolve().parent))
+    parser.add_argument("--project-dir", default=str(Path(__file__).resolve().parent.parent))
     args = parser.parse_args()
 
     monitor_dir = Path(args.monitor_dir).resolve()
     project_dir = Path(args.project_dir).resolve()
 
-    Handler = make_handler(monitor_dir, project_dir)
+    Handler = make_handler(monitor_dir, project_dir)  # noqa: N806
     server = ThreadingServer((args.bind, args.port), Handler)
     sys.stderr.write(
-        f"[server] http://{args.bind}:{args.port}/ "
-        f"(monitor={monitor_dir}, project={project_dir})\n"
+        f"[server] http://{args.bind}:{args.port}/ (monitor={monitor_dir}, project={project_dir})\n"
     )
     try:
         server.serve_forever()

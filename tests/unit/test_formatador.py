@@ -1,4 +1,5 @@
 """Testes de cnpj_lib.formatador — normalização, máscara, parsing."""
+
 from __future__ import annotations
 
 import pytest
@@ -11,8 +12,8 @@ from cnpj_lib.formatador import (
     parsear_data_yyyymmdd,
 )
 
-
 # --- normalizar -----------------------------------------------------------
+
 
 @pytest.mark.parametrize(
     "entrada, esperado",
@@ -29,6 +30,7 @@ def test_normalizar(entrada: str, esperado: str) -> None:
 
 
 # --- formatar -------------------------------------------------------------
+
 
 def test_formatar_aplica_mascara_padrao() -> None:
     assert formatar("00000000000191") == "00.000.000/0001-91"
@@ -51,6 +53,7 @@ def test_formatar_recusa_tamanho_errado() -> None:
 
 # --- fragmentar -----------------------------------------------------------
 
+
 def test_fragmentar_devolve_basico_ordem_dv() -> None:
     assert fragmentar("00.000.000/0001-91") == ("00000000", "0001", "91")
     assert fragmentar("12ABC34501DE35") == ("12ABC345", "01DE", "35")
@@ -62,6 +65,7 @@ def test_fragmentar_recusa_tamanho_errado() -> None:
 
 
 # --- mascarar_cpf ---------------------------------------------------------
+
 
 def test_mascarar_cpf_padrao_rfb() -> None:
     assert mascarar_cpf("12345678901") == "***456789**"
@@ -77,6 +81,7 @@ def test_mascarar_cpf_recusa_tamanho_errado() -> None:
 
 
 # --- parsear_data_yyyymmdd ------------------------------------------------
+
 
 @pytest.mark.parametrize(
     "entrada, esperado",
@@ -98,6 +103,7 @@ def test_parsear_data_invalida_retorna_none(entrada: str | None) -> None:
 
 
 # --- round-trip -----------------------------------------------------------
+
 
 def test_normalizar_formatar_roundtrip() -> None:
     """normalizar(formatar(s)) == normalizar(s) para qualquer CNPJ válido."""

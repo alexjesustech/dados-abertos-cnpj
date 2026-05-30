@@ -1,4 +1,5 @@
 """Subrotas paginadas /cnpj/{basico}/socios e /cnpj/{basico}/estabelecimentos."""
+
 from __future__ import annotations
 
 from fastapi.testclient import TestClient

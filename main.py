@@ -1,12 +1,13 @@
 """Orquestra o pipeline de Dados Abertos do CNPJ: fetcher -> database."""
+
 import logging
 import os
 import shutil
 from pathlib import Path
 
-from notifier import Notifier, load_env
-from fetcher import CNPJFetcher
 from database import DatabaseManager
+from fetcher import CNPJFetcher
+from notifier import Notifier, load_env
 
 
 def main():
@@ -30,7 +31,9 @@ def main():
         notifier.log_and_notify(f"Falha no download dos ZIPs: {e}", level=logging.ERROR)
         raise
 
-    notifier.log_and_notify(f"Download concluído ({len(zip_files)} arquivos) para o período {period}.")
+    notifier.log_and_notify(
+        f"Download concluído ({len(zip_files)} arquivos) para o período {period}."
+    )
 
     if not zip_files:
         notifier.log_and_notify("Nenhum ZIP baixado — abortando ingestão.", level=logging.WARNING)

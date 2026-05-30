@@ -1,4 +1,5 @@
 """Rotas /api/v1/cnpj/{cnpj} — payload completo, 404, 422 e mascaramento."""
+
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
@@ -165,9 +166,7 @@ def test_socio_estrangeiro_tem_representante_legal(
     cnpjs: dict[str, str],
 ) -> None:
     body = client.get(f"/api/v1/cnpj/{cnpjs['matriz_a']}").json()
-    estrangeiro = next(
-        s for s in body["socios"]["lista"] if s["identificador"]["codigo"] == "3"
-    )
+    estrangeiro = next(s for s in body["socios"]["lista"] if s["identificador"]["codigo"] == "3")
     rep = estrangeiro["representante_legal"]
     assert rep is not None
     assert rep["nome"] == "JOSE REPRESENTANTE"

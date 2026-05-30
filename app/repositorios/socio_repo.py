@@ -1,4 +1,5 @@
 """SELECTs na tabela `socios` (sem PK no schema atual)."""
+
 from __future__ import annotations
 
 import sqlite3

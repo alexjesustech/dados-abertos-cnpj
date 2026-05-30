@@ -1,4 +1,5 @@
 """Queries agregadas pra tools MCP de busca/exploração."""
+
 from __future__ import annotations
 
 import sqlite3

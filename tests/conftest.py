@@ -8,6 +8,7 @@ chars completos (basico + ordem + DVs calculados via cnpj_lib).
 Suítes filhas (`integracao/`, `mcp/`) consomem essas fixtures
 diretamente — pytest faz a injeção pela árvore de conftests.
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -141,31 +142,49 @@ def tmp_db_path(tmp_path_factory: pytest.TempPathFactory) -> Path:
     conn = sqlite3.connect(db)
     conn.executescript(DDL)
 
-    conn.executemany("INSERT INTO cnaes VALUES (?,?)", [
-        ("6204000", "Consultoria em tecnologia da informação"),
-        ("4751201", "Comércio varejista especializado de equipamentos"),
-    ])
-    conn.executemany("INSERT INTO motivos VALUES (?,?)", [
-        ("00", "Sem motivo"),
-        ("01", "Extinção por encerramento liquidação voluntária"),
-    ])
-    conn.executemany("INSERT INTO municipios VALUES (?,?)", [
-        ("7107", "PORTO VELHO"),
-        ("9999", "EXTERIOR"),
-    ])
-    conn.executemany("INSERT INTO paises VALUES (?,?)", [
-        ("105", "BRASIL"),
-        ("249", "EUA"),
-    ])
-    conn.executemany("INSERT INTO qualificacoes VALUES (?,?)", [
-        ("05", "Administrador"),
-        ("22", "Sócio"),
-        ("49", "Sócio-Administrador"),
-    ])
-    conn.executemany("INSERT INTO naturezas VALUES (?,?)", [
-        ("2062", "Sociedade Empresária Limitada"),
-        ("2046", "Sociedade Anônima Aberta"),
-    ])
+    conn.executemany(
+        "INSERT INTO cnaes VALUES (?,?)",
+        [
+            ("6204000", "Consultoria em tecnologia da informação"),
+            ("4751201", "Comércio varejista especializado de equipamentos"),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO motivos VALUES (?,?)",
+        [
+            ("00", "Sem motivo"),
+            ("01", "Extinção por encerramento liquidação voluntária"),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO municipios VALUES (?,?)",
+        [
+            ("7107", "PORTO VELHO"),
+            ("9999", "EXTERIOR"),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO paises VALUES (?,?)",
+        [
+            ("105", "BRASIL"),
+            ("249", "EUA"),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO qualificacoes VALUES (?,?)",
+        [
+            ("05", "Administrador"),
+            ("22", "Sócio"),
+            ("49", "Sócio-Administrador"),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO naturezas VALUES (?,?)",
+        [
+            ("2062", "Sociedade Empresária Limitada"),
+            ("2046", "Sociedade Anônima Aberta"),
+        ],
+    )
 
     conn.execute(
         "INSERT INTO empresas VALUES (?,?,?,?,?,?,?)",
@@ -178,38 +197,131 @@ def tmp_db_path(tmp_path_factory: pytest.TempPathFactory) -> Path:
     conn.execute(
         "INSERT INTO estabelecimentos VALUES "
         "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        (BASICO_A, ORDEM_MATRIZ_A, calcular_dv(BASICO_A + ORDEM_MATRIZ_A),
-         "1", "ACME SEDE", "02", "20100101", "00",
-         "", "105", "20100101", "6204000", "4751201",
-         "RUA", "DAS FLORES", "100", "SALA 1", "CENTRO",
-         "76801000", "RO", "7107",
-         "69", "999999999", "", "", "", "",
-         "contato@acme.test", "", ""),
+        (
+            BASICO_A,
+            ORDEM_MATRIZ_A,
+            calcular_dv(BASICO_A + ORDEM_MATRIZ_A),
+            "1",
+            "ACME SEDE",
+            "02",
+            "20100101",
+            "00",
+            "",
+            "105",
+            "20100101",
+            "6204000",
+            "4751201",
+            "RUA",
+            "DAS FLORES",
+            "100",
+            "SALA 1",
+            "CENTRO",
+            "76801000",
+            "RO",
+            "7107",
+            "69",
+            "999999999",
+            "",
+            "",
+            "",
+            "",
+            "contato@acme.test",
+            "",
+            "",
+        ),
     )
     conn.execute(
         "INSERT INTO estabelecimentos VALUES "
         "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        (BASICO_A, ORDEM_FILIAL_A, calcular_dv(BASICO_A + ORDEM_FILIAL_A),
-         "2", "ACME FILIAL", "02", "20150101", "00",
-         "", "105", "20150101", "4751201", "",
-         "AV", "BRASIL", "200", "", "JARDIM",
-         "76802000", "RO", "7107",
-         "", "", "", "", "", "",
-         "", "", ""),
+        (
+            BASICO_A,
+            ORDEM_FILIAL_A,
+            calcular_dv(BASICO_A + ORDEM_FILIAL_A),
+            "2",
+            "ACME FILIAL",
+            "02",
+            "20150101",
+            "00",
+            "",
+            "105",
+            "20150101",
+            "4751201",
+            "",
+            "AV",
+            "BRASIL",
+            "200",
+            "",
+            "JARDIM",
+            "76802000",
+            "RO",
+            "7107",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        ),
     )
     conn.executemany(
         "INSERT INTO socios VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
-            (BASICO_A, "2", "JOAO DA SILVA", "***123456**", "49",
-             "20100101", "105", "", "", "", "5"),
-            (BASICO_A, "2", "MARIA SANTOS", "***234567**", "22",
-             "20100101", "105", "", "", "", "6"),
-            (BASICO_A, "1", "EMPRESA HOLDING SA", "99888777000166", "22",
-             "20120101", "105", "", "", "", "0"),
-            (BASICO_A, "2", "PEDRO LIMA", "***345678**", "22",
-             "20130101", "105", "", "", "", "7"),
-            (BASICO_A, "3", "JOHN DOE", "***456789**", "22",
-             "20140101", "249", "***000111**", "JOSE REPRESENTANTE", "49", "0"),
+            (
+                BASICO_A,
+                "2",
+                "JOAO DA SILVA",
+                "***123456**",
+                "49",
+                "20100101",
+                "105",
+                "",
+                "",
+                "",
+                "5",
+            ),
+            (
+                BASICO_A,
+                "2",
+                "MARIA SANTOS",
+                "***234567**",
+                "22",
+                "20100101",
+                "105",
+                "",
+                "",
+                "",
+                "6",
+            ),
+            (
+                BASICO_A,
+                "1",
+                "EMPRESA HOLDING SA",
+                "99888777000166",
+                "22",
+                "20120101",
+                "105",
+                "",
+                "",
+                "",
+                "0",
+            ),
+            (BASICO_A, "2", "PEDRO LIMA", "***345678**", "22", "20130101", "105", "", "", "", "7"),
+            (
+                BASICO_A,
+                "3",
+                "JOHN DOE",
+                "***456789**",
+                "22",
+                "20140101",
+                "249",
+                "***000111**",
+                "JOSE REPRESENTANTE",
+                "49",
+                "0",
+            ),
         ],
     )
 
@@ -220,13 +332,38 @@ def tmp_db_path(tmp_path_factory: pytest.TempPathFactory) -> Path:
     conn.execute(
         "INSERT INTO estabelecimentos VALUES "
         "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        (BASICO_B, ORDEM_B, calcular_dv(BASICO_B + ORDEM_B),
-         "1", "", "02", "20240101", "00",
-         "", "105", "20240101", "6204000", "",
-         "RUA", "ALFA", "1", "", "BETA",
-         "01000000", "SP", "7107",
-         "11", "999999999", "", "", "", "",
-         "alfanum@test.test", "", ""),
+        (
+            BASICO_B,
+            ORDEM_B,
+            calcular_dv(BASICO_B + ORDEM_B),
+            "1",
+            "",
+            "02",
+            "20240101",
+            "00",
+            "",
+            "105",
+            "20240101",
+            "6204000",
+            "",
+            "RUA",
+            "ALFA",
+            "1",
+            "",
+            "BETA",
+            "01000000",
+            "SP",
+            "7107",
+            "11",
+            "999999999",
+            "",
+            "",
+            "",
+            "",
+            "alfanum@test.test",
+            "",
+            "",
+        ),
     )
 
     conn.executemany(

@@ -10,11 +10,13 @@ Cenário esperado no banco descartável (ver tests/conftest.py):
   Total por CNAE em 7107:  6204000 → 2 estabs · 4751201 → 1 estab
   Total por CNAE 6204000:  2 estabs (matriz A em RO + matriz B em SP)
 """
+
 from __future__ import annotations
 
 from types import ModuleType
 
 # ---------- vinculos_pj ----------
+
 
 def test_vinculos_pj_para_holding_pj(mcp_module: ModuleType) -> None:
     """O CNPJ da holding aparece como sócio (ident=1) da empresa A."""
@@ -50,6 +52,7 @@ def test_vinculos_pj_paginada(mcp_module: ModuleType) -> None:
 
 # ---------- cnaes_por_municipio ----------
 
+
 def test_cnaes_por_municipio_porto_velho(mcp_module: ModuleType) -> None:
     out = mcp_module.cnaes_por_municipio(municipio_codigo="7107")
     assert out["municipio"] == "PORTO VELHO"
@@ -71,6 +74,7 @@ def test_cnaes_por_municipio_paginada(mcp_module: ModuleType) -> None:
 
 
 # ---------- empresas_por_cnae ----------
+
 
 def test_empresas_por_cnae_sem_filtro(mcp_module: ModuleType) -> None:
     out = mcp_module.empresas_por_cnae(cnae="6204000")

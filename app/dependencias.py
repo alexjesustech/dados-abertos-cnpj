@@ -1,4 +1,5 @@
 """Depends do FastAPI: conexão por request + validação de CNPJ no path."""
+
 from __future__ import annotations
 
 import sqlite3

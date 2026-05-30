@@ -17,6 +17,7 @@ Referências:
 * NT Conjunta 2025.001 — vigência 06/07/2026 para documentos fiscais.
 * PDF Serpro: cálculo do módulo 11 para o novo CNPJ.
 """
+
 from __future__ import annotations
 
 from cnpj_lib.formatador import normalizar

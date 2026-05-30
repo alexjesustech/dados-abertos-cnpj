@@ -1,7 +1,8 @@
 """Rotas de meta-informação: health, período atual, contagens."""
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Request
 
@@ -16,7 +17,7 @@ _TABELAS_FATO = ("empresas", "estabelecimentos", "socios", "simples")
 def health() -> dict[str, str]:
     return {
         "status": "ok",
-        "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+        "timestamp": datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z"),
     }
 
 

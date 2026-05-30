@@ -1,4 +1,5 @@
 """Modelos Pydantic compartilhados — usados pela API HTTP e pelas tools MCP."""
+
 from __future__ import annotations
 
 from typing import Literal
@@ -10,7 +11,9 @@ class CodigoDescricao(BaseModel):
     """Par código + descrição traduzida (de tabela lookup ou domínio hardcoded)."""
 
     codigo: str = Field(..., description="Código original como vem da RFB.")
-    descricao: str | None = Field(None, description="Descrição humana (pode ser nula se código desconhecido).")
+    descricao: str | None = Field(
+        None, description="Descrição humana (pode ser nula se código desconhecido)."
+    )
 
 
 class PartesCNPJ(BaseModel):
@@ -54,14 +57,18 @@ class Contato(BaseModel):
 class Documento(BaseModel):
     valor: str = Field(..., description="CPF mascarado ('***NNNNNN**') ou CNPJ de 14 chars.")
     tipo: Literal["cpf", "cnpj"]
-    mascarado: bool = Field(..., description="True se o valor está mascarado (sempre true para PF).")
+    mascarado: bool = Field(
+        ..., description="True se o valor está mascarado (sempre true para PF)."
+    )
 
 
 class Paginacao(BaseModel):
     total: int = Field(..., ge=0, description="Quantidade total disponível no banco.")
     retornados: int = Field(..., ge=0, description="Quantos itens vieram neste payload.")
     tem_mais: bool = Field(..., description="True se há mais itens além dos retornados.")
-    link: str | None = Field(None, description="Subrota para listagem completa, quando o array foi omitido.")
+    link: str | None = Field(
+        None, description="Subrota para listagem completa, quando o array foi omitido."
+    )
 
 
 class ErroResponse(BaseModel):
