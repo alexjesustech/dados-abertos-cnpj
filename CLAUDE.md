@@ -29,6 +29,7 @@ Este projeto é lido tanto pelo Claude Code quanto por agentes Gemini (Antigravi
 Convenção da workstation (ver [`../CLAUDE.md`](../CLAUDE.md)):
 
 * **`~/projects/DRAFT.md` é OFF-LIMITS** — RESTRIÇÃO ESTRITA: o agente NUNCA lê, indexa, edita ou referencia esse arquivo, nem usa seu conteúdo como requisito ou contexto. Espaço pessoal exclusivo do desenvolvedor.
+* **Documentação obrigatória** (ver `~/projects/CLAUDE.md` § "Convenções de trabalho"): manter `README.md` + `CHANGELOG.md` (Keep a Changelog + SemVer, `[Unreleased]` sempre) atualizados — e `docs/PRD.md` se for projeto de produto/aplicação. **Definition of Done:** feature só está "pronta" após atualizar as docs obrigatórias afetadas; doc desatualizada = feature incompleta.
 * **Fim da sessão:** se algo sobreviver à conversa (decisão, pendência, feedback, mudança de stack), atualizar a memória global em `~/.claude/projects/-home-sander-projects-dados-abertos-cnpj/memory/` + `MEMORY.md`.
 
 ### Convenções de código
