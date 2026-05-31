@@ -17,6 +17,10 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - Diretiva de documentação obrigatória + governança documental propagada no
   `CLAUDE.md`/`GEMINI.md` (Definition of Done inclui docs atualizadas).
 - Segundo recipient age de recuperação no `.sops.yaml` (GUARD-002).
+- Adicionado branch-guard ao hook `.githooks/pre-commit` (bloqueia commit
+  direto em `main`/`master`; escape `git config hooks.allowMainCommit true`
+  ou `ALLOW_MAIN_COMMIT=1`), compondo com o `gitleaks` já existente. Camada 3
+  do fluxo `/branch` da workstation.
 - Hook `pre-commit` com `gitleaks` como defesa em profundidade (GUARD-002).
 - Padrão "CI local 3 camadas" do projeto `nous` (script de CI local +
   pre-push hook via `core.hooksPath`).
