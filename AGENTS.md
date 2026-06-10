@@ -54,7 +54,7 @@ Convenção da ambiente local (ver [`../CLAUDE.md`](../CLAUDE.md)):
 
 * **`~/projects/DRAFT.md` é OFF-LIMITS** — RESTRIÇÃO ESTRITA: o agente NUNCA lê, indexa, edita ou referencia esse arquivo, nem usa seu conteúdo como requisito ou contexto. Espaço pessoal exclusivo do desenvolvedor.
 * **Documentação obrigatória** (ver `~/projects/CLAUDE.md` § "Convenções de trabalho"): manter `README.md` + `CHANGELOG.md` (Keep a Changelog + SemVer, `[Unreleased]` sempre) atualizados — e `docs/PRD.md` se for projeto de produto/aplicação. **Definition of Done:** feature só está "pronta" após atualizar as docs obrigatórias afetadas; doc desatualizada = feature incompleta.
-* **Fim da sessão:** se algo sobreviver à conversa (decisão, pendência, feedback, mudança de stack), atualizar a memória global em `~/.claude/projects/-home-sander-projects-dados-abertos-cnpj/memory/` + `MEMORY.md`.
+* **Fim da sessão:** se algo sobreviver à conversa (decisão, pendência, feedback, mudança de stack), atualizar a memória global em `~/.claude/projects/dados-abertos-cnpj/memory/` + `MEMORY.md`.
 
 ### Convenções de código
 
@@ -203,7 +203,7 @@ Para consultas ad hoc no banco já ingerido, registre o servidor SQLite MCP em `
         "-y",
         "@modelcontextprotocol/server-sqlite",
         "--db",
-        "~/projects/dados-abertos-cnpj/dados_cnpj.db"
+        "~/projects/develop/dados-abertos-cnpj/dados_cnpj.db"
       ]
     }
   }
