@@ -14,6 +14,12 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Adicionado
 
+- **Migração interop multi-LLM (governança da workstation):** `AGENTS.md` na raiz vira a
+  fonte única de regras (conteúdo movido do `CLAUDE.md`, que vira ponteiro `@AGENTS.md`);
+  `GEMINI.md` deixa de ser symlink e vira arquivo híbrido (`@AGENTS.md` + fallback em prosa);
+  `.claude/` passa a ser versionado (settings + rules modulares; `settings.local.json`
+  bloqueado no `.gitignore`); suporte ao OpenCode (`.opencode/rules/` + `opencode.json`).
+
 - Diretiva de documentação obrigatória + governança documental propagada no
   `CLAUDE.md`/`GEMINI.md` (Definition of Done inclui docs atualizadas).
 - Segundo recipient age de recuperação no `.sops.yaml` (GUARD-002).

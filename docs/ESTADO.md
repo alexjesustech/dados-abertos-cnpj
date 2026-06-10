@@ -5,8 +5,16 @@
 > cada ferramenta NÃO é vista pela outra.
 
 ## Última sessão
-- Data / ferramenta: 2026-05-30 / Claude Code
+- Data / ferramenta: 2026-06-10 / Claude Code
 - Branch: main
+- Onde paramos: **commitada a migração interop multi-LLM** que estava solta no working
+  tree (higiene pré-reestruturação da workstation): `AGENTS.md` fonte única (+ correção
+  da referência caduca ao symlink `GEMINI.md → CLAUDE.md`), `CLAUDE.md` ponteiro,
+  `GEMINI.md` híbrido, `.claude/` versionado, `.opencode/` + `opencode.json`. Sem
+  mudança de código. **Ciente:** o repo será movido para `develop/dados-abertos-cnpj`
+  na Fase 4 da reestruturação (`~/projects/docs/plans/2026-06-07-selfhost-mesmo-host.md`).
+
+## Sessão anterior (2026-05-30 — branch-guard)
 - Onde paramos: propagado o branch-guard (camada 3 do fluxo `/branch` da workstation)
   ao hook `.githooks/pre-commit` — bloqueia commit direto em `main`/`master`, compondo
   com o `gitleaks` já existente. Este repo commita governança/infra direto na `main`

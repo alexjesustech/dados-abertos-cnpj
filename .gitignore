@@ -2,7 +2,6 @@
 .venv
 .idea
 .pytest_cache
-.claude/
 temp/
 temp_smoke/
 extracted/
@@ -33,3 +32,9 @@ monitor/collect.log
 monitor/notifications.log
 monitor/notify.sent
 monitor/status.json
+
+# Claude Code — arquivos locais de máquina (não versionar)
+.claude/settings.local.json
+
+# Preferências pessoais de projeto na raiz (se você utilizar)
+CLAUDE.local.md
