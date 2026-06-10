@@ -7,6 +7,11 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Corrigido
+
+- Referências de caminho atualizadas para `~/projects/develop/dados-abertos-cnpj` (+ slug de memória do
+  Claude) — Fase 4 da reestruturação da workstation (2026-06-10).
+
 > Sem tags Git no repositório até o momento; a versão declarada em
 > `pyproject.toml` é `0.1.0`. Os marcos abaixo refletem o histórico real de
 > commits em `main`. Promova para `## [0.1.0] - AAAA-MM-DD` e crie a tag

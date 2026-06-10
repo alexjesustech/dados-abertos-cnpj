@@ -16,7 +16,7 @@ Conjunto leve de scripts em Python (stdlib only) + bash para acompanhar em tempo
 ## Como iniciar
 
 ```bash
-cd ~/projects/dados-abertos-cnpj/monitor
+cd ~/projects/develop/dados-abertos-cnpj/monitor
 ./start.sh
 ```
 
