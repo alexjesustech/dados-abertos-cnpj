@@ -11,6 +11,7 @@ tarefa envolver políticas globais, configuração de ferramentas (Claude Code,
 Antigravity, OpenCode) ou temas não cobertos por este arquivo.
 
 - **Início de sessão — verificar o remoto (diretiva global da workstation, desde 2026-06-11):** `git fetch origin --prune` + comparar local × remoto (`git status -sb`) **antes de editar**; divergência (atrás / à frente / divergida) se reporta e resolve (fast-forward quando possível) primeiro. Regra canônica: `~/projects/AGENTS.md` § Convenções de trabalho.
+- **Serviço de infra parado é estado intencional (GUARD-005, diretiva global da workstation, desde 2026-06-11):** o agente **não (re)liga** serviço de infraestrutura que não parou (runner de CI, stack Docker, unit systemd) — consultar o `docs/ESTADO.md` do `_infra/homelab-stacks` + **GO do dono** antes. CI `pending` sem runner = estado esperado, não defeito. Regra canônica: `~/projects/AGENTS.md` § GUARD-005.
 
 ## Estado entre sessões (LEIA E ATUALIZE SEMPRE)
 Antes de começar: leia `docs/ESTADO.md`. Ao terminar: atualize `docs/ESTADO.md`

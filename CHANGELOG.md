@@ -7,6 +7,13 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Adicionado — Linha-ponteiro GUARD-005 (diretiva global da workstation)
+
+- Serviço de infra parado é estado intencional: o agente não (re)liga runner de CI/stack/unit
+  que não parou — consultar o `docs/ESTADO.md` do `_infra/homelab-stacks` + GO do dono antes.
+  Regra canônica: `~/projects/AGENTS.md` § GUARD-005 (origem: incidente de 2026-06-11,
+  gitea-runner religado indevidamente por agente).
+
 ### Adicionado
 
 - **Regra de rotação do `docs/ESTADO.md`** (2026-06-11, replicada do meta-repo
