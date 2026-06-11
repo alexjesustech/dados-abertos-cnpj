@@ -7,6 +7,16 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Alterado
+
+- **`.env.sops.yaml` desversionado** (2026-06-11, política nova da ambiente local — ciphertext
+  fora do git: histórico eterno, sem *forward secrecy*): `git rm --cached` + `.gitignore`;
+  o arquivo segue no disco e o backup são os valores na secure note
+  `env — dados-abertos-cnpj` do cofre de segredos Personal Vault. O `.sops.yaml` (config de
+  recipient) e o `bin/with-env` continuam versionados; nada muda no uso
+  (`bin/with-env …`). Rotação dos valores já expostos no histórico = pendência da
+  ambiente local.
+
 ### Corrigido
 
 - Referências de caminho atualizadas para `~/projects/develop/dados-abertos-cnpj` (+ slug de memória do
