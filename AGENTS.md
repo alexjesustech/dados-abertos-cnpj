@@ -10,6 +10,8 @@ SOPS+age para segredos e CI multi-push GitHub+Gitea. Consulte-o quando a
 tarefa envolver políticas globais, configuração de ferramentas (Claude Code,
 Antigravity, OpenCode) ou temas não cobertos por este arquivo.
 
+- **Início de sessão — verificar o remoto (diretiva global da workstation, desde 2026-06-11):** `git fetch origin --prune` + comparar local × remoto (`git status -sb`) **antes de editar**; divergência (atrás / à frente / divergida) se reporta e resolve (fast-forward quando possível) primeiro. Regra canônica: `~/projects/AGENTS.md` § Convenções de trabalho.
+
 ## Estado entre sessões (LEIA E ATUALIZE SEMPRE)
 Antes de começar: leia `docs/ESTADO.md`. Ao terminar: atualize `docs/ESTADO.md`
 com data, ferramenta usada, o que mudou e pendências. A memória interna de cada

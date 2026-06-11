@@ -12,6 +12,7 @@
   `CHANGELOG` atualizados. Sem mudança de código; uso via `bin/with-env` inalterado.
   Rotação dos valores expostos no histórico = pendência da workstation
   (`~/projects/docs/ESTADO.md`).
+- 2026-06-11 — replicada a diretiva global "verificar o remoto no início de sessão" (linha-ponteiro no AGENTS.md).
 
 ## Sessão anterior
 - Data / ferramenta: 2026-06-10 / Claude Code
