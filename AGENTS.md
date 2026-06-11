@@ -237,7 +237,7 @@ Migrado para **SOPS + age** em 2026-05-24 (substitui o `.env` plaintext legado).
 
 | Item | Onde | Notas |
 |---|---|---|
-| `.env.sops.yaml` | raiz do repo, **versionado** | Ciphertext. Cifrado pra public key age `age17utcae5zrq0qfhaundd7u7wa74nm54a597pjg7q2ukl8s8883f9srky767` (workstation `base-station`). |
+| `.env.sops.yaml` | raiz do repo, **NÃO versionado** (gitignored desde 2026-06-11 — política da workstation: ciphertext fora do git, sem *forward secrecy* no histórico) | Ciphertext. Cifrado pra public key age `age17utcae5zrq0qfhaundd7u7wa74nm54a597pjg7q2ukl8s8883f9srky767` (workstation `base-station`). Backup = valores na secure note `env — dados-abertos-cnpj` do Bitwarden Personal Vault (`scripts/env-vault-push.sh` do meta-repo). |
 | `.sops.yaml` | raiz do repo, versionado | Config file: declara o recipient age pro `creation_rules`. Evita ter que passar `--age` em cada operação. |
 | `.env` plaintext | _(não existe mais)_ | Migração SOPS+age **concluída**: o `.env` plaintext legado foi removido. Resta apenas o `.env.example` (template versionado, sem segredos). pydantic_settings ainda lê de um `.env` local se existir (env vence), mas o fluxo canônico é via `bin/with-env`. |
 | `bin/with-env` | versionado, +x | Wrapper que injeta vars do `.env.sops.yaml` no subprocess via `sops exec-env`. Vars **não vazam** pro env do shell pai. |

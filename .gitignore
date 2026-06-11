@@ -38,3 +38,7 @@ monitor/status.json
 
 # Preferências pessoais de projeto na raiz (se você utilizar)
 CLAUDE.local.md
+
+# Política 2026-06-11 (workstation): ciphertext SOPS fora do git (sem forward secrecy no histórico).
+# Backup = valores no Bitwarden Personal Vault (note "env — dados-abertos-cnpj"). .sops.yaml (config) segue versionado.
+.env.sops.yaml

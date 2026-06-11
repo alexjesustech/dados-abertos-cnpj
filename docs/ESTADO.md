@@ -5,6 +5,15 @@
 > cada ferramenta NÃO é vista pela outra.
 
 ## Última sessão
+- Data / ferramenta: 2026-06-11 / Claude Code (manutenção de governança da workstation)
+- **`.env.sops.yaml` desversionado** (`git rm --cached` + `.gitignore`) — política nova da
+  workstation (ciphertext fora do git); backup = secure note `env — dados-abertos-cnpj`
+  no Bitwarden Personal Vault (fingerprint conferido). `AGENTS.md` § Segredos e
+  `CHANGELOG` atualizados. Sem mudança de código; uso via `bin/with-env` inalterado.
+  Rotação dos valores expostos no histórico = pendência da workstation
+  (`~/projects/docs/ESTADO.md`).
+
+## Sessão anterior
 - Data / ferramenta: 2026-06-10 / Claude Code
 - Branch: main
 - Onde paramos: **commitada a migração interop multi-LLM** que estava solta no working
