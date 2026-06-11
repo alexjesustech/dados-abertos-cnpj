@@ -7,6 +7,10 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Adicionado
+
+- Replica a diretiva global da ambiente local "verificar o remoto no início de toda sessão" (2026-06-11) como linha-ponteiro no `AGENTS.md` (canônica em `~/projects/AGENTS.md` § Convenções de trabalho).
+
 ### Alterado
 
 - **`.env.sops.yaml` desversionado** (2026-06-11, política nova da ambiente local — ciphertext
