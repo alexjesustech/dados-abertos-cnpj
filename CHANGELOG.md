@@ -9,6 +9,11 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Adicionado
 
+- **Regra de rotação do `docs/ESTADO.md`** (2026-06-11, replicada do meta-repo
+  `~/projects`): gatilho de poda em ~200 linhas, executada na mesma sessão; excedente
+  movido **verbatim** para `docs/ESTADO-arquivo.md` (criado na 1ª rotação); regras por
+  seção no cabeçalho do próprio `ESTADO.md`.
+
 - Replica a diretiva global da ambiente local "verificar o remoto no início de toda sessão" (2026-06-11) como linha-ponteiro no `AGENTS.md` (canônica em `~/projects/AGENTS.md` § Convenções de trabalho).
 
 ### Alterado
