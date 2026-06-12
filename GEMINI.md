@@ -5,4 +5,4 @@
 > automaticamente pelo Gemini CLI (*memory import*). Se o seu agente não
 > expandir imports (ex.: Antigravity — que, de todo modo, lê o `AGENTS.md`
 > nativamente), **leia e siga integralmente o `AGENTS.md`**. Não duplicar
-> conteúdo aqui (evita drift). Estado entre sessões: `docs/ESTADO.md`.
+> conteúdo aqui (evita drift). Estado entre sessões: `docs/HANDOFF.md`.
