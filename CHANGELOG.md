@@ -9,6 +9,26 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Alterado
 
+- Convenção de continuidade renomeada: docs/ESTADO.md → docs/HANDOFF.md (2026-06-11).
+
+### Adicionado — Linha-ponteiro GUARD-005 (diretiva global da ambiente local)
+
+- Serviço de infra parado é estado intencional: o agente não (re)liga runner de CI/stack/unit
+  que não parou — consultar o `docs/ESTADO.md` do `infra-local` + GO do dono antes.
+  Regra canônica: `~/projects/AGENTS.md` § GUARD-005 (origem: incidente de 2026-06-11,
+  gitea-runner religado indevidamente por agente).
+
+### Adicionado
+
+- **Regra de rotação do `docs/ESTADO.md`** (2026-06-11, replicada do meta-repo
+  `~/projects`): gatilho de poda em ~200 linhas, executada na mesma sessão; excedente
+  movido **verbatim** para `docs/ESTADO-arquivo.md` (criado na 1ª rotação); regras por
+  seção no cabeçalho do próprio `ESTADO.md`.
+
+- Replica a diretiva global da ambiente local "verificar o remoto no início de toda sessão" (2026-06-11) como linha-ponteiro no `AGENTS.md` (canônica em `~/projects/AGENTS.md` § Convenções de trabalho).
+
+### Alterado
+
 - **`.env.sops.yaml` desversionado** (2026-06-11, política nova da ambiente local — ciphertext
   fora do git: histórico eterno, sem *forward secrecy*): `git rm --cached` + `.gitignore`;
   o arquivo segue no disco e o backup são os valores na secure note

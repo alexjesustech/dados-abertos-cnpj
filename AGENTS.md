@@ -10,17 +10,20 @@ SOPS+age para segredos e CI multi-push GitHub+Gitea. Consulte-o quando a
 tarefa envolver políticas globais, configuração de ferramentas (Claude Code,
 Antigravity, OpenCode) ou temas não cobertos por este arquivo.
 
+- **Início de sessão — verificar o remoto (diretiva global da ambiente local, desde 2026-06-11):** `git fetch origin --prune` + comparar local × remoto (`git status -sb`) **antes de editar**; divergência (atrás / à frente / divergida) se reporta e resolve (fast-forward quando possível) primeiro. Regra canônica: `~/projects/AGENTS.md` § Convenções de trabalho.
+- **Serviço de infra parado é estado intencional (GUARD-005, diretiva global da ambiente local, desde 2026-06-11):** o agente **não (re)liga** serviço de infraestrutura que não parou (runner de CI, stack Docker, unit systemd) — consultar o `docs/HANDOFF.md` do `infra-local` + **GO do dono** antes. CI `pending` sem runner = estado esperado, não defeito. Regra canônica: `~/projects/AGENTS.md` § GUARD-005.
+
 ## Estado entre sessões (LEIA E ATUALIZE SEMPRE)
-Antes de começar: leia `docs/ESTADO.md`. Ao terminar: atualize `docs/ESTADO.md`
+Antes de começar: leia `docs/HANDOFF.md`. Ao terminar: atualize `docs/HANDOFF.md`
 com data, ferramenta usada, o que mudou e pendências. A memória interna de cada
 agente (Claude Code e Antigravity) NÃO é compartilhada com o outro —
-`docs/ESTADO.md` é a ÚNICA fonte de continuidade entre sessões/ferramentas.
-Decisões duráveis continuam registradas em ADRs (`docs/`); `ESTADO.md` é o
+`docs/HANDOFF.md` é a ÚNICA fonte de continuidade entre sessões/ferramentas.
+Decisões duráveis continuam registradas em ADRs (`docs/`); `HANDOFF.md` é o
 "ponteiro do dia" leve.
 
 Protocolo de interoperabilidade de estado:
-1. Memória / "onde paramos" → `docs/ESTADO.md`. Lida no início, atualizada no fim.
-2. Tasks → seção `## Pendências abertas` do `ESTADO.md` (checkboxes). Única fonte canônica de tarefas no commit.
+1. Memória / "onde paramos" → `docs/HANDOFF.md`. Lida no início, atualizada no fim.
+2. Tasks → seção `## Pendências abertas` do `HANDOFF.md` (checkboxes). Única fonte canônica de tarefas no commit.
 3. Planos de implementação → em `docs/adr/` para decisões duráveis; em `docs/plans/` para execução efêmera.
 4. Sumários / walkthroughs → `CHANGELOG.md [Unreleased]`.
 
