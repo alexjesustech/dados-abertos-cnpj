@@ -4,7 +4,7 @@
 > replicada aqui):** manter este arquivo **enxuto (< ~200 linhas)**. Na atualização de
 > fim de sessão, se passar de ~200 linhas, a poda acontece na **MESMA sessão** (item da
 > DoD documental). O excedente roda **verbatim** (nunca resumido/reescrito — auditável)
-> para `docs/ESTADO-arquivo.md` (criado na 1ª rotação), em blocos `## Rotação AAAA-MM-DD`
+> para `docs/HANDOFF-arquivo.md` (criado na 1ª rotação), em blocos `## Rotação AAAA-MM-DD`
 > (mais recente no topo). Por seção: **Snapshot** = só estado vigente; **Pendências** =
 > `- [x]` fechadas saem na rotação seguinte ao fechamento, `- [ ]` abertas NUNCA rodam;
 > **Decisões** = manter as últimas ~10; **Histórico** = manter as últimas ~8–10 entradas
@@ -16,13 +16,15 @@
 > cada ferramenta NÃO é vista pela outra.
 
 ## Última sessão
+
+- 2026-06-11 — Claude Code — arquivo renomeado de ESTADO.md p/ HANDOFF.md (convenção de continuidade entre agentes).
 - Data / ferramenta: 2026-06-11 / Claude Code (manutenção de governança da workstation)
 - **`.env.sops.yaml` desversionado** (`git rm --cached` + `.gitignore`) — política nova da
   workstation (ciphertext fora do git); backup = secure note `env — dados-abertos-cnpj`
   no Bitwarden Personal Vault (fingerprint conferido). `AGENTS.md` § Segredos e
   `CHANGELOG` atualizados. Sem mudança de código; uso via `bin/with-env` inalterado.
   Rotação dos valores expostos no histórico = pendência da workstation
-  (`~/projects/docs/ESTADO.md`).
+  (`~/projects/docs/HANDOFF.md`).
 - 2026-06-11 — replicada a diretiva global "verificar o remoto no início de sessão" (linha-ponteiro no AGENTS.md).
 
 ## Sessão anterior
