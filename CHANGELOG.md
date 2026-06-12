@@ -7,6 +7,10 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Alterado
+
+- Convenção de continuidade renomeada: docs/ESTADO.md → docs/HANDOFF.md (2026-06-11).
+
 ### Adicionado — Linha-ponteiro GUARD-005 (diretiva global da ambiente local)
 
 - Serviço de infra parado é estado intencional: o agente não (re)liga runner de CI/stack/unit
