@@ -240,8 +240,8 @@ Migrado para **SOPS + age** em 2026-05-24 (substitui o `.env` plaintext legado).
 
 | Item | Onde | Notas |
 |---|---|---|
-| `.env.sops.yaml` | raiz do repo, **NÃO versionado** (gitignored desde 2026-06-11 — política da ambiente local: ciphertext fora do git, sem *forward secrecy* no histórico) | Ciphertext. Cifrado pra public key age `***age-recipient-redacted***` (ambiente local `local-ambiente local`). Backup = valores na secure note `env — dados-abertos-cnpj` do cofre de segredos Personal Vault (`scripts/env-vault-push.sh` do meta-repo). |
-| `.sops.yaml` | raiz do repo, versionado | Config file: declara o recipient age pro `creation_rules`. Evita ter que passar `--age` em cada operação. |
+| `.env.sops.yaml` | raiz do repo, **NÃO versionado** (gitignored desde 2026-06-11 — política da ambiente local: ciphertext fora do git, sem *forward secrecy* no histórico) | Ciphertext. Cifrado pra public key age da ambiente local (recipient não divulgado aqui — política de 2026-06-12). Backup = valores na secure note `env — dados-abertos-cnpj` do cofre de segredos Personal Vault (`scripts/env-vault-push.sh` do meta-repo). |
+| `.sops.yaml` | raiz do repo, **NÃO versionado** (gitignored desde 2026-06-12 — política da ambiente local: nenhum `*.sops.yaml` no git; o config expõe os recipients age) | Config file: declara o recipient age pro `creation_rules`. Evita ter que passar `--age` em cada operação. Local-only; recriável conforme o howto da ambiente local. |
 | `.env` plaintext | _(não existe mais)_ | Migração SOPS+age **concluída**: o `.env` plaintext legado foi removido. Resta apenas o `.env.example` (template versionado, sem segredos). pydantic_settings ainda lê de um `.env` local se existir (env vence), mas o fluxo canônico é via `bin/with-env`. |
 | `bin/with-env` | versionado, +x | Wrapper que injeta vars do `.env.sops.yaml` no subprocess via `sops exec-env`. Vars **não vazam** pro env do shell pai. |
 

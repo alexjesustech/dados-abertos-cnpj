@@ -18,6 +18,12 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Alterado — curadoria de publicação
 
+- **`.sops.yaml` (config do SOPS) sai do versionamento** (2026-06-12): o arquivo declara
+  os recipients age da ambiente local do mantenedor — identidade de chave não é conteúdo
+  público. `git rm --cached` + `.gitignore` generalizado para `*.sops.yaml`; a tabela
+  § Segredos do `AGENTS.md` foi atualizada e deixou de divulgar o recipient por extenso.
+  O arquivo segue no disco do mantenedor (recriável; uso local via `bin/with-env` inalterado).
+
 - `docs/HANDOFF.md` (estado de sessão entre agentes) sai do versionamento e passa a
   **local-only** (`.gitignore`), conforme a política de curadoria de publicação:
   planejamento interno não é conteúdo público. O arquivo segue no disco do mantenedor.

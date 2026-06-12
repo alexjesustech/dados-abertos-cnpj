@@ -39,9 +39,10 @@ monitor/status.json
 # Preferências pessoais de projeto na raiz (se você utilizar)
 CLAUDE.local.md
 
-# Política 2026-06-11 (ambiente local): ciphertext SOPS fora do git (sem forward secrecy no histórico).
-# Backup = valores no cofre de segredos Personal Vault (note "env — dados-abertos-cnpj"). .sops.yaml (config) segue versionado.
-.env.sops.yaml
+# Política 2026-06-12 (ambiente local): NENHUM *.sops.yaml versionado — nem o ciphertext
+# (sem forward secrecy no histórico) nem o .sops.yaml de config (expõe recipients age).
+# Backup = valores no cofre de segredos Personal Vault (note "env — dados-abertos-cnpj").
+*.sops.yaml
 
 # Estado de sessão entre agentes — local-only (curadoria de publicação)
 docs/HANDOFF.md
