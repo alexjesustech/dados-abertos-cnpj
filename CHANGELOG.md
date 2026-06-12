@@ -7,6 +7,12 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Alterado — curadoria de publicação
+
+- `docs/HANDOFF.md` (estado de sessão entre agentes) sai do versionamento e passa a
+  **local-only** (`.gitignore`), conforme a política de curadoria de publicação:
+  planejamento interno não é conteúdo público. O arquivo segue no disco do mantenedor.
+
 ### Alterado
 
 - Convenção de continuidade renomeada: docs/ESTADO.md → docs/HANDOFF.md (2026-06-11).
@@ -14,18 +20,18 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 ### Adicionado — Linha-ponteiro GUARD-005 (diretiva global da workstation)
 
 - Serviço de infra parado é estado intencional: o agente não (re)liga runner de CI/stack/unit
-  que não parou — consultar o `docs/ESTADO.md` do `_infra/homelab-stacks` + GO do dono antes.
-  Regra canônica: `~/projects/AGENTS.md` § GUARD-005 (origem: incidente de 2026-06-11,
-  gitea-runner religado indevidamente por agente).
+  que não parou — consultar a documentação de estado da infraestrutura + GO explícito do mantenedor
+  antes. Regra canônica na governança central (privada) da workstation (origem:
+  incidente de 2026-06-11).
 
 ### Adicionado
 
-- **Regra de rotação do `docs/ESTADO.md`** (2026-06-11, replicada do meta-repo
-  `~/projects`): gatilho de poda em ~200 linhas, executada na mesma sessão; excedente
+- **Regra de rotação do `docs/ESTADO.md`** (2026-06-11, replicada da governança
+  central da workstation): gatilho de poda em ~200 linhas, executada na mesma sessão; excedente
   movido **verbatim** para `docs/ESTADO-arquivo.md` (criado na 1ª rotação); regras por
   seção no cabeçalho do próprio `ESTADO.md`.
 
-- Replica a diretiva global da workstation "verificar o remoto no início de toda sessão" (2026-06-11) como linha-ponteiro no `AGENTS.md` (canônica em `~/projects/AGENTS.md` § Convenções de trabalho).
+- Replica a diretiva global da workstation "verificar o remoto no início de toda sessão" (2026-06-11) como linha-ponteiro no `AGENTS.md` (canônica na governança central, privada, da workstation).
 
 ### Alterado
 
@@ -39,8 +45,8 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Corrigido
 
-- Referências de caminho atualizadas para `~/projects/develop/dados-abertos-cnpj` (+ slug de memória do
-  Claude) — Fase 4 da reestruturação da workstation (2026-06-10).
+- Referências de caminho internas atualizadas após a reestruturação da workstation
+  (2026-06-10).
 
 > Sem tags Git no repositório até o momento; a versão declarada em
 > `pyproject.toml` é `0.1.0`. Os marcos abaixo refletem o histórico real de

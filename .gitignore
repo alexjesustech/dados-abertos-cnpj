@@ -42,3 +42,7 @@ CLAUDE.local.md
 # Política 2026-06-11 (workstation): ciphertext SOPS fora do git (sem forward secrecy no histórico).
 # Backup = valores no Bitwarden Personal Vault (note "env — dados-abertos-cnpj"). .sops.yaml (config) segue versionado.
 .env.sops.yaml
+
+# Estado de sessão entre agentes — local-only (curadoria de publicação)
+docs/HANDOFF.md
+docs/HANDOFF-arquivo.md
