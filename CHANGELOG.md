@@ -28,6 +28,19 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   **local-only** (`.gitignore`), conforme a política de curadoria de publicação:
   planejamento interno não é conteúdo público. O arquivo segue no disco do mantenedor.
 
+- **Tooling de agente (`.claude/`, `.opencode/`) sai do versionamento** (2026-06-12,
+  diretriz da ambiente local): diretórios de configuração pessoal de agente são
+  **local-only em repositório público**. `git rm --cached` + `.gitignore` (cobre também
+  `.agents/`); os arquivos seguem no disco do mantenedor. O
+  `.opencode/rules/opencode-tooling.md` versionado era, inclusive, um symlink quebrado
+  apontando para fora do repositório.
+
+### Adicionado — curadoria de publicação
+
+- `llms.txt` na raiz (padrão [llmstxt.org](https://llmstxt.org/)), conforme a diretriz
+  da ambiente local para repositórios públicos (criar ao publicar; nos existentes,
+  adicionar ao tocá-los).
+
 ### Alterado
 
 - Convenção de continuidade renomeada: docs/ESTADO.md → docs/HANDOFF.md (2026-06-11).

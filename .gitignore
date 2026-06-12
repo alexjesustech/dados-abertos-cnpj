@@ -33,8 +33,10 @@ monitor/notifications.log
 monitor/notify.sent
 monitor/status.json
 
-# Claude Code — arquivos locais de máquina (não versionar)
-.claude/settings.local.json
+# Tooling de agente — local-only em repositório público (diretriz da ambiente local 2026-06-12)
+.claude/
+.opencode/
+.agents/
 
 # Preferências pessoais de projeto na raiz (se você utilizar)
 CLAUDE.local.md

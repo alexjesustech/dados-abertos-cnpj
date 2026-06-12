@@ -1,0 +1,24 @@
+# dados-abertos-cnpj
+
+> Pipeline em Python que baixa os Dados Abertos do CNPJ publicados pela
+> Receita Federal do Brasil (RFB) e os ingere em um banco SQLite local, com
+> retomada parcial e idempotência. Sobre esse banco vivem dois consumidores
+> read-only em pt-BR: uma API HTTP local (FastAPI) e um servidor MCP
+> (FastMCP, 9 tools).
+
+## Documentação
+
+- [README](README.md): pré-requisitos, instalação, configuração (`.env`) e
+  execução do pipeline
+- [Guia de agentes (AGENTS.md)](AGENTS.md): arquitetura das camadas
+  (pipeline, API, MCP, monitor), comandos frequentes, convenções de código e
+  política de segredos
+- [PRD](docs/PRD.md): requisitos e escopo do produto
+- [Changelog](CHANGELOG.md): mudanças notáveis por versão
+
+## Opcional
+
+- [Planejamento de produto](docs/planejamento-2026-05-23.html): peça
+  fundadora da série editorial em `docs/` (briefing, plano de implementação,
+  relatório de execução e backlog)
+- [CI local](docs/CI-LOCAL.md): espelho local do pipeline de CI
