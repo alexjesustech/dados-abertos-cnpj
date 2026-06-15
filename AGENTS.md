@@ -206,7 +206,7 @@ Para consultas ad hoc no banco já ingerido, registre o servidor SQLite MCP em `
         "-y",
         "@modelcontextprotocol/server-sqlite",
         "--db",
-        "~/projects/develop/dados-abertos-cnpj/dados_cnpj.db"
+        "/caminho/para/dados-abertos-cnpj/dados_cnpj.db"
       ]
     }
   }

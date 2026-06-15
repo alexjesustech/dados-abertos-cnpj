@@ -11,6 +11,11 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 - Seção `## Status` (maturidade SemVer) no README, `LICENSE` MIT e seção `## Licença`.
 
+### Corrigido
+
+- Removidos caminhos pessoais absolutos (`/home/<user>/…`) dos exemplos de config MCP em
+  `AGENTS.md` e `mcp_server/server.py` → placeholder `/caminho/para/dados-abertos-cnpj` (higiene pública).
+
 ### Alterado — curadoria de publicação
 
 - `docs/HANDOFF.md` (estado de sessão entre agentes) sai do versionamento e passa a

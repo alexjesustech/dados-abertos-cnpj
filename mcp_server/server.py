@@ -14,7 +14,7 @@ controla):
       "mcpServers": {
         "cnpj-br": {
           "command": "uv",
-          "args": ["--directory", "~/projects/develop/dados-abertos-cnpj",
+          "args": ["--directory", "/caminho/para/dados-abertos-cnpj",
                    "run", "mcp-cnpj"]
         }
       }
