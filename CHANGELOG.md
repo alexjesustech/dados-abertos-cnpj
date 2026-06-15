@@ -7,6 +7,10 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Adicionado
+
+- Seção `## Status` (maturidade SemVer) no README, `LICENSE` MIT e seção `## Licença`.
+
 ### Alterado — curadoria de publicação
 
 - `docs/HANDOFF.md` (estado de sessão entre agentes) sai do versionamento e passa a

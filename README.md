@@ -4,6 +4,11 @@ Pipeline em Python para baixar os **Dados Abertos do CNPJ** publicados pela Rece
 
 A fonte é o share público de Nextcloud da RFB em [`arquivos.receitafederal.gov.br`](https://arquivos.receitafederal.gov.br/index.php/s/gn672Ad4CF8N6TK). O pipeline detecta automaticamente o período mais recente (`YYYY-MM`) e baixa os ~37 ZIPs do mês (Empresas, Estabelecimentos, Sócios, Simples e tabelas de domínio).
 
+## Status
+
+`0.1.0` — desenvolvimento inicial. Pipeline funcional; a interface (CLI/config) ainda pode mudar
+([SemVer](https://semver.org/lang/pt-BR/) `0.y.z` = API pública instável).
+
 ## Pré-requisitos
 
 - **Python ≥ 3.10** (testado em 3.12)
@@ -77,3 +82,7 @@ notifier.py    # logging para arquivo + Discord/Telegram opcional
 - Portal oficial: <https://dados.gov.br/dados/conjuntos-dados/cadastro-nacional-da-pessoa-juridica---cnpj>
 - Share Nextcloud (fonte real dos arquivos): <https://arquivos.receitafederal.gov.br/index.php/s/gn672Ad4CF8N6TK>
 - Layout dos CSVs: ver dicionário oficial da Receita Federal (`Metadados.pdf` no próprio share)
+
+## Licença
+
+[MIT](LICENSE) © 2026 Alex Jesus.
