@@ -8,7 +8,7 @@ Conjunto leve de scripts em Python (stdlib only) + bash para acompanhar em tempo
 
 1. **Coletor (`collect.py`)** lê o `dados-abertos-cnpj.log` incrementalmente, parseia eventos conforme [`STATUS_SCHEMA.md`](./STATUS_SCHEMA.md) e mantém um snapshot vivo em `status.json`.
 2. **Viewer de terminal (`status.sh`)** transforma o `status.json` em um resumo Markdown colorido.
-3. **Dashboard HTML** (`dashboard.html`, mantido em paralelo por outro agente) consome o mesmo `status.json` e renderiza visão rica no browser.
+3. **Dashboard HTML** (`dashboard.html`) consome o mesmo `status.json` e renderiza visão rica no browser.
 4. **Notificação (`notify.sh`)** dispara `notify-send` no desktop assim que o pipeline termina (sucesso ou falha) — disparada uma única vez por run, com idempotência via `notify.sent`.
 
 ---
@@ -16,7 +16,7 @@ Conjunto leve de scripts em Python (stdlib only) + bash para acompanhar em tempo
 ## Como iniciar
 
 ```bash
-cd ~/projects/develop/dados-abertos-cnpj/monitor
+cd monitor          # a partir da raiz do repositório
 ./start.sh
 ```
 

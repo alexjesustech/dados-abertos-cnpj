@@ -9,8 +9,7 @@
 #   bin/with-env .venv/bin/uvicorn monitor.server:app --reload
 #
 # As vars NUNCA entram no env do shell pai — só no subprocess executado.
-# Pra editar valores: SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt EDITOR=micro sops .env.sops.yaml
-# Howto canônico: ~/projects/docs/sops-secrets-howto.md
+# Pra editar valores: SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops .env.sops.yaml
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"

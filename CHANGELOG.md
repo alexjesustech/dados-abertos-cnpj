@@ -10,122 +10,43 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 ### Adicionado
 
 - Seção `## Status` (maturidade SemVer) no README, `LICENSE` MIT e seção `## Licença`.
-
-### Corrigido
-
-- Removidos caminhos pessoais absolutos (`/home/<user>/…`) dos exemplos de config MCP em
-  `AGENTS.md` e `mcp_server/server.py` → placeholder `/caminho/para/dados-abertos-cnpj` (higiene pública).
-
-### Alterado — curadoria de publicação
-
-- **`.sops.yaml` (config do SOPS) sai do versionamento** (2026-06-12): o arquivo declara
-  os recipients age da ambiente local do mantenedor — identidade de chave não é conteúdo
-  público. `git rm --cached` + `.gitignore` generalizado para `*.sops.yaml`; a tabela
-  § Segredos do `AGENTS.md` foi atualizada e deixou de divulgar o recipient por extenso.
-  O arquivo segue no disco do mantenedor (recriável; uso local via `bin/with-env` inalterado).
-
-- `docs/HANDOFF.md` (estado de sessão entre agentes) sai do versionamento e passa a
-  **local-only** (`.gitignore`), conforme a política de curadoria de publicação:
-  planejamento interno não é conteúdo público. O arquivo segue no disco do mantenedor.
-
-- **Tooling de agente (`.claude/`, `.opencode/`) sai do versionamento** (2026-06-12,
-  diretriz da ambiente local): diretórios de configuração pessoal de agente são
-  **local-only em repositório público**. `git rm --cached` + `.gitignore` (cobre também
-  `.agents/`); os arquivos seguem no disco do mantenedor. O
-  `.opencode/rules/opencode-tooling.md` versionado era, inclusive, um symlink quebrado
-  apontando para fora do repositório.
-
-### Adicionado — curadoria de publicação
-
-- `llms.txt` na raiz (padrão [llmstxt.org](https://llmstxt.org/)), conforme a diretriz
-  da ambiente local para repositórios públicos (criar ao publicar; nos existentes,
-  adicionar ao tocá-los).
+- `llms.txt` na raiz (padrão [llmstxt.org](https://llmstxt.org/)).
+- `AGENTS.md` como guia público de agente: arquitetura, comandos, convenções de
+  código e política de segredos.
 
 ### Alterado
 
-- Convenção de continuidade renomeada: docs/ESTADO.md → docs/HANDOFF.md (2026-06-11).
-
-### Adicionado — Linha-ponteiro GUARD-005 (diretiva global da ambiente local)
-
-- Serviço de infra parado é estado intencional: o agente não (re)liga runner de CI/stack/unit
-  que não parou — consultar a documentação de estado da infraestrutura + GO explícito do mantenedor
-  antes. Regra canônica na governança central (privada) da ambiente local (origem:
-  incidente de 2026-06-11).
-
-### Adicionado
-
-- **Regra de rotação do `docs/ESTADO.md`** (2026-06-11, replicada da governança
-  central da ambiente local): gatilho de poda em ~200 linhas, executada na mesma sessão; excedente
-  movido **verbatim** para `docs/ESTADO-arquivo.md` (criado na 1ª rotação); regras por
-  seção no cabeçalho do próprio `ESTADO.md`.
-
-- Replica a diretiva global da ambiente local "verificar o remoto no início de toda sessão" (2026-06-11) como linha-ponteiro no `AGENTS.md` (canônica na governança central, privada, da ambiente local).
-
-### Alterado
-
-- **`.env.sops.yaml` desversionado** (2026-06-11, política nova da ambiente local — ciphertext
-  fora do git: histórico eterno, sem *forward secrecy*): `git rm --cached` + `.gitignore`;
-  o arquivo segue no disco e o backup são os valores na secure note
-  `env — dados-abertos-cnpj` do cofre de segredos Personal Vault. O `.sops.yaml` (config de
-  recipient) e o `bin/with-env` continuam versionados; nada muda no uso
-  (`bin/with-env …`). Rotação dos valores já expostos no histórico = pendência da
-  ambiente local.
-
-### Corrigido
-
-- Referências de caminho internas atualizadas após a reestruturação da ambiente local
-  (2026-06-10).
-
-> Sem tags Git no repositório até o momento; a versão declarada em
-> `pyproject.toml` é `0.1.0`. Os marcos abaixo refletem o histórico real de
-> commits em `main`. Promova para `## [0.1.0] - AAAA-MM-DD` e crie a tag
-> `v0.1.0` quando for cortar a primeira release.
-
-### Adicionado
-
-- **Migração interop multi-LLM (governança da ambiente local):** `AGENTS.md` na raiz vira a
-  fonte única de regras (conteúdo movido do `CLAUDE.md`, que vira ponteiro `@AGENTS.md`);
-  `GEMINI.md` deixa de ser symlink e vira arquivo híbrido (`@AGENTS.md` + fallback em prosa);
-  `.claude/` passa a ser versionado (settings + rules modulares; `settings.local.json`
-  bloqueado no `.gitignore`); suporte ao OpenCode (`.opencode/rules/` + `opencode.json`).
-
-- Diretiva de documentação obrigatória + governança documental propagada no
-  `CLAUDE.md`/`GEMINI.md` (Definition of Done inclui docs atualizadas).
-- Segundo recipient age de recuperação no `.sops.yaml` (GUARD-002).
-- Adicionado branch-guard ao hook `.githooks/pre-commit` (bloqueia commit
-  direto em `main`/`master`; escape `git config hooks.allowMainCommit true`
-  ou `ALLOW_MAIN_COMMIT=1`), compondo com o `gitleaks` já existente. Camada 3
-  do fluxo `/branch` da ambiente local.
-- Hook `pre-commit` com `gitleaks` como defesa em profundidade (GUARD-002).
-- Padrão "CI local 3 camadas" do projeto `outro-projeto` (script de CI local +
-  pre-push hook via `core.hooksPath`).
-
-### Alterado
-
-- Restrição estrita sobre `DRAFT.md`: o agente nunca lê, indexa ou referencia
-  esse arquivo (revoga a política anterior de "ler-e-formalizar").
 - Migração dos segredos do `.env` plaintext legado para **SOPS + age**
-  (`.env.sops.yaml` versionado + wrapper `bin/with-env`); `.env` plaintext
-  removido (GUARD-002 v0.3.0).
-- `GEMINI.md` passou a ser symlink para `CLAUDE.md` (fonte única multi-LLM).
-- Aplicado `ruff` (lint + format) em toda a base, resolvendo dívida
-  pré-existente que travava o gate de CI.
+  (arquivo cifrado **não versionado** + wrapper `bin/with-env`); `.env` plaintext removido.
 
-## Caminho 01 — "Caixa-preta de CNPJ pra mim" (2026-05-23)
+### Removido
 
-> Camada de consumo (A + I + J) entregue em sessão única sobre o banco já
-> ingerido (~37 GB, período `2026-05`). Marco principal do projeto.
+- Configuração local de tooling de IA (`.claude/`, `.opencode/`, `CLAUDE.md`,
+  `GEMINI.md`, `opencode.json`), arquivos cifrados de segredo (`*.sops.yaml`) e
+  planejamento interno (`docs/HANDOFF.md`) saem do versionamento e passam a
+  **local-only** — a orientação pública de agente fica no `AGENTS.md`.
+
+### Corrigido
+
+- Removidos caminhos absolutos pessoais dos exemplos de configuração (higiene pública).
+
+> A versão declarada em `pyproject.toml` é `0.1.0`. Promova para
+> `## [0.1.0] - AAAA-MM-DD` e crie a tag `v0.1.0` ao cortar a primeira release.
+
+## Camada de consumo — API + MCP (2026-05-23)
+
+> Camada de consumo (API + MCP + biblioteca) sobre o banco já ingerido.
 
 ### Adicionado
 
-- **`cnpj_lib/`** (J) — biblioteca compartilhada: validador de CNPJ
+- **`cnpj_lib/`** — biblioteca compartilhada: validador de CNPJ
   alfanumérico (Módulo 11, NT Conjunta 2025.001, vigência 06/07/2026),
-  formatador e tabelas de domínio RFB. 60 testes + Hypothesis, cobertura 100%.
-- **`app/`** (A) — API HTTP local em FastAPI sobre SQLite read-only
+  formatador e tabelas de domínio RFB. Testes + Hypothesis, cobertura 100%.
+- **`app/`** — API HTTP local em FastAPI sobre SQLite read-only
   (`?mode=ro`): rotas `/health`, `/periodo-atual`, `/stats`, `/cnpj/{cnpj}`,
   `/cnpj/{basico}/socios`, `/cnpj/{basico}/estabelecimentos`. Pydantic v2,
   Swagger em pt-BR.
-- **`mcp_server/`** (I) — MCP server FastMCP `cnpj-br` com 9 tools tipadas
+- **`mcp_server/`** — MCP server FastMCP `cnpj-br` com 9 tools tipadas
   (`buscar_empresa`, `listar_socios`, `listar_filiais`, `vinculos_pj`,
   `cnaes_por_municipio`, `empresas_por_cnae`, `delta_mensal`, `validar_cnpj`,
   `descrever_codigo`), reusando `app.servicos`; paginação manual
@@ -133,12 +54,9 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **`monitor/`** — observabilidade do pipeline (coletor stdlib → `status.json`,
   dashboard HTML em loopback, controle `POST /api/run` e `/api/stop`).
 - **`migrations/`** — SQL idempotente com `ANALYZE` + 4 índices.
-- Suíte de testes: 27 de integração da API + 37 do MCP; fixtures em
-  `tests/conftest.py`.
+- Suíte de testes: integração da API + MCP; fixtures em `tests/conftest.py`.
 - `pyproject.toml` com extras `[api]`, `[mcp]`, `[dev]`; entrypoints `cnpj-api`
   e `mcp-cnpj`; gestão via `uv`.
-- Série de documentos de produto em `docs/` (planejamento, briefing, relatório,
-  backlog) + design system "Dossiê editorial".
 
 ## Pipeline WebDAV (2026-05-22)
 
@@ -149,7 +67,7 @@ e o projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   1 MB). POCs Selenium preservadas na branch `experiments/spa-scraping`.
 - Projeto renomeado para `dados-abertos-cnpj` (antes `dados_aberto_cpnj` —
   kebab-case + correção de typo).
-- README/CLAUDE/GEMINI reescritos refletindo a arquitetura WebDAV.
+- README reescrito refletindo a arquitetura WebDAV.
 
 ### Adicionado
 

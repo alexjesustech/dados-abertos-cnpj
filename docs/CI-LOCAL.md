@@ -1,9 +1,8 @@
 # CI local — gate único do projeto
 
 > **Por quê?** Este repo **não tem CI cloud** (sem `.github/workflows/`). CI
-> local é o único gate automatizado contra regressão de lint/testes. Padrão
-> herdado do projeto `outro-projeto` (`~/projects/outro-projeto/docs/CI-LOCAL.md`), adaptado
-> para Python 3.11+ + ruff + pytest.
+> local é o único gate automatizado contra regressão de lint/testes. Padrão de
+> CI local em camadas (script + hooks Git), adaptado para Python 3.11+ + ruff + pytest.
 
 ## Camadas
 
@@ -81,8 +80,7 @@ disparam CI.
 CNPJ_SKIP_PREPUSH=1 git push ...
 ```
 
-Documentar o motivo no commit. Nunca `--no-verify` silencioso (antipadrão
-explícito do padrão outro-projeto).
+Documentar o motivo no commit. Nunca `--no-verify` silencioso (antipadrão explícito).
 
 ### Desinstalar
 
@@ -122,13 +120,10 @@ Decisão: Makefile fino + venv direto é a opção mais leve e versionável.
 
 ## Referências
 
-- `~/projects/outro-projeto/docs/CI-LOCAL.md` — padrão de origem (Rust + cargo).
-- `~/projects/outro-projeto/docs/CI-LOCAL.md` — adaptação Laravel/Sail.
-- `~/projects/outro-projeto/docs/CI-LOCAL.md` — adaptação Sail-only.
 - `Makefile` (raiz) — targets canônicos.
 - `.githooks/pre-push` — gate automático em main.
 - `pyproject.toml` `[tool.ruff]` `[tool.pytest.ini_options]` — fonte das configs.
 
 ## Histórico
 
-- **2026-05-23**: arquivo + Makefile + .githooks/pre-push criados em branch `feature/ci-local-outro-projeto-pattern`.
+- **2026-05-23**: arquivo + Makefile + `.githooks/pre-push` criados.

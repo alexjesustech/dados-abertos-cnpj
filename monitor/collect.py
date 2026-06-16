@@ -41,8 +41,8 @@ from typing import Any
 
 SCHEMA_VERSION = 1
 
-# Fuso horário local: detectado do sistema na inicialização.
-# Em local-ambiente local é Porto Velho (-04:00), em São Paulo seria (-03:00).
+# Fuso horário local: detectado do sistema na inicialização
+# (ex.: Porto Velho -04:00, São Paulo -03:00).
 # Calculado em runtime via `datetime.now().astimezone().utcoffset()`.
 TZ_LOCAL = datetime.now().astimezone().tzinfo or timezone(timedelta(hours=-3))
 

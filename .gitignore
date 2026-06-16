@@ -33,19 +33,21 @@ monitor/notifications.log
 monitor/notify.sent
 monitor/status.json
 
-# Tooling de agente — local-only em repositório público (diretriz da ambiente local 2026-06-12)
+# Tooling de agente de IA — local-only (a orientação pública vive no AGENTS.md)
 .claude/
 .opencode/
 .agents/
+CLAUDE.md
+GEMINI.md
+opencode.json
 
 # Preferências pessoais de projeto na raiz (se você utilizar)
 CLAUDE.local.md
 
-# Política 2026-06-12 (ambiente local): NENHUM *.sops.yaml versionado — nem o ciphertext
-# (sem forward secrecy no histórico) nem o .sops.yaml de config (expõe recipients age).
-# Backup = valores no cofre de segredos Personal Vault (note "env — dados-abertos-cnpj").
+# Segredos: NENHUM *.sops.yaml versionado — nem o ciphertext (sem forward
+# secrecy no histórico) nem o .sops.yaml de config (expõe os recipients age).
 *.sops.yaml
 
-# Estado de sessão entre agentes — local-only (curadoria de publicação)
+# Estado de sessão entre agentes — local-only
 docs/HANDOFF.md
 docs/HANDOFF-arquivo.md

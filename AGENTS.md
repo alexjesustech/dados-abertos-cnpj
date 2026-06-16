@@ -1,85 +1,35 @@
 # dados-abertos-cnpj — Pipeline + API + MCP server
 
-## Workstation — governança global
-
-Este projeto está contido em `~/projects/`. O [`AGENTS.md`](../AGENTS.md) na
-raiz da ambiente local contém regras vinculantes que **prevalecem** sobre
-diretivas locais em caso de conflito: interoperabilidade multi-LLM, protocolo
-de estado, convenções de nomenclatura (kebab-case, branch main/develop),
-SOPS+age para segredos e CI multi-push GitHub+Gitea. Consulte-o quando a
-tarefa envolver políticas globais, configuração de ferramentas (Claude Code,
-Antigravity, OpenCode) ou temas não cobertos por este arquivo.
-
-- **Início de sessão — verificar o remoto (diretiva global da ambiente local, desde 2026-06-11):** `git fetch origin --prune` + comparar local × remoto (`git status -sb`) **antes de editar**; divergência (atrás / à frente / divergida) se reporta e resolve (fast-forward quando possível) primeiro. Regra canônica: `~/projects/AGENTS.md` § Convenções de trabalho.
-- **Serviço de infra parado é estado intencional (GUARD-005, diretiva global da ambiente local, desde 2026-06-11):** o agente **não (re)liga** serviço de infraestrutura que não parou (runner de CI, stack Docker, unit systemd) — consultar o `docs/HANDOFF.md` do `infra-local` + **GO do dono** antes. CI `pending` sem runner = estado esperado, não defeito. Regra canônica: `~/projects/AGENTS.md` § GUARD-005.
-
-## Estado entre sessões (LEIA E ATUALIZE SEMPRE)
-Antes de começar: leia `docs/HANDOFF.md`. Ao terminar: atualize `docs/HANDOFF.md`
-com data, ferramenta usada, o que mudou e pendências. A memória interna de cada
-agente (Claude Code e Antigravity) NÃO é compartilhada com o outro —
-`docs/HANDOFF.md` é a ÚNICA fonte de continuidade entre sessões/ferramentas.
-Decisões duráveis continuam registradas em ADRs (`docs/`); `HANDOFF.md` é o
-"ponteiro do dia" leve.
-
-Protocolo de interoperabilidade de estado:
-1. Memória / "onde paramos" → `docs/HANDOFF.md`. Lida no início, atualizada no fim.
-2. Tasks → seção `## Pendências abertas` do `HANDOFF.md` (checkboxes). Única fonte canônica de tarefas no commit.
-3. Planos de implementação → em `docs/adr/` para decisões duráveis; em `docs/plans/` para execução efêmera.
-4. Sumários / walkthroughs → `CHANGELOG.md [Unreleased]`.
-
 Pipeline Python que baixa os Dados Abertos do CNPJ (Receita Federal) via WebDAV público do Nextcloud da RFB e ingere em SQLite local, com retomada e idempotência. Sobre esse banco vivem **dois consumidores**: uma **API HTTP local** (FastAPI) e um **MCP server** (FastMCP, 9 tools) — ambos read-only, em pt-BR.
 
-> **📍 Estado** — pipeline executado (banco com 37 GB, período `2026-05`); monitor + API integ + MCP tests já commitados. A suite `tests/mcp/` (chamada direta das 9 tools FastMCP, commit `812e8bb`) e o refator de `tests/conftest.py` (fixtures compartilhadas `tmp_db_path`/`cnpjs`, commit `548bab1`) entraram na história — não há mais WIP pendente desses itens. `git log` mostra como topo `b709aa0` (GEMINI.md symlink + merge das diretrizes de agentes no CLAUDE.md).
-
-## 📚 Série de documentos
-
-As peças encadeadas em `docs/` registram a decisão e a execução do Caminho 01 ("Caixa-preta de CNPJ pra mim"):
-
-| Nº | Documento | Tipo |
-|---|---|---|
-| 000 | [`planejamento-2026-05-23.html`](./docs/planejamento-2026-05-23.html) | Planejamento de produto — o que dá pra construir (estado atual + mercado + restrições legais + datasets cruzáveis + catálogo de soluções + 3 caminhos). Peça fundadora que originou a série. |
-| 001 | [`briefing-2026-05-23.html`](./docs/briefing-2026-05-23.html) | Pesquisa de viabilidade (mercado + restrições legais + 10 soluções + 3 caminhos) |
-| 002 | [`briefing-implementacao-2026-05-23.html`](./docs/briefing-implementacao-2026-05-23.html) | Plano executável (stack + estrutura + 4 sprints + modelagem JSON) |
-| 003 | [`relatorio-execucao-2026-05-23.html`](./docs/relatorio-execucao-2026-05-23.html) | Relatório de entrega (4 sprints concluídos + métricas + decisões registradas) |
-| 004 | [`backlog-2026-05-23.html`](./docs/backlog-2026-05-23.html) | Backlog & alternativas pós-pausa (estado, polimento, caminhos 02/03, 10 soluções, decisões válidas) |
-
-Sistema visual: [`docs/design/dossie-editorial.md`](./docs/design/dossie-editorial.md) — variante B (creme + Newsreader + vermillion único, sem emoji).
+Este arquivo orienta **agentes de IA** (e contribuidores humanos) que trabalham no repositório: convenções, arquitetura e o que preservar antes de mudar.
 
 ---
 
 ## 🤖 Diretrizes para Agentes de IA
-
-Este projeto é lido pelo Claude Code (via ponteiro `CLAUDE.md` → `@AGENTS.md`), pelo Antigravity e pelo OpenCode (ambos leem este `AGENTS.md` nativamente) e pelo Gemini CLI (via `GEMINI.md` híbrido `@AGENTS.md` + prosa) — fonte única conforme a governança multi-LLM em [`../AGENTS.md`](../AGENTS.md). Regras específicas deste repo (consolidadas do antigo `GEMINI.md` em 2026-05-25):
-
-### Sessão (dois canais)
-
-Convenção da ambiente local (ver [`../CLAUDE.md`](../CLAUDE.md)):
-
-* **`~/projects/DRAFT.md` é OFF-LIMITS** — RESTRIÇÃO ESTRITA: o agente NUNCA lê, indexa, edita ou referencia esse arquivo, nem usa seu conteúdo como requisito ou contexto. Espaço pessoal exclusivo do desenvolvedor.
-* **Documentação obrigatória** (ver `~/projects/CLAUDE.md` § "Convenções de trabalho"): manter `README.md` + `CHANGELOG.md` (Keep a Changelog + SemVer, `[Unreleased]` sempre) atualizados — e `docs/PRD.md` se for projeto de produto/aplicação. **Definition of Done:** feature só está "pronta" após atualizar as docs obrigatórias afetadas; doc desatualizada = feature incompleta.
-* **Fim da sessão:** se algo sobreviver à conversa (decisão, pendência, feedback, mudança de stack), atualizar a memória global em `~/.claude/projects/dados-abertos-cnpj/memory/` + `MEMORY.md`.
 
 ### Convenções de código
 
 * PEP 8 + regras de `.pylintrc`. Comentários só onde o porquê não for óbvio.
 * **Sem `print()` direto** em código de produção — usar sempre `Notifier.log_and_notify(message, level=logging.INFO|WARNING|ERROR)`; cuida de log em arquivo + Discord/Telegram opcionais.
 * Path resolution via `pathlib.Path`, **nunca** `os.path.join`.
-* Strings de log em pt-BR (segue a política global do workspace).
+* Strings de log em pt-BR.
 
 ### Antes de mudar
 
 * **Arquitetura:** preserve a divisão `main → fetcher → database → notifier` (ver "Arquitetura" abaixo). Se for refatorar, justifique o desvio.
 * **Dependências:** avaliar stdlib primeiro. A camada original tem só `requests` justamente pra manter a árvore enxuta; a camada nova (API+MCP) entra via `uv` com extras (`--extra api`, `--extra mcp`, `--extra dev`).
-* **Schema do SQLite:** verificar `controle_importacao` — DDL muda comportamento em bancos já populados em produção.
+* **Schema do SQLite:** verificar `controle_importacao` — DDL muda comportamento em bancos já populados.
 * **`fetcher.py`:** a fonte é HTTP estático via WebDAV público da RFB. Se `RFB_SHARE_TOKEN` ou path mudar, é configuração — **não** reescrever pra usar Selenium ou outra fonte (POCs antigas estão preservadas na branch `experiments/spa-scraping`).
 
 ### Checklist pré-commit
 
 1. `pylint *.py` (camada original) e/ou `uv run ruff check .` (camada nova) sem regressões.
 2. Logs novos em pt-BR.
-3. Sem token, webhook ou path absoluto do usuário no diff.
+3. Sem token, webhook ou caminho absoluto pessoal no diff.
 4. Se mexeu em DDL, atualizou o trecho correspondente em "Arquitetura".
-5. Mensagem de commit em pt-BR, imperativo (`adiciona X`, `corrige Y`, `remove Z`).
+5. Mensagem de commit em pt-BR, imperativo (`adiciona X`, `corrige Y`, `remove Z`), seguindo Conventional Commits.
+6. **Definition of Done:** atualizar `CHANGELOG.md` (`[Unreleased]`, Keep a Changelog + SemVer) e, se mudou requisito/escopo, `README.md`/`docs/PRD.md`. Doc desatualizada = tarefa incompleta.
 
 ### Não faça
 
@@ -92,7 +42,7 @@ Convenção da ambiente local (ver [`../CLAUDE.md`](../CLAUDE.md)):
 
 ## 🛠️ Comandos Frequentes
 
-> Comandos que leem envs (DB_PATH, TELEGRAM_BOT_TOKEN, etc.) devem ser prefixados por `bin/with-env` desde a migração SOPS+age de 2026-05-24 — vide seção "Segredos" no final deste documento.
+> Comandos que leem envs (`DB_PATH`, `TELEGRAM_BOT_TOKEN`, etc.) devem ser prefixados por `bin/with-env` — vide seção "Segredos" no final deste documento.
 
 ### Pipeline (camada original)
 
@@ -100,12 +50,12 @@ Convenção da ambiente local (ver [`../CLAUDE.md`](../CLAUDE.md)):
 * **Instalar dependências (legado)**: `.venv/bin/pip install -r requirements.txt`
 * **Análise estática**: `.venv/bin/pylint *.py`
 
-### API + MCP (Caminho 01)
+### API + MCP
 
 * **Setup uv**: `uv sync --extra api --extra mcp --extra dev`
 * **Levantar API**: `bin/with-env uv run cnpj-api` → `http://127.0.0.1:8000` (Swagger em `/docs`)
-* **Levantar MCP stdio**: `bin/with-env uv run mcp-cnpj` (geralmente chamado pelo Claude Code via `~/.claude/mcp.json`)
-* **Rodar testes**: `bin/with-env uv run pytest tests/ -v` (60 unitários, cobertura 100% em `cnpj_lib/`)
+* **Levantar MCP stdio**: `bin/with-env uv run mcp-cnpj`
+* **Rodar testes**: `bin/with-env uv run pytest tests/ -v`
 * **Lint moderno**: `uv run ruff check .`
 
 ### Monitor (observabilidade do pipeline)
@@ -130,15 +80,15 @@ Quatro módulos em PT-BR na raiz do repo:
 
 ⚠️ **`synchronous=OFF`** torna o banco vulnerável a crash de OS (não de processo). Aceitável: pipeline é re-executável.
 
-### Camada nova — API + MCP (Caminho 01, 2026-05-23)
+### Camada nova — API + MCP
 
 ```
-cnpj_lib/                Biblioteca compartilhada (J — validador alfanumérico)
+cnpj_lib/                Biblioteca compartilhada (validador alfanumérico)
 ├── validador.py         Módulo 11 (alfa + num) — NT Conjunta 2025.001, vigência 06/07/2026
 ├── formatador.py        normalizar · formatar · fragmentar · mascarar_cpf · parsear_data
 └── dominio.py           6 tabelas hardcoded RFB (situacao_cadastral, etc) + descrever()
 
-app/                     Núcleo da API HTTP (A) — reusado pelo MCP
+app/                     Núcleo da API HTTP — reusado pelo MCP
 ├── main.py              FastAPI + lifespan + run_uvicorn()
 ├── config.py            pydantic-settings (DB_PATH, API_BIND, API_PORT, CORS_ORIGINS)
 ├── db.py                sqlite3 URI ?mode=ro (read-only por design)
@@ -148,14 +98,13 @@ app/                     Núcleo da API HTTP (A) — reusado pelo MCP
 ├── servicos/            consulta_cnpj.montar_cnpj_completo — orquestrador único
 └── rotas/               /health · /periodo-atual · /stats · /cnpj/{cnpj} + subrotas
 
-mcp_server/              Servidor MCP (I)
+mcp_server/              Servidor MCP
 └── server.py            FastMCP("cnpj-br") + 9 tools tipadas via @mcp.tool()
 
-migrations/              SQL idempotente (ANALYZE + 4 índices novos aplicados 2026-05-23)
-tests/conftest.py        Fixtures compartilhadas: tmp_db_path + cnpjs (WIP, 2026-05-23)
-tests/unit/              60 testes pytest + Hypothesis, cobertura 100% em cnpj_lib/
-tests/integracao/        27 testes — FastAPI TestClient contra SQLite descartável (commit 45496e2)
-tests/mcp/               37 testes — chamada direta das 9 tools FastMCP (WIP, 2026-05-23)
+migrations/              SQL idempotente (ANALYZE + índices)
+tests/unit/              testes pytest + Hypothesis, cobertura 100% em cnpj_lib/
+tests/integracao/        FastAPI TestClient contra SQLite descartável
+tests/mcp/               chamada direta das 9 tools FastMCP
 
 monitor/                 Observabilidade — stdlib only, não invasivo
 ├── collect.py           Daemon que parseia dados-abertos-cnpj.log → status.json
@@ -179,23 +128,25 @@ monitor/                 Observabilidade — stdlib only, não invasivo
 |---|---|---|
 | `DB_PATH` | `dados_cnpj.db` | Caminho do SQLite |
 | `DELETE_ZIP_AFTER` | `false` | Apaga ZIP após ingestão OK |
-| `RFB_SHARE_TOKEN` | `gn672Ad4CF8N6TK` | Token do share Nextcloud — atualizar se a RFB rotacionar |
+| `RFB_SHARE_TOKEN` | `gn672Ad4CF8N6TK` | Token do share **público** Nextcloud da RFB — atualizar se a RFB rotacionar |
 | `CNPJ_PERIOD` | _(vazio)_ | Força período `YYYY-MM`. Vazio = último disponível |
 | `DISCORD_WEBHOOK_URL` | _(vazio)_ | Notificações Discord |
 | `TELEGRAM_BOT_TOKEN` | _(vazio)_ | Token do bot Telegram |
 | `TELEGRAM_CHAT_ID` | _(vazio)_ | Chat-alvo do Telegram |
 
+Veja `.env.example` para o template completo (sem segredos).
+
 ---
 
 ## 📦 Dependências
 
-Apenas `requests==2.31.0`. Toda lógica de WebDAV é manual via PROPFIND/GET com headers HTTP padrão.
+Camada original: apenas `requests`. Toda lógica de WebDAV é manual via PROPFIND/GET com headers HTTP padrão. A camada API+MCP entra via `uv` (extras `api`/`mcp`/`dev`) — ver `pyproject.toml`.
 
 ---
 
-## 📊 Integração com MCP SQLite
+## 📊 Integração com MCP SQLite (consultas ad hoc)
 
-Para consultas ad hoc no banco já ingerido, registre o servidor SQLite MCP em `~/.claude/mcp.json`:
+Para consultas ad hoc no banco já ingerido, registre o servidor SQLite MCP no `mcp.json` do seu cliente:
 
 ```json
 {
@@ -231,23 +182,20 @@ Período `2026-05` (referência):
 * `Estabelecimentos0.zip` é o maior individual (~2 GB)
 * Banco final descomprimido: ~50 GB
 
-
 ---
 
 ## Segredos
 
-Migrado para **SOPS + age** em 2026-05-24 (substitui o `.env` plaintext legado). Stack do projeto:
+Os valores sensíveis (tokens de notificação, etc.) ficam em um arquivo cifrado com **SOPS + age**, **fora do versionamento**. O versionado é só o template `.env.example` (sem segredos).
 
 | Item | Onde | Notas |
 |---|---|---|
-| `.env.sops.yaml` | raiz do repo, **NÃO versionado** (gitignored desde 2026-06-11 — política da ambiente local: ciphertext fora do git, sem *forward secrecy* no histórico) | Ciphertext. Cifrado pra public key age da ambiente local (recipient não divulgado aqui — política de 2026-06-12). Backup = valores na secure note `env — dados-abertos-cnpj` do cofre de segredos Personal Vault (`scripts/env-vault-push.sh` do meta-repo). |
-| `.sops.yaml` | raiz do repo, **NÃO versionado** (gitignored desde 2026-06-12 — política da ambiente local: nenhum `*.sops.yaml` no git; o config expõe os recipients age) | Config file: declara o recipient age pro `creation_rules`. Evita ter que passar `--age` em cada operação. Local-only; recriável conforme o howto da ambiente local. |
-| `.env` plaintext | _(não existe mais)_ | Migração SOPS+age **concluída**: o `.env` plaintext legado foi removido. Resta apenas o `.env.example` (template versionado, sem segredos). pydantic_settings ainda lê de um `.env` local se existir (env vence), mas o fluxo canônico é via `bin/with-env`. |
-| `bin/with-env` | versionado, +x | Wrapper que injeta vars do `.env.sops.yaml` no subprocess via `sops exec-env`. Vars **não vazam** pro env do shell pai. |
+| `.env.sops.yaml` | raiz do repo, **NÃO versionado** (gitignored) | Ciphertext SOPS+age. Recriável pela própria pessoa que opera o repo. |
+| `.sops.yaml` | raiz do repo, **NÃO versionado** (gitignored) | Config do SOPS (recipients age). Local-only. |
+| `.env` plaintext | _(não usar)_ | O fluxo canônico é via `bin/with-env`; `pydantic_settings` lê de um `.env` local se existir (env vence). |
+| `bin/with-env` | versionado, +x | Wrapper que injeta as vars do `.env.sops.yaml` no subprocess via `sops exec-env`. Vars **não vazam** pro env do shell pai. |
 
 ### Como rodar comandos que precisam de envs
-
-Prefixar comandos com `bin/with-env`:
 
 ```bash
 bin/with-env .venv/bin/python main.py
@@ -259,9 +207,7 @@ bin/with-env uv run pytest tests/ -v
 ### Como editar valores
 
 ```bash
-SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt EDITOR=micro sops .env.sops.yaml
+SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops .env.sops.yaml
 ```
 
-(Editor `micro` é o default da ambiente local — substituir por `nano`/`vim`/`code -w` se preferir.)
-
-**NUNCA editar `.env.sops.yaml` direto via `micro .env.sops.yaml`** — quebra o MAC e o arquivo vira inválido. Howto canônico (humanos + agentes): [`../docs/sops-secrets-howto.md`](../docs/sops-secrets-howto.md). Política global: [`../CLAUDE.md`](../CLAUDE.md) "Segredos & envs (SOPS + age)".
+**NUNCA editar `.env.sops.yaml` direto no editor** (sem o wrapper `sops`) — quebra o MAC e o arquivo vira inválido.

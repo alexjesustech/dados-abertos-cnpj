@@ -1,17 +1,14 @@
 #!/usr/bin/env bash
 # pre-commit — duas defesas em profundidade:
 #   1. branch-guard: barra commit direto em main/master (feature branch obrigatória).
-#   2. gitleaks: barra segredos em arquivos staged (custódia SOPS+age, GUARD-002).
-# Instalado em repos NOVOS via `git config --global init.templateDir`. Repos com
-# core.hooksPath local (padrão CI-local "outro-projeto", .githooks/) recebem cópia própria com
-# este mesmo corpo. Nunca use --no-verify silenciosamente.
+#   2. gitleaks: barra segredos em arquivos staged.
+# Ativado com `git config core.hooksPath .githooks` (ver docs/CI-LOCAL.md).
+# Nunca use --no-verify silenciosamente.
 set -uo pipefail
 
-# === branch-guard (camada 3 do fluxo /branch — AGENTS.md § Fluxo de branch) ===
-# Bloqueia commit direto em main/master. develop fica livre (é branch de trabalho em
-# vários repos). Escape per-repo: `git config hooks.allowMainCommit true` (o meta-repo
-# ~/projects está marcado assim — governança vai direto na main). Escape pontual:
-# ALLOW_MAIN_COMMIT=1 git commit ...  Não aplica no commit inicial (HEAD unborn).
+# === branch-guard (bloqueia commit direto em main/master) ===
+# develop fica livre. Escape per-repo: `git config hooks.allowMainCommit true`.
+# Escape pontual: ALLOW_MAIN_COMMIT=1 git commit ...  Não aplica no commit inicial.
 if [ "${ALLOW_MAIN_COMMIT:-0}" != "1" ] \
    && [ "$(git config --bool hooks.allowMainCommit 2>/dev/null)" != "true" ] \
    && git rev-parse --verify -q HEAD >/dev/null 2>&1; then

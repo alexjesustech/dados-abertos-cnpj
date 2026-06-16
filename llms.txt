@@ -18,7 +18,4 @@
 
 ## Opcional
 
-- [Planejamento de produto](docs/planejamento-2026-05-23.html): peça
-  fundadora da série editorial em `docs/` (briefing, plano de implementação,
-  relatório de execução e backlog)
 - [CI local](docs/CI-LOCAL.md): espelho local do pipeline de CI
